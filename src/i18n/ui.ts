@@ -61,7 +61,7 @@ const de = {
         { id: 'tisch', name: 'Tischaufkleber', where: 'Direkt auf dem Tisch, für WLAN, Speisekarte oder Bewertungen.' },
       ],
       extra: 'Auch für Speisekarte, WLAN oder Instagram, auf Anfrage.',
-      price: 'ab 25 €',
+      price: 'ab 25 €',
       tag: 'Bewertet uns',
       tagSub: 'Handy hier dranhalten',
       phoneTitle: 'Google-Bewertung',
@@ -72,7 +72,7 @@ const de = {
     web: {
       title: 'Websites für Restaurants und Betriebe',
       text: 'Speisekarte, Öffnungszeiten und Anfahrt, schnell gefunden und gut lesbar auf jedem Handy. Auf Wunsch zweisprachig, für Kurgäste und Touristen.',
-      price: 'ab 250 €',
+      price: 'ab 250 €',
       demoLabel: 'Beispiel einer Speisekarte',
       url: 'euer-restaurant.de',
       restaurant: 'Gasthaus am Gradierwerk',
@@ -112,7 +112,7 @@ const de = {
     hosting: {
       title: 'Einrichtung und Hosting',
       text: 'Wir bringen eure Seite online und halten sie dort. Um die Technik müsst ihr euch nicht kümmern.',
-      price: 'ab 50 € im Jahr',
+      price: 'ab 50 € im Jahr',
       domain: 'euer-restaurant.de',
       status: 'Online',
       items: ['Domain einrichten', 'HTTPS-Verschlüsselung', 'Seite online bringen', 'Ein fester Ansprechpartner aus der Region'],
@@ -172,6 +172,8 @@ const de = {
       ],
       cta: 'Bundle anfragen',
       requestMessage: 'Hallo, wir interessieren uns für das Mega-Bundle.',
+      saved: 'bis zu {x} gespart',
+      savedNote: 'Ersparnis gegenüber unseren Einzelpreisen, gerechnet mit Website für 750 € und Hosting für 100 € im Jahr.',
     },
     singles: 'Einzeln buchen',
     nfc: {
@@ -194,20 +196,20 @@ const de = {
       total: 'zusammen',
       avg: 'im Schnitt pro Stück',
       saved: 'gespart',
-      scale: 'Der erste kostet 25 €, der zweite 20 €, der dritte 17,50 € und jeder weitere 15 €.',
+      scale: 'Der erste kostet 25 €, der zweite 20 €, der dritte 17,50 € und jeder weitere 15 €.',
       maxNote: 'Mehr als 50 Tische? Schreibt uns.',
     },
     website: {
       title: 'Website',
       from: 'ab',
-      range: 'Je nach Umfang bis 750 €.',
+      range: 'Je nach Umfang bis 750 €.',
       factors: 'Der Preis hängt zum Beispiel davon ab, wie viele Seiten ihr braucht, ob eine Speisekarte dazugehört und ob die Seite zweisprachig sein soll.',
     },
     hosting: {
       title: 'Einrichtung und Hosting',
       from: 'ab',
       unit: 'im Jahr',
-      range: 'Das sind ab 4,17 € im Monat. Je nach Umfang bis 100 € im Jahr.',
+      range: 'Das sind ab 4,17 € im Monat. Je nach Umfang bis 100 € im Jahr.',
     },
     cta: 'Angebot anfragen',
   },
@@ -231,11 +233,11 @@ const de = {
       },
       {
         q: 'Was kostet eine Website?',
-        a: 'Zwischen 250 und 750 €, je nach Umfang. Nach einem kurzen Gespräch bekommt ihr ein genaues Angebot.',
+        a: 'Zwischen 250 und 750 €, je nach Umfang. Nach einem kurzen Gespräch bekommt ihr ein genaues Angebot.',
       },
       {
         q: 'Was ist im Mega-Bundle enthalten?',
-        a: 'Alles für den Start: eine fertige Website nach euren Wünschen, ein bis zwei Aufsteller oder Sticker, bis zu 25 Tischaufkleber mit NFC, die Einrichtung und das erste Jahr Hosting. Je nach Umfang kostet es zwischen 800 und 1.100 €.',
+        a: 'Alles für den Start: eine fertige Website nach euren Wünschen, ein bis zwei Aufsteller oder Sticker, bis zu 25 Tischaufkleber mit NFC, die Einrichtung und das erste Jahr Hosting. Je nach Umfang kostet es zwischen 800 und 1.100 €.',
       },
       {
         q: 'Brauchen wir schon eine eigene Domain?',
@@ -461,6 +463,8 @@ const en: Dict = {
       ],
       cta: 'Ask about the bundle',
       requestMessage: 'Hello, we are interested in the mega bundle.',
+      saved: 'save up to {x}',
+      savedNote: 'Savings compared to our single prices, calculated with a €750 website and €100 hosting per year.',
     },
     singles: 'Book separately',
     nfc: {

@@ -53,7 +53,15 @@ export const site = {
     // Tischaufkleber mit NFC: Preis pro Stück, gestaffelt
     tableTags: { first: 25, second: 20, third: 17.5, following: 15, max: 50 },
     // Mega-Bundle (alles inklusive)
-    bundle: { from: 800, to: 1100 },
+    // Inhalt pro Stufe steuert die Ersparnis-Anzeige
+    bundle: {
+      from: 800,
+      to: 1100,
+      tiers: [
+        { price: 800, stands: 1, tags: 1 },
+        { price: 1100, stands: 2, tags: 25 },
+      ],
+    },
     // TODO: Umsatzsteuer-Hinweis. Kleinunternehmer:
     // 'Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.'
     taxNote: { de: null as string | null, en: null as string | null },
