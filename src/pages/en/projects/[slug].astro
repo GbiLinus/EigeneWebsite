@@ -1,0 +1,19 @@
+---
+import { getCollection } from 'astro:content';
+import ProjectPage from '../../../components/ProjectPage.astro';
+
+export async function getStaticPaths() {
+  const all = await getCollection('projects', (p) => !p.data.draft);
+  const slug = (id: string) => id.split('/').slice(1).join('/');
+  return all
+    .filter((p) => p.id.startsWith('en/'))
+    .map((entry) => ({
+      params: { slug: slug(entry.id) },
+      props: { entry, otherSlug: all.some((p) => p.id === `de/${slug(entry.id)}`) ? slug(entry.id) : null },
+    }));
+}
+
+const { entry, otherSlug } = Astro.props;
+---
+
+<ProjectPage lang="en" entry={entry} otherSlug={otherSlug} />

@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from './Nav.astro';
+import Hero from './Hero.astro';
+import Services from './Services.astro';
+import Work from './Work.astro';
+import Process from './Process.astro';
+import Pricing from './Pricing.astro';
+import Team from './Team.astro';
+import Faq from './Faq.astro';
+import Contact from './Contact.astro';
+import Footer from './Footer.astro';
+import { routes, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const alternates = { de: routes.home.de, en: routes.home.en };
+---
+
+<Base lang={lang} alternates={alternates} detectLanguage={lang === 'de'}>
+  <Nav lang={lang} alternates={alternates} />
+  <main id="main">
+    <Hero lang={lang} />
+    <Services lang={lang} />
+    <Work lang={lang} />
+    <Process lang={lang} />
+    <Pricing lang={lang} />
+    <Team lang={lang} />
+    <Faq lang={lang} />
+    <Contact lang={lang} />
+  </main>
+  <Footer lang={lang} alternates={alternates} />
+</Base>

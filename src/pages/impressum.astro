@@ -1,0 +1,9 @@
+---
+import Page from '../layouts/Page.astro';
+import Imprint from '../components/Imprint.astro';
+import { routes } from '../i18n/ui';
+---
+
+<Page lang="de" title="Impressum" alternates={routes.imprint}>
+  <Imprint lang="de" />
+</Page>

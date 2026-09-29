@@ -1,0 +1,12 @@
+{
+  "name": "Linus Asche",
+  "initials": "LA",
+  "order": 1,
+  "role": { "de": "Gründer", "en": "Founder" },
+  "tone": "sole",
+  "skills": [
+    { "de": "Design", "en": "Design" },
+    { "de": "Entwicklung", "en": "Development" },
+    { "de": "Beratung", "en": "Consulting" }
+  ]
+}

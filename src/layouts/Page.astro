@@ -1,0 +1,74 @@
+---
+import Base from './Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { t, routes, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  alternates: { de: string; en: string };
+  noindex?: boolean;
+}
+
+const { lang, title, alternates, noindex } = Astro.props;
+const d = t(lang);
+---
+
+<Base lang={lang} title={`${title} – WebDesignBR`} alternates={alternates} noindex={noindex}>
+  <Nav lang={lang} alternates={alternates} onHome={false} />
+  <main id="main" class="page container">
+    <a class="page-back link" href={routes.home[lang]}>{d.legal.back}</a>
+    <slot />
+  </main>
+  <Footer lang={lang} alternates={alternates} />
+</Base>
+
+<style>
+  .page {
+    padding-top: clamp(8rem, 14vw, 11rem);
+    padding-bottom: var(--section-y);
+    max-width: calc(52rem + 2 * var(--gutter));
+  }
+
+  .page-back {
+    display: inline-block;
+    margin-bottom: 2.5rem;
+    font-weight: 560;
+  }
+
+  .page :global(h1) {
+    margin: 0 0 2.5rem;
+  }
+
+  .page :global(h2) {
+    margin: 3rem 0 1rem;
+    font-size: 1.5rem;
+    font-weight: 680;
+    font-stretch: 108%;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+  }
+
+  .page :global(p),
+  .page :global(li) {
+    color: var(--text-soft);
+    max-width: 38em;
+  }
+
+  .page :global(.pending) {
+    padding: 0.1rem 0.5rem;
+    border-radius: 6px;
+    color: var(--gold);
+    background: rgb(255 194 75 / 0.1);
+  }
+
+  .page :global(.notice) {
+    margin: 0 0 2.5rem;
+    padding: 1rem 1.25rem;
+    border-radius: var(--r-md);
+    color: var(--gold);
+    background: rgb(255 194 75 / 0.08);
+    box-shadow: inset 0 0 0 1px rgb(255 194 75 / 0.2);
+  }
+</style>

@@ -1,0 +1,224 @@
+---
+import { getCollection } from 'astro:content';
+import { site } from '../config/site';
+import { t, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const team = (await getCollection('team')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section class="section team" id={d.ids.team}>
+  <div class="container">
+    <header class="section-head">
+      <h2 class="t-h2">{d.team.title}</h2>
+      <p class="t-lead">{d.team.lead}</p>
+    </header>
+
+    <ul class="team-grid" role="list">
+      {
+        team.map(({ data: m }) => (
+          <li class="member glass" data-spec data-tilt data-tone={m.tone}>
+            <div class="orb" aria-hidden="true">
+              {m.photo ? <img src={m.photo} alt="" loading="lazy" /> : <span class="orb-initials">{m.initials}</span>}
+            </div>
+            <div class="member-copy">
+              <h3 class="member-name">{m.name}</h3>
+              <p class="member-role">{m.role[lang]}</p>
+            </div>
+            <div class="member-skills">
+              <p class="sr-only">{d.team.skills}</p>
+              <ul role="list">
+                {m.skills.map((s) => (
+                  <li class="chip">{s[lang]}</li>
+                ))}
+              </ul>
+            </div>
+            {m.funFact && <p class="t-small member-fact">{m.funFact[lang]}</p>}
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="home">
+      <p class="home-title">{d.team.home}</p>
+      <p class="t-body">{d.team.homeText}</p>
+      <p class="home-coords t-num">{site.location.coords}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    perspective: 1200px;
+  }
+
+  .member {
+    --r: var(--r-xl);
+    --tone-a: var(--sole);
+    --tone-b: #1f8f86;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    column-gap: clamp(1.25rem, 3vw, 2rem);
+    row-gap: 1.5rem;
+    align-items: center;
+    padding: clamp(1.5rem, 3.5vw, 2.5rem);
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .member[data-tone='abend'] {
+    --tone-a: var(--abend);
+    --tone-b: #4b3fb3;
+  }
+
+  /* Monogramm in einer Glaskugel */
+  .orb {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: clamp(5.5rem, 10vw, 7.5rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 30% 25%, rgb(255 255 255 / 0.55), transparent 32%),
+      conic-gradient(from var(--spin, 0deg), var(--tone-a), var(--tone-b), var(--tone-a));
+    box-shadow:
+      inset 0 2px 2px rgb(255 255 255 / 0.5),
+      inset 0 -8px 18px rgb(4 27 32 / 0.45),
+      0 18px 40px -12px color-mix(in srgb, var(--tone-a) 60%, transparent);
+    transform: translateZ(30px);
+    transition: --spin 1.2s var(--ease-out);
+  }
+
+  .member:hover .orb {
+    --spin: 180deg;
+  }
+
+  .orb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .orb-initials {
+    font-size: clamp(1.75rem, 3.4vw, 2.5rem);
+    font-weight: 820;
+    font-stretch: 125%;
+    letter-spacing: -0.04em;
+    color: rgb(4 27 32 / 0.82);
+  }
+
+  .member-copy {
+    transform: translateZ(20px);
+  }
+
+  .member-name {
+    margin: 0;
+    font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+    font-weight: 740;
+    font-stretch: 112%;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+
+  .member-role {
+    margin: 0.35rem 0 0;
+    color: var(--tone-a);
+    font-weight: 600;
+  }
+
+  .member-skills,
+  .member-fact {
+    grid-column: 1 / -1;
+  }
+
+  .member-skills ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .home {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.6rem 2rem;
+    align-items: end;
+    margin-top: clamp(3.5rem, 7vw, 5.5rem);
+    padding-top: 2rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .home-title {
+    grid-column: 1 / -1;
+    margin: 0;
+    font-size: clamp(1.75rem, 3.6vw, 3rem);
+    font-weight: 760;
+    font-stretch: 120%;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+  }
+
+  .home-coords {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 560;
+    font-stretch: 112%;
+    color: var(--text-faint);
+    white-space: nowrap;
+  }
+
+  @property --spin {
+    syntax: '<angle>';
+    inherits: true;
+    initial-value: 0deg;
+  }
+
+  @media (max-width: 860px) {
+    .team-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .home {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, finePointer, reduced } from '../scripts/motion';
+
+  if (finePointer && !reduced) {
+    document.querySelectorAll<HTMLElement>('[data-tilt]').forEach((card) => {
+      const rx = gsap.quickTo(card, 'rotationX', { duration: 0.6, ease: 'power3.out' });
+      const ry = gsap.quickTo(card, 'rotationY', { duration: 0.6, ease: 'power3.out' });
+      card.addEventListener('pointermove', (e) => {
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        ry(px * 8);
+        rx(-py * 8);
+      });
+      card.addEventListener('pointerleave', () => {
+        gsap.to(card, { rotationX: 0, rotationY: 0, duration: 1, ease: 'elastic.out(1, 0.5)' });
+      });
+    });
+  }
+</script>

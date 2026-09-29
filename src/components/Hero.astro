@@ -1,0 +1,577 @@
+---
+import { t, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+---
+
+<section class="hero" id="top" data-hero>
+  <div class="hero-layout" data-hero-layout>
+    <canvas class="hero-strands" data-strands aria-hidden="true"></canvas>
+    <div class="hero-inner container">
+      <h1 class="t-display hero-title">
+        {
+          d.hero.lines.map((line) => (
+            <span class="hero-mask">
+              <span class="hero-line">{line}</span>
+            </span>
+          ))
+        }
+      </h1>
+      <p class="t-lead hero-lead" data-intro-fade>{d.hero.lead}</p>
+      <div class="hero-ctas" data-intro-fade>
+        <a class="btn btn-primary" href={`#${d.ids.contact}`} data-magnetic>{d.hero.primary}</a>
+        <a class="btn btn-ghost glass" href={`#${d.ids.pricing}`} data-spec>{d.hero.secondary}</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="lens" data-lens aria-hidden="true">
+    <div class="lens-pop" data-lens-pop>
+      <div class="lens-inner" data-lens-inner></div>
+      <div class="lens-shine"></div>
+    </div>
+  </div>
+
+  <p class="hero-egg" data-egg data-text={`★★★★★ ${d.lensHint}`} role="status" aria-live="polite"></p>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .hero-layout {
+    position: relative;
+    display: grid;
+    align-items: center;
+    min-height: max(40rem, min(100svh, 62rem));
+    padding-block: 8rem 5rem;
+  }
+
+  .hero-strands {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-mask-image: linear-gradient(90deg, transparent 22%, #000 62%);
+    mask-image: linear-gradient(90deg, transparent 22%, #000 62%);
+  }
+
+  .hero-inner {
+    position: relative;
+  }
+
+  .hero-title {
+    display: grid;
+    margin-bottom: clamp(1.75rem, 3.5vw, 2.75rem);
+  }
+
+  .hero-mask {
+    display: block;
+    overflow: hidden;
+    /* Platz für Unterlängen innerhalb der Maske */
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+
+  .hero-line {
+    display: block;
+    width: fit-content;
+  }
+
+  .hero-mask:nth-child(2) .hero-line {
+    background: linear-gradient(100deg, var(--salz) 10%, #a8f3e7 45%, #c9c1ff 90%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero-lead {
+    max-width: 31em;
+  }
+
+  .hero-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2.25rem;
+  }
+
+  /* Intro-Startzustand, nur mit JS und ohne reduzierte Bewegung */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .hero-layout[data-hero-layout] .hero-line {
+      transform: translateY(108%);
+      animation: hero-fallback 0s 2.6s forwards;
+    }
+    :global(.js) .hero-layout[data-hero-layout] [data-intro-fade],
+    :global(.js) .hero-layout[data-hero-layout] .hero-strands {
+      opacity: 0;
+      animation: hero-fallback 0s 2.6s forwards;
+    }
+  }
+
+  @keyframes hero-fallback {
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
+
+  /* ---------------- Linse ---------------- */
+  .lens {
+    --size: clamp(8.5rem, 17vw, 15rem);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: var(--size);
+    height: var(--size);
+    pointer-events: none;
+    will-change: transform;
+    visibility: hidden;
+  }
+
+  .lens.is-ready {
+    visibility: visible;
+  }
+
+  .lens-pop {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    transform: scale(0);
+    background: radial-gradient(circle at 50% 60%, var(--tiefsole), var(--nacht));
+    box-shadow:
+      0 30px 60px -18px rgb(0 8 10 / 0.85),
+      0 0 0 1px rgb(255 255 255 / 0.1);
+  }
+
+  .lens-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    will-change: transform;
+  }
+
+  /* Verzerrung am Rand: chromatische Aberration im Klon */
+  .lens-inner :global(.hero-line),
+  .lens-inner :global(.hero-lead),
+  .lens-inner :global(.btn) {
+    filter: drop-shadow(-1.5px 0 rgb(255 90 140 / 0.4)) drop-shadow(1.5px 0 rgb(80 210 255 / 0.45));
+  }
+
+  .lens-shine {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 32% 22%, rgb(255 255 255 / 0.45), transparent 26%),
+      radial-gradient(circle at 70% 85%, rgb(59 227 201 / 0.28), transparent 30%),
+      radial-gradient(circle, transparent 58%, rgb(255 255 255 / 0.08) 66%, rgb(255 255 255 / 0.22) 71%, transparent 72%);
+    box-shadow:
+      inset 0 2px 1px rgb(255 255 255 / 0.55),
+      inset 0 -3px 8px rgb(59 227 201 / 0.35),
+      inset 0 0 22px rgb(255 255 255 / 0.12),
+      inset 0 0 0 1px rgb(255 255 255 / 0.25);
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .lens {
+      pointer-events: auto;
+      touch-action: none;
+      cursor: grab;
+    }
+  }
+
+  .hero-egg {
+    position: absolute;
+    left: 50%;
+    bottom: 2rem;
+    z-index: 3;
+    margin: 0;
+    padding: 0.6rem 1.1rem;
+    border-radius: 999px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--nacht);
+    background: var(--gold);
+    box-shadow: 0 10px 30px -6px rgb(255 194 75 / 0.6);
+    transform: translate(-50%, 1rem);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 0.4s,
+      transform 0.6s var(--ease-liquid);
+  }
+
+  .hero-egg.is-on {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  @media (max-width: 700px) {
+    .hero-strands {
+      opacity: 0.55;
+      -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 30%, #000 70%, transparent 100%);
+      mask-image: linear-gradient(180deg, transparent 0%, #000 30%, #000 70%, transparent 100%);
+    }
+    .hero-layout {
+      min-height: 100svh;
+      padding-block: 7rem 4rem;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, reduced, finePointer } from '../scripts/motion';
+
+  type Drop = { x: number; lean: number; y: number; v: number; pause: number; len: number; size: number; glow: number };
+
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  if (hero) initHero(hero);
+
+  function initHero(hero: HTMLElement) {
+    const layout = hero.querySelector<HTMLElement>('[data-hero-layout]')!;
+    const canvas = layout.querySelector<HTMLCanvasElement>('[data-strands]')!;
+    const title = layout.querySelector<HTMLElement>('.hero-title')!;
+    const lens = hero.querySelector<HTMLElement>('[data-lens]')!;
+    const pop = lens.querySelector<HTMLElement>('[data-lens-pop]')!;
+    const inner = lens.querySelector<HTMLElement>('[data-lens-inner]')!;
+
+    // Klon des Hero-Inhalts für die Linse
+    const clone = layout.cloneNode(true) as HTMLElement;
+    clone.removeAttribute('data-hero-layout');
+    clone.setAttribute('inert', '');
+    clone.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+    clone.querySelectorAll('[data-magnetic]').forEach((el) => el.removeAttribute('data-magnetic'));
+    const lensCanvas = clone.querySelector<HTMLCanvasElement>('[data-strands]')!;
+    lensCanvas.removeAttribute('data-strands');
+    inner.appendChild(clone);
+
+    // ---------------- Gradierwerk: Reisig und Sole-Tropfen ----------------
+    const ctx = canvas.getContext('2d')!;
+    const lctx = lensCanvas.getContext('2d')!;
+    const texture = document.createElement('canvas');
+    const tctx = texture.getContext('2d')!;
+    let W = 0;
+    let H = 0;
+    let dpr = 1;
+    let drops: Drop[] = [];
+    let starMode = false;
+
+    const rand = (a: number, b: number) => a + Math.random() * (b - a);
+
+    function buildTexture() {
+      texture.width = W * dpr;
+      texture.height = H * dpr;
+      tctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      tctx.clearRect(0, 0, W, H);
+      const startX = W < 700 ? 0 : W * 0.28;
+      tctx.lineCap = 'round';
+      for (let x = startX; x < W + 10; x += rand(2.5, 6)) {
+        const lean = rand(-0.05, 0.05);
+        const top = rand(-20, H * 0.08);
+        const segs = 9;
+        const alpha = rand(0.04, 0.15);
+        tctx.strokeStyle = `rgba(237,246,243,${alpha})`;
+        tctx.lineWidth = rand(0.5, 1.3);
+        tctx.beginPath();
+        tctx.moveTo(x, top);
+        for (let i = 1; i <= segs; i++) {
+          const y = top + ((H + 40 - top) * i) / segs;
+          tctx.lineTo(x + lean * (y - top) + rand(-1.4, 1.4), y);
+        }
+        tctx.stroke();
+        // kurze Seitenzweige wie beim Schwarzdorn-Reisig
+        if (Math.random() < 0.35) {
+          const by = rand(top, H);
+          const bx = x + lean * (by - top);
+          tctx.strokeStyle = `rgba(237,246,243,${alpha * 0.7})`;
+          tctx.beginPath();
+          tctx.moveTo(bx, by);
+          tctx.lineTo(bx + rand(-9, 9), by + rand(6, 16));
+          tctx.stroke();
+        }
+      }
+      // Holzrahmen des Gradierwerks: zwei feine Querbalken
+      tctx.strokeStyle = 'rgba(237,246,243,0.05)';
+      tctx.lineWidth = 1;
+      [0.34, 0.68].forEach((f) => {
+        tctx.beginPath();
+        tctx.moveTo(startX, H * f);
+        tctx.lineTo(W, H * f);
+        tctx.stroke();
+      });
+    }
+
+    function makeDrop(initial: boolean): Drop {
+      const startX = W < 700 ? 0 : W * 0.3;
+      return {
+        x: rand(startX, W),
+        lean: rand(-0.04, 0.04),
+        y: initial ? rand(-H * 0.2, H) : rand(-H * 0.3, -10),
+        v: rand(10, 40),
+        pause: Math.random() < 0.3 ? rand(0, 1.2) : 0,
+        len: rand(14, 48),
+        size: rand(0.8, 2.2),
+        glow: Math.random() < 0.25 ? 1 : rand(0.35, 0.7),
+      };
+    }
+
+    function resize() {
+      const r = layout.getBoundingClientRect();
+      W = Math.round(r.width);
+      H = Math.round(r.height);
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      for (const c of [canvas, lensCanvas]) {
+        c.width = W * dpr;
+        c.height = H * dpr;
+      }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      lctx.setTransform(1, 0, 0, 1, 0, 0);
+      inner.style.width = `${W}px`;
+      inner.style.height = `${H}px`;
+      buildTexture();
+      const count = Math.round(Math.min(70, W / 22));
+      drops = Array.from({ length: count }, () => makeDrop(true));
+    }
+
+    function drawStar(c: CanvasRenderingContext2D, x: number, y: number, r: number) {
+      c.beginPath();
+      for (let i = 0; i < 10; i++) {
+        const a = -Math.PI / 2 + (i * Math.PI) / 5;
+        const rr = i % 2 === 0 ? r : r * 0.45;
+        c.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr);
+      }
+      c.closePath();
+      c.fill();
+    }
+
+    function draw(dt: number) {
+      ctx.clearRect(0, 0, W, H);
+      ctx.drawImage(texture, 0, 0, W, H);
+      ctx.globalCompositeOperation = 'lighter';
+      for (const d of drops) {
+        if (dt > 0) {
+          if (d.pause > 0) d.pause -= dt;
+          else {
+            d.v = Math.min(d.v + 28 * dt, 120);
+            d.y += d.v * dt;
+            // Oberflächenspannung: Tropfen bleiben manchmal kurz hängen
+            if (Math.random() < dt * 0.25) {
+              d.pause = rand(0.3, 1.4);
+              d.v = rand(6, 18);
+            }
+          }
+          if (d.y - d.len > H) Object.assign(d, makeDrop(false));
+        }
+        const x = d.x + d.lean * d.y;
+        const grad = ctx.createLinearGradient(x, d.y - d.len, x, d.y);
+        grad.addColorStop(0, 'rgba(59,227,201,0)');
+        grad.addColorStop(1, starMode ? 'rgba(255,194,75,0.55)' : `rgba(59,227,201,${0.5 * d.glow})`);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = d.size * 0.8;
+        ctx.beginPath();
+        ctx.moveTo(x - d.lean * d.len, d.y - d.len);
+        ctx.lineTo(x, d.y);
+        ctx.stroke();
+        if (starMode) {
+          ctx.fillStyle = 'rgba(255,194,75,0.95)';
+          drawStar(ctx, x, d.y, d.size * 3.2);
+        } else {
+          ctx.fillStyle = `rgba(59,227,201,${0.16 * d.glow})`;
+          ctx.beginPath();
+          ctx.arc(x, d.y, d.size * 3.2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = `rgba(237,246,243,${0.9 * d.glow})`;
+          ctx.beginPath();
+          ctx.arc(x, d.y, d.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      ctx.globalCompositeOperation = 'source-over';
+      if (lensVisible) {
+        lctx.clearRect(0, 0, lensCanvas.width, lensCanvas.height);
+        lctx.drawImage(canvas, 0, 0);
+      }
+    }
+
+    // ---------------- Linse ----------------
+    let R = lens.offsetWidth / 2;
+    const MAG = 1.42;
+    const pos = { x: 0, y: 0, tx: 0, ty: 0, vx: 0, vy: 0 };
+    let mode: 'idle' | 'follow' | 'drag' = 'idle';
+    let idleT = Math.random() * 10;
+    let idleTimer = 0;
+    let lensVisible = false;
+    let heroVisible = true;
+
+    function idleTarget() {
+      const hr = hero.getBoundingClientRect();
+      const tr = title.getBoundingClientRect();
+      const textW = Math.max(...[...title.querySelectorAll('.hero-line')].map((l) => l.getBoundingClientRect().width));
+      const left = tr.left - hr.left;
+      const top = tr.top - hr.top;
+      const w = Math.max(textW - 2 * R, 0);
+      const h = Math.max(tr.height - 2 * R, 0);
+      pos.tx = left + w * (0.5 + 0.48 * Math.sin(idleT * 0.32));
+      pos.ty = top + h * (0.5 + 0.5 * Math.sin(idleT * 0.53 + 1.3));
+    }
+
+    function applyLens() {
+      const speed = Math.hypot(pos.vx, pos.vy);
+      const stretch = reduced ? 0 : Math.min(speed / 2600, 0.16);
+      const ang = Math.atan2(pos.vy, pos.vx);
+      lens.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0) rotate(${ang}rad) scale(${1 + stretch}, ${1 - stretch * 0.75}) rotate(${-ang}rad)`;
+      inner.style.transformOrigin = `${pos.x + R}px ${pos.y + R}px`;
+      inner.style.transform = `translate3d(${-pos.x}px, ${-pos.y}px, 0) scale(${MAG})`;
+    }
+
+    function tick(_time: number, deltaMs: number) {
+      if (!heroVisible || document.hidden) return;
+      const dt = Math.min(deltaMs / 1000, 0.05);
+      draw(dt);
+      if (!lensVisible) return;
+      if (mode === 'idle') {
+        idleT += dt;
+        idleTarget();
+      }
+      const k = 1 - Math.exp(-dt * (mode === 'drag' ? 18 : 6.5));
+      const nx = pos.x + (pos.tx - pos.x) * k;
+      const ny = pos.y + (pos.ty - pos.y) * k;
+      pos.vx = dt > 0 ? (nx - pos.x) / dt : 0;
+      pos.vy = dt > 0 ? (ny - pos.y) / dt : 0;
+      pos.x = nx;
+      pos.y = ny;
+      applyLens();
+    }
+
+    const toIdleLater = (ms: number) => {
+      clearTimeout(idleTimer);
+      idleTimer = window.setTimeout(() => (mode = 'idle'), ms);
+    };
+
+    if (finePointer && !reduced) {
+      hero.addEventListener('pointermove', (e) => {
+        const hr = hero.getBoundingClientRect();
+        mode = 'follow';
+        pos.tx = e.clientX - hr.left - R;
+        pos.ty = e.clientY - hr.top - R;
+        toIdleLater(4000);
+      });
+      hero.addEventListener('pointerleave', () => toIdleLater(600));
+    }
+
+    if (!finePointer && !reduced) {
+      let offX = 0;
+      let offY = 0;
+      lens.addEventListener('pointerdown', (e) => {
+        lens.setPointerCapture(e.pointerId);
+        mode = 'drag';
+        const hr = hero.getBoundingClientRect();
+        offX = e.clientX - hr.left - pos.x;
+        offY = e.clientY - hr.top - pos.y;
+        clearTimeout(idleTimer);
+      });
+      lens.addEventListener('pointermove', (e) => {
+        if (mode !== 'drag') return;
+        const hr = hero.getBoundingClientRect();
+        pos.tx = e.clientX - hr.left - offX;
+        pos.ty = e.clientY - hr.top - offY;
+      });
+      const end = () => {
+        if (mode === 'drag') toIdleLater(2500);
+      };
+      lens.addEventListener('pointerup', end);
+      lens.addEventListener('pointercancel', end);
+    }
+
+    new IntersectionObserver(([entry]) => (heroVisible = entry.isIntersecting)).observe(hero);
+
+    let resizeTimer = 0;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        R = lens.offsetWidth / 2;
+        resize();
+        if (reduced) {
+          draw(0);
+          placeStatic();
+        }
+      }, 150);
+    });
+
+    function placeStatic() {
+      const hr = hero.getBoundingClientRect();
+      const line = title.querySelectorAll('.hero-line')[1] ?? title;
+      const lr = line.getBoundingClientRect();
+      pos.x = pos.tx = lr.left - hr.left + lr.width * 0.62 - R;
+      pos.y = pos.ty = lr.top - hr.top + lr.height / 2 - R;
+      applyLens();
+    }
+
+    resize();
+
+    // ---------------- Intro ----------------
+    const showLens = () => {
+      lensVisible = true;
+      lens.classList.add('is-ready');
+    };
+
+    if (reduced) {
+      draw(0);
+      showLens();
+      pop.style.transform = 'scale(1)';
+      placeStatic();
+      lctx.drawImage(canvas, 0, 0);
+      return;
+    }
+
+    idleTarget();
+    pos.x = pos.tx;
+    pos.y = pos.ty;
+    applyLens();
+    gsap.ticker.add(tick);
+
+    const lines = layout.querySelectorAll('.hero-line');
+    const fades = layout.querySelectorAll('[data-intro-fade]');
+    gsap
+      .timeline({ defaults: { ease: 'expo.out' } })
+      .to(canvas, { opacity: 1, duration: 2, ease: 'power1.out' }, 0)
+      .to(lines, { y: 0, yPercent: 0, duration: 1.3, stagger: 0.13 }, 0.1)
+      .fromTo(fades, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 1.1, stagger: 0.12 }, 0.55)
+      .add(showLens, 1.05)
+      .fromTo(pop, { scale: 0 }, { scale: 1, duration: 1.4, ease: 'elastic.out(1, 0.5)' }, 1.05);
+
+    // ---------------- Easter Egg: Konami-Code ----------------
+    const code = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    let idx = 0;
+    const egg = hero.querySelector<HTMLElement>('[data-egg]')!;
+    let eggTimer = 0;
+    window.addEventListener('keydown', (e) => {
+      idx = e.key.toLowerCase() === code[idx].toLowerCase() ? idx + 1 : e.key === code[0] ? 1 : 0;
+      if (idx === code.length) {
+        idx = 0;
+        starMode = true;
+        egg.textContent = egg.dataset.text ?? '';
+        egg.classList.add('is-on');
+        clearTimeout(eggTimer);
+        eggTimer = window.setTimeout(() => {
+          starMode = false;
+          egg.classList.remove('is-on');
+          egg.textContent = '';
+        }, 9000);
+      }
+    });
+  }
+</script>

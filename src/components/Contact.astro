@@ -1,0 +1,509 @@
+---
+import { site } from '../config/site';
+import { t, routes, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const c = d.contact;
+const { email, phone, instagram, linkedin, formEndpoint } = site.contact;
+const interests = Object.entries(c.interests) as [string, string][];
+---
+
+<section class="section contact" id={d.ids.contact}>
+  <div class="container contact-layout">
+    <div class="contact-intro">
+      <h2 class="t-h2">{c.title}</h2>
+      <p class="t-lead">{c.lead}</p>
+
+      <div class="contact-direct">
+        <p class="t-small">{c.direct}</p>
+        {email && <a class="link" href={`mailto:${email}`}>{email}</a>}
+        {phone && <a class="link" href={`tel:${phone.replace(/\s/g, '')}`}>{phone}</a>}
+        {instagram && <a class="link" href={instagram} rel="noopener">Instagram</a>}
+        {linkedin && <a class="link" href={linkedin} rel="noopener">LinkedIn</a>}
+        <p class="contact-place">{c.place}</p>
+      </div>
+    </div>
+
+    <div class="form-card glass" data-spec>
+      <form class="form" novalidate data-form data-endpoint={formEndpoint ?? ''}>
+        <fieldset class="interests">
+          <legend>{c.interest}</legend>
+          <div class="interest-list">
+            {
+              interests.map(([key, label]) => (
+                <label class="interest">
+                  <input type="checkbox" name="interest" value={key} data-interest={key} />
+                  <span class="interest-box" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M5 12.5l4.2 4.2L19 7" />
+                    </svg>
+                  </span>
+                  {label}
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <div class="fields">
+          <div class="field">
+            <label for={`f-name-${lang}`}>{c.name}</label>
+            <input id={`f-name-${lang}`} name="name" type="text" autocomplete="name" required aria-describedby={`f-name-${lang}-err`} />
+            <p class="field-error" id={`f-name-${lang}-err`} data-error-for="name" data-msg={c.errors.name}></p>
+          </div>
+          <div class="field">
+            <label for={`f-business-${lang}`}>{c.business} <span class="opt">{c.optional}</span></label>
+            <input id={`f-business-${lang}`} name="business" type="text" autocomplete="organization" />
+          </div>
+          <div class="field">
+            <label for={`f-email-${lang}`}>{c.email}</label>
+            <input id={`f-email-${lang}`} name="email" type="email" autocomplete="email" required aria-describedby={`f-email-${lang}-err`} />
+            <p class="field-error" id={`f-email-${lang}-err`} data-error-for="email" data-msg={c.errors.email}></p>
+          </div>
+          <div class="field">
+            <label for={`f-phone-${lang}`}>{c.phone} <span class="opt">{c.optional}</span></label>
+            <input id={`f-phone-${lang}`} name="phone" type="tel" autocomplete="tel" />
+          </div>
+          <div class="field field-wide">
+            <label for={`f-message-${lang}`}>{c.message}</label>
+            <textarea id={`f-message-${lang}`} name="message" rows="5" required placeholder={c.placeholder} aria-describedby={`f-message-${lang}-err`}></textarea>
+            <p class="field-error" id={`f-message-${lang}-err`} data-error-for="message" data-msg={c.errors.message}></p>
+          </div>
+        </div>
+
+        <div class="form-foot">
+          <p class="t-small">
+            {c.privacy} <a class="link" href={routes.privacy[lang]}>{c.privacyLink}</a>.
+          </p>
+          <button class="btn btn-primary form-submit" type="submit" data-magnetic data-submit>
+            <span class="submit-label" data-label-idle={c.submit} data-label-busy={c.sending}>{c.submit}</span>
+            <span class="submit-spinner" aria-hidden="true"></span>
+          </button>
+        </div>
+        <p class="form-error" role="alert" data-form-error data-msg={c.error}></p>
+      </form>
+
+      <div class="form-success" data-success hidden tabindex="-1">
+        <svg class="success-check" viewBox="0 0 52 52" aria-hidden="true">
+          <circle cx="26" cy="26" r="24" fill="none" pathLength="1" />
+          <path d="M15 27l7.5 7.5L37.5 19" fill="none" pathLength="1" />
+        </svg>
+        <p class="t-h3">{c.successTitle}</p>
+        <p class="t-body">{c.successText}</p>
+        {!formEndpoint && <p class="t-small preview-note">{c.previewNote}</p>}
+        <button class="btn btn-ghost glass" type="button" data-again>{c.again}</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: start;
+  }
+
+  .contact-intro {
+    display: grid;
+    gap: 1.25rem;
+    position: sticky;
+    top: 7rem;
+  }
+
+  .contact-direct {
+    display: grid;
+    gap: 0.4rem;
+    justify-items: start;
+    margin-top: 1.5rem;
+  }
+
+  .contact-place {
+    margin: 0;
+    font-weight: 560;
+  }
+
+  .form-card {
+    --r: var(--r-xl);
+    padding: clamp(1.5rem, 4vw, 2.75rem);
+  }
+
+  .form {
+    display: grid;
+    gap: 1.75rem;
+  }
+
+  .interests {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .interests legend {
+    margin-bottom: 0.8rem;
+    font-weight: 600;
+  }
+
+  .interest-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .interest {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1.1rem 0.6rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.9375rem;
+    font-weight: 580;
+    cursor: pointer;
+    background: rgb(237 246 243 / 0.06);
+    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.14);
+    transition:
+      background-color 0.3s,
+      box-shadow 0.3s,
+      transform 0.5s var(--ease-liquid);
+  }
+
+  .interest input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+
+  .interest:active {
+    transform: scale(0.96);
+  }
+
+  .interest-box {
+    display: grid;
+    place-items: center;
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1.5px rgb(237 246 243 / 0.35);
+    color: var(--nacht);
+    transition:
+      background-color 0.3s,
+      box-shadow 0.3s;
+  }
+
+  .interest-box svg {
+    width: 0.85rem;
+    height: 0.85rem;
+    transform: scale(0);
+    transition: transform 0.45s var(--ease-liquid);
+  }
+
+  .interest:has(input:checked) {
+    background: rgb(59 227 201 / 0.14);
+    box-shadow: inset 0 0 0 1px rgb(59 227 201 / 0.6);
+  }
+
+  .interest:has(input:checked) .interest-box {
+    background: var(--sole);
+    box-shadow: none;
+  }
+
+  .interest:has(input:checked) svg {
+    transform: scale(1);
+  }
+
+  .interest:has(input:focus-visible) {
+    outline: 2px solid var(--sole);
+    outline-offset: 3px;
+  }
+
+  .fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .field {
+    display: grid;
+    gap: 0.45rem;
+    align-content: start;
+  }
+
+  .field-wide {
+    grid-column: 1 / -1;
+  }
+
+  .field label {
+    font-size: 0.9375rem;
+    font-weight: 580;
+  }
+
+  .opt {
+    font-weight: 420;
+    color: var(--text-faint);
+  }
+
+  .field input,
+  .field textarea {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 0;
+    border-radius: var(--r-md);
+    font: inherit;
+    font-size: 1rem;
+    color: var(--salz);
+    background: rgb(4 27 32 / 0.55);
+    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.12);
+    transition:
+      box-shadow 0.3s,
+      background-color 0.3s;
+    resize: vertical;
+  }
+
+  .field textarea::placeholder {
+    color: var(--text-faint);
+  }
+
+  .field input:focus,
+  .field textarea:focus {
+    outline: none;
+    background: rgb(4 27 32 / 0.75);
+    box-shadow:
+      inset 0 0 0 1.5px var(--sole),
+      0 0 0 4px rgb(59 227 201 / 0.15);
+  }
+
+  .field [aria-invalid='true'] {
+    box-shadow: inset 0 0 0 1.5px #ff8a7a;
+  }
+
+  .field-error,
+  .form-error {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #ffa99c;
+  }
+
+  .field-error:empty,
+  .form-error:empty {
+    display: none;
+  }
+
+  .form-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+  }
+
+  .form-foot .t-small {
+    max-width: 26rem;
+  }
+
+  .form-submit {
+    min-width: 12rem;
+  }
+
+  .submit-spinner {
+    display: none;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    border: 2px solid rgb(4 27 32 / 0.25);
+    border-top-color: var(--nacht);
+    animation: spin 0.8s linear infinite;
+  }
+
+  .form-submit[aria-busy='true'] .submit-spinner {
+    display: block;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .form-success {
+    display: grid;
+    gap: 1rem;
+    justify-items: start;
+    padding: 1rem 0;
+  }
+
+  .form-success:focus {
+    outline: none;
+  }
+
+  .success-check {
+    width: 4rem;
+    height: 4rem;
+    stroke: var(--sole);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .success-check circle,
+  .success-check path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  .form-success.is-shown circle {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.7s var(--ease-out);
+  }
+
+  .form-success.is-shown path {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.45s var(--ease-out) 0.55s;
+  }
+
+  .preview-note {
+    padding: 0.5rem 0.9rem;
+    border-radius: var(--r-sm);
+    background: rgb(255 194 75 / 0.1);
+    color: var(--gold);
+  }
+
+  @media (max-width: 960px) {
+    .contact-layout {
+      grid-template-columns: 1fr;
+    }
+    .contact-intro {
+      position: static;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .fields {
+      grid-template-columns: 1fr;
+    }
+    .form-submit {
+      width: 100%;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, reduced, scrollToEl } from '../scripts/motion';
+
+  const form = document.querySelector<HTMLFormElement>('[data-form]');
+  if (form) {
+    const card = form.parentElement!;
+    const success = card.querySelector<HTMLElement>('[data-success]')!;
+    const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const label = submit.querySelector<HTMLElement>('.submit-label')!;
+    const formError = form.querySelector<HTMLElement>('[data-form-error]')!;
+    const endpoint = form.dataset.endpoint;
+
+    const fields = ['name', 'email', 'message'] as const;
+
+    const validate = () => {
+      let first: HTMLElement | null = null;
+      for (const name of fields) {
+        const input = form.elements.namedItem(name) as HTMLInputElement | HTMLTextAreaElement;
+        const err = form.querySelector<HTMLElement>(`[data-error-for="${name}"]`)!;
+        const value = input.value.trim();
+        const ok = name === 'email' ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) : value.length > 0;
+        input.setAttribute('aria-invalid', String(!ok));
+        err.textContent = ok ? '' : (err.dataset.msg ?? '');
+        if (!ok && !first) first = input;
+      }
+      if (first) {
+        first.focus();
+        if (!reduced) gsap.fromTo(first, { x: -6 }, { x: 0, duration: 0.5, ease: 'elastic.out(1, 0.3)' });
+      }
+      return !first;
+    };
+
+    form.addEventListener('input', (e) => {
+      const el = e.target as HTMLInputElement;
+      if (el.getAttribute('aria-invalid') === 'true') {
+        el.setAttribute('aria-invalid', 'false');
+        const err = form.querySelector<HTMLElement>(`[data-error-for="${el.name}"]`);
+        if (err) err.textContent = '';
+      }
+    });
+
+    const setBusy = (busy: boolean) => {
+      submit.setAttribute('aria-busy', String(busy));
+      submit.disabled = busy;
+      label.textContent = (busy ? label.dataset.labelBusy : label.dataset.labelIdle) ?? '';
+    };
+
+    const showSuccess = () => {
+      const done = () => {
+        form.hidden = true;
+        success.hidden = false;
+        requestAnimationFrame(() => success.classList.add('is-shown'));
+        success.focus();
+      };
+      if (reduced) return done();
+      gsap.to(form, {
+        opacity: 0,
+        y: -10,
+        duration: 0.3,
+        onComplete: () => {
+          done();
+          gsap.fromTo(success.children, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.08, ease: 'power3.out' });
+        },
+      });
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      formError.textContent = '';
+      if (!validate()) return;
+      setBusy(true);
+      try {
+        if (endpoint) {
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { Accept: 'application/json' },
+            body: new FormData(form),
+          });
+          if (!res.ok) throw new Error(String(res.status));
+        } else {
+          // Vorschau ohne Versand
+          await new Promise((r) => setTimeout(r, 900));
+        }
+        form.reset();
+        showSuccess();
+      } catch {
+        formError.textContent = formError.dataset.msg ?? '';
+      } finally {
+        setBusy(false);
+      }
+    });
+
+    card.querySelector('[data-again]')!.addEventListener('click', () => {
+      success.hidden = true;
+      success.classList.remove('is-shown');
+      form.hidden = false;
+      gsap.set(form, { clearProps: 'opacity,transform' });
+      (form.elements.namedItem('name') as HTMLInputElement).focus();
+    });
+
+    // Vorbelegung aus dem Preisbereich (z.B. vier oder mehr NFC-Aufsteller)
+    window.addEventListener('wdbr:prefill', (e) => {
+      const { interest, message } = (e as CustomEvent<{ interest?: string; message?: string }>).detail ?? {};
+      if (interest) {
+        const box = form.querySelector<HTMLInputElement>(`[data-interest="${interest}"]`);
+        if (box) box.checked = true;
+      }
+      const ta = form.elements.namedItem('message') as HTMLTextAreaElement;
+      if (message && !ta.value.trim()) ta.value = message;
+      scrollToEl(card);
+    });
+  }
+</script>

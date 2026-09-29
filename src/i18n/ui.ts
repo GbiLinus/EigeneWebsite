@@ -1,0 +1,487 @@
+export const languages = { de: 'Deutsch', en: 'English' } as const;
+export type Lang = keyof typeof languages;
+
+export const routes = {
+  home: { de: '/', en: '/en/' },
+  imprint: { de: '/impressum/', en: '/en/imprint/' },
+  privacy: { de: '/datenschutz/', en: '/en/privacy/' },
+} as const;
+
+export type RouteKey = keyof typeof routes;
+
+export const projectPath = (lang: Lang, slug: string) =>
+  lang === 'de' ? `/projekte/${slug}/` : `/en/projects/${slug}/`;
+
+const de = {
+  meta: {
+    title: 'WebDesignBR – Websites und Google-Bewertungen aus Bad Rothenfelde',
+    description:
+      'Websites, NFC-Aufsteller für Google-Bewertungen und Hosting für Restaurants, Cafés und Betriebe rund um Bad Rothenfelde.',
+    locale: 'de_DE',
+  },
+  skip: 'Zum Inhalt springen',
+  ids: {
+    services: 'leistungen',
+    work: 'projekte',
+    process: 'ablauf',
+    pricing: 'preise',
+    team: 'team',
+    faq: 'fragen',
+    contact: 'kontakt',
+  },
+  nav: {
+    label: 'Hauptnavigation',
+    home: 'WebDesignBR, zur Startseite',
+    services: 'Leistungen',
+    pricing: 'Preise',
+    team: 'Team',
+    faq: 'Fragen',
+    cta: 'Anfrage senden',
+    menu: 'Menü',
+    close: 'Menü schließen',
+    lang: 'Sprache',
+  },
+  hero: {
+    lines: ['Mehr Gäste.', 'Mehr Sterne.'],
+    lead: 'Websites, NFC-Aufsteller für Google-Bewertungen und Hosting für Restaurants, Cafés und Betriebe rund um Bad Rothenfelde.',
+    primary: 'Anfrage senden',
+    secondary: 'Preise ansehen',
+  },
+  services: {
+    title: 'Was wir für euch machen',
+    lead: 'Drei Leistungen, die zusammen dafür sorgen, dass Gäste euch finden, euch besuchen und davon erzählen.',
+    priceLink: 'Zu den Preisen',
+    nfc: {
+      title: 'NFC-Aufsteller für Google-Bewertungen',
+      text: 'Eure Gäste halten ihr Handy an den Aufsteller, und eure Google-Bewertungsseite öffnet sich. Keine App, kein Suchen.',
+      tabs: 'Form wählen',
+      products: [
+        { id: 'aufsteller', name: 'Aufsteller', where: 'Für Tresen, Kasse oder Eingang.' },
+        { id: 'sticker', name: 'Sticker', where: 'Für Tür, Fenster oder Speisekarte.' },
+        { id: 'tisch', name: 'Tischaufkleber', where: 'Direkt auf dem Tisch, wo eure Gäste sitzen.' },
+      ],
+      extra: 'Auch für Speisekarte, WLAN oder Instagram, auf Anfrage.',
+      price: 'ab 40 €',
+      tag: 'Bewertet uns',
+      tagSub: 'Handy hier dranhalten',
+      phoneTitle: 'Google-Bewertung',
+      phoneDone: 'Danke für eure Bewertung',
+      replay: 'Noch einmal abspielen',
+      stage: 'Animation: Ein Handy wird an den NFC-Aufsteller gehalten, danach erscheinen fünf Sterne.',
+    },
+    web: {
+      title: 'Websites für Restaurants und Betriebe',
+      text: 'Speisekarte, Öffnungszeiten und Anfahrt, schnell gefunden und gut lesbar auf jedem Handy. Auf Wunsch zweisprachig, für Kurgäste und Touristen.',
+      price: 'ab 250 €',
+      demoLabel: 'Beispiel einer Speisekarte',
+      url: 'euer-restaurant.de',
+      restaurant: 'Gasthaus am Gradierwerk',
+      allergens: 'Allergene anzeigen',
+      legend: 'A Gluten, C Ei, D Fisch, G Milch, I Sellerie, J Senf',
+      note: 'Fiktives Beispiel. Probiert die Kategorien und den Schalter aus.',
+      menu: [
+        {
+          id: 'vorspeisen',
+          name: 'Vorspeisen',
+          items: [
+            { name: 'Westfälische Kartoffelsuppe', desc: 'mit Mettendchen und Schnittlauch', price: '6,50', allergens: ['G', 'I'] },
+            { name: 'Feldsalat', desc: 'mit Speck, Croûtons und Senf-Dressing', price: '7,90', allergens: ['A', 'J'] },
+            { name: 'Schmalzbrot', desc: 'Bauernbrot, Griebenschmalz, Gewürzgurke', price: '4,90', allergens: ['A'] },
+          ],
+        },
+        {
+          id: 'hauptgerichte',
+          name: 'Hauptgerichte',
+          items: [
+            { name: 'Pfefferpotthast', desc: 'mit Salzkartoffeln und Gewürzgurke', price: '16,90', allergens: ['I', 'J'] },
+            { name: 'Forelle Müllerin', desc: 'aus dem Teutoburger Wald, mit Petersilienkartoffeln', price: '18,50', allergens: ['A', 'D', 'G'] },
+            { name: 'Grünkohl', desc: 'mit Mettwurst und Bratkartoffeln', price: '15,50', allergens: ['I'] },
+          ],
+        },
+        {
+          id: 'desserts',
+          name: 'Desserts',
+          items: [
+            { name: 'Westfälische Quarkspeise', desc: 'mit Pumpernickel und Kirschen', price: '6,90', allergens: ['A', 'G'] },
+            { name: 'Herrencreme', desc: 'mit Schokolade und einem Schuss Rum', price: '5,90', allergens: ['G'] },
+            { name: 'Apfelpfannkuchen', desc: 'mit Zimt und Zucker', price: '7,50', allergens: ['A', 'C', 'G'] },
+          ],
+        },
+      ],
+    },
+    hosting: {
+      title: 'Einrichtung und Hosting',
+      text: 'Wir bringen eure Seite online und halten sie dort. Um die Technik müsst ihr euch nicht kümmern.',
+      price: 'ab 50 € im Jahr',
+      domain: 'euer-restaurant.de',
+      status: 'Online',
+      items: ['Domain einrichten', 'HTTPS-Verschlüsselung', 'Seite online bringen', 'Ein fester Ansprechpartner aus der Region'],
+    },
+  },
+  work: {
+    title: 'Projekte',
+    emptyTitle: 'Die ersten Projekte entstehen gerade.',
+    emptyText: 'Hier zeigen wir bald Websites und Aufsteller aus der Region. Euer Betrieb könnte eines der ersten Projekte sein.',
+    emptyCta: 'Anfrage senden',
+    open: 'Projekt ansehen',
+    services: { website: 'Website', nfc: 'NFC-Aufsteller', hosting: 'Hosting' },
+    back: 'Zurück zur Startseite',
+    visit: 'Website besuchen',
+  },
+  process: {
+    title: 'So läuft es ab',
+    steps: [
+      { title: 'Kennenlernen', text: 'Wir sprechen persönlich oder am Telefon darüber, was euer Betrieb braucht.' },
+      { title: 'Entwurf', text: 'Ihr seht eure Seite, bevor sie online geht, und sagt uns, was passt.' },
+      { title: 'Umsetzung', text: 'Wir bauen die Seite fertig und richten eure NFC-Aufsteller ein.' },
+      { title: 'Online', text: 'Domain, Hosting und Bewertungslink laufen. Bei Fragen erreicht ihr uns direkt.' },
+    ],
+  },
+  pricing: {
+    title: 'Preise',
+    lead: 'Jeder Betrieb ist anders, darum bekommt ihr ein Angebot, das zu euch passt. Diese Preise geben euch eine Richtung.',
+    nfc: {
+      title: 'NFC-Aufsteller, Sticker und Tischaufkleber',
+      text: 'Einzeln oder im Set. Ab vier Stück machen wir euch ein eigenes Angebot.',
+      qtyLabel: 'Anzahl',
+      qty: ['1 Stück', '2 Stück', '3 Stück', '4 und mehr'],
+      perPiece: 'pro Stück',
+      saved: 'gespart',
+      onRequest: 'Auf Anfrage',
+      request: 'Menge anfragen',
+      requestMessage: 'Hallo, wir interessieren uns für vier oder mehr NFC-Aufsteller.',
+    },
+    website: {
+      title: 'Website',
+      from: 'ab',
+      range: 'Je nach Umfang bis 750 €.',
+      factors: 'Der Preis hängt zum Beispiel davon ab, wie viele Seiten ihr braucht, ob eine Speisekarte dazugehört und ob die Seite zweisprachig sein soll.',
+    },
+    hosting: {
+      title: 'Einrichtung und Hosting',
+      from: 'ab',
+      unit: 'im Jahr',
+      range: 'Das sind ab 4,17 € im Monat. Je nach Umfang bis 100 € im Jahr.',
+    },
+    cta: 'Angebot anfragen',
+  },
+  team: {
+    title: 'Linus und Kristian',
+    lead: 'Wir haben WebDesignBR in Bad Rothenfelde gegründet. Ihr sprecht immer direkt mit uns.',
+    skills: 'Aufgaben',
+    home: 'Aus Bad Rothenfelde. Für überall.',
+    homeText: 'Im Osnabrücker Land kommen wir gern vorbei. Mit Betrieben weiter weg arbeiten wir per Telefon und E-Mail.',
+  },
+  faq: {
+    title: 'Häufige Fragen',
+    items: [
+      {
+        q: 'Wie funktioniert ein NFC-Aufsteller?',
+        a: 'Im Aufsteller steckt ein kleiner NFC-Chip. Hält ein Gast sein Handy daran, öffnet sich direkt eure Google-Bewertungsseite. Das klappt mit den meisten aktuellen Smartphones, ganz ohne App.',
+      },
+      {
+        q: 'Ist das mit den Regeln von Google vereinbar?',
+        a: 'Ja. Ihr bittet eure Gäste um eine ehrliche Bewertung, und jeder kann frei bewerten. Google verbietet, Bewertungen zu belohnen oder nur zufriedene Gäste anzusprechen. Beides machen wir nicht.',
+      },
+      {
+        q: 'Was kostet eine Website?',
+        a: 'Zwischen 250 und 750 €, je nach Umfang. Nach einem kurzen Gespräch bekommt ihr ein genaues Angebot.',
+      },
+      {
+        q: 'Brauchen wir schon eine eigene Domain?',
+        a: 'Nein. Wir suchen mit euch eine passende Adresse aus und richten sie ein.',
+      },
+      {
+        q: 'Arbeitet ihr nur in Bad Rothenfelde?',
+        a: 'Wir kommen aus Bad Rothenfelde und sind im Osnabrücker Land gern vor Ort. Für Betriebe weiter weg arbeiten wir per Telefon und E-Mail.',
+      },
+    ],
+  },
+  contact: {
+    title: 'Schreibt uns',
+    lead: 'Erzählt kurz, was ihr braucht. Wir melden uns persönlich bei euch.',
+    interest: 'Worum geht es?',
+    interests: { website: 'Website', nfc: 'NFC-Aufsteller', hosting: 'Hosting' },
+    name: 'Name',
+    business: 'Betrieb',
+    email: 'E-Mail',
+    phone: 'Telefon',
+    message: 'Nachricht',
+    optional: 'optional',
+    placeholder: 'Zum Beispiel: Wir haben ein Café in Bad Laer und möchten eine Speisekarte online.',
+    privacy: 'Wir nutzen eure Angaben nur, um eure Anfrage zu beantworten. Mehr dazu in der',
+    privacyLink: 'Datenschutzerklärung',
+    submit: 'Anfrage senden',
+    sending: 'Wird gesendet',
+    successTitle: 'Anfrage gesendet',
+    successText: 'Danke! Wir melden uns persönlich bei euch.',
+    previewNote: 'Vorschau: Das Formular ist noch nicht verbunden. Es wurde nichts gesendet.',
+    again: 'Weitere Anfrage schreiben',
+    error: 'Die Anfrage wurde nicht gesendet. Prüft eure Internetverbindung und versucht es noch einmal.',
+    errors: {
+      name: 'Bitte gebt euren Namen an.',
+      email: 'Bitte gebt eine gültige E-Mail-Adresse an, zum Beispiel name@betrieb.de.',
+      message: 'Bitte schreibt uns kurz, worum es geht.',
+    },
+    direct: 'Direkt erreichen',
+    place: 'Bad Rothenfelde, Osnabrücker Land',
+  },
+  footer: {
+    imprint: 'Impressum',
+    privacy: 'Datenschutz',
+    rights: 'Websites und Google-Bewertungen aus Bad Rothenfelde.',
+    top: 'Nach oben',
+  },
+  legal: {
+    back: 'Zurück zur Startseite',
+    pending: 'wird ergänzt',
+    imprintTitle: 'Impressum',
+    privacyTitle: 'Datenschutzerklärung',
+  },
+  notFound: {
+    title: 'Diese Seite gibt es nicht.',
+    text: 'Vielleicht hat sich die Adresse geändert. Auf der Startseite findet ihr alles über WebDesignBR.',
+    cta: 'Zur Startseite',
+  },
+  lensHint: 'Easter Egg gefunden',
+};
+
+export type Dict = typeof de;
+
+const en: Dict = {
+  meta: {
+    title: 'WebDesignBR – Websites and Google reviews from Bad Rothenfelde',
+    description:
+      'Websites, NFC stands for Google reviews and hosting for restaurants, cafés and local businesses around Bad Rothenfelde, Germany.',
+    locale: 'en_US',
+  },
+  skip: 'Skip to content',
+  ids: {
+    services: 'services',
+    work: 'work',
+    process: 'process',
+    pricing: 'pricing',
+    team: 'team',
+    faq: 'faq',
+    contact: 'contact',
+  },
+  nav: {
+    label: 'Main navigation',
+    home: 'WebDesignBR, go to homepage',
+    services: 'Services',
+    pricing: 'Pricing',
+    team: 'Team',
+    faq: 'FAQ',
+    cta: 'Send enquiry',
+    menu: 'Menu',
+    close: 'Close menu',
+    lang: 'Language',
+  },
+  hero: {
+    lines: ['More guests.', 'More stars.'],
+    lead: 'Websites, NFC stands for Google reviews and hosting for restaurants, cafés and local businesses around Bad Rothenfelde.',
+    primary: 'Send enquiry',
+    secondary: 'See pricing',
+  },
+  services: {
+    title: 'What we do for you',
+    lead: 'Three services that work together so guests find you, visit you and tell others about it.',
+    priceLink: 'See pricing',
+    nfc: {
+      title: 'NFC stands for Google reviews',
+      text: 'Your guests hold their phone to the stand and your Google review page opens. No app, no searching.',
+      tabs: 'Choose a format',
+      products: [
+        { id: 'aufsteller', name: 'Stand', where: 'For the counter, till or entrance.' },
+        { id: 'sticker', name: 'Sticker', where: 'For doors, windows or menus.' },
+        { id: 'tisch', name: 'Table sticker', where: 'Right on the table where your guests sit.' },
+      ],
+      extra: 'Also works for menus, Wi-Fi or Instagram, on request.',
+      price: 'from €40',
+      tag: 'Review us',
+      tagSub: 'Hold your phone here',
+      phoneTitle: 'Google review',
+      phoneDone: 'Thanks for your review',
+      replay: 'Play again',
+      stage: 'Animation: a phone is held to the NFC stand, then five stars appear.',
+    },
+    web: {
+      title: 'Websites for restaurants and businesses',
+      text: 'Menu, opening hours and directions, easy to find and easy to read on any phone. In two languages if you like, for spa guests and tourists.',
+      price: 'from €250',
+      demoLabel: 'Example of a menu',
+      url: 'your-restaurant.com',
+      restaurant: 'Gasthaus am Gradierwerk',
+      allergens: 'Show allergens',
+      legend: 'A gluten, C egg, D fish, G milk, I celery, J mustard',
+      note: 'Fictional example. Try the categories and the switch.',
+      menu: [
+        {
+          id: 'starters',
+          name: 'Starters',
+          items: [
+            { name: 'Westphalian potato soup', desc: 'with smoked sausage and chives', price: '6.50', allergens: ['G', 'I'] },
+            { name: 'Lamb’s lettuce', desc: 'with bacon, croutons and mustard dressing', price: '7.90', allergens: ['A', 'J'] },
+            { name: 'Dripping on rye', desc: 'farmhouse bread, crackling lard, gherkin', price: '4.90', allergens: ['A'] },
+          ],
+        },
+        {
+          id: 'mains',
+          name: 'Mains',
+          items: [
+            { name: 'Pfefferpotthast', desc: 'peppery beef stew with boiled potatoes', price: '16.90', allergens: ['I', 'J'] },
+            { name: 'Trout meunière', desc: 'from the Teutoburg Forest, with parsley potatoes', price: '18.50', allergens: ['A', 'D', 'G'] },
+            { name: 'Kale', desc: 'with smoked sausage and fried potatoes', price: '15.50', allergens: ['I'] },
+          ],
+        },
+        {
+          id: 'desserts',
+          name: 'Desserts',
+          items: [
+            { name: 'Westphalian quark dessert', desc: 'with pumpernickel and cherries', price: '6.90', allergens: ['A', 'G'] },
+            { name: 'Herrencreme', desc: 'vanilla cream with chocolate and a dash of rum', price: '5.90', allergens: ['G'] },
+            { name: 'Apple pancake', desc: 'with cinnamon and sugar', price: '7.50', allergens: ['A', 'C', 'G'] },
+          ],
+        },
+      ],
+    },
+    hosting: {
+      title: 'Setup and hosting',
+      text: 'We put your site online and keep it there. You don’t have to deal with any of the technical side.',
+      price: 'from €50 a year',
+      domain: 'your-restaurant.com',
+      status: 'Online',
+      items: ['Domain setup', 'HTTPS encryption', 'Site goes live', 'One contact person from the region'],
+    },
+  },
+  work: {
+    title: 'Work',
+    emptyTitle: 'Our first projects are in progress.',
+    emptyText: 'Soon you’ll find websites and review stands from the region here. Your business could be one of the first.',
+    emptyCta: 'Send enquiry',
+    open: 'View project',
+    services: { website: 'Website', nfc: 'NFC stand', hosting: 'Hosting' },
+    back: 'Back to homepage',
+    visit: 'Visit website',
+  },
+  process: {
+    title: 'How it works',
+    steps: [
+      { title: 'Getting to know you', text: 'We talk in person or on the phone about what your business needs.' },
+      { title: 'Draft', text: 'You see your site before it goes live and tell us what works.' },
+      { title: 'Build', text: 'We finish the site and set up your NFC stands.' },
+      { title: 'Live', text: 'Domain, hosting and review link are running. If you have questions, you reach us directly.' },
+    ],
+  },
+  pricing: {
+    title: 'Pricing',
+    lead: 'Every business is different, so you get an offer that fits yours. These prices give you a direction.',
+    nfc: {
+      title: 'NFC stands, stickers and table stickers',
+      text: 'Single or as a set. From four pieces we make you an individual offer.',
+      qtyLabel: 'Quantity',
+      qty: ['1 piece', '2 pieces', '3 pieces', '4 or more'],
+      perPiece: 'per piece',
+      saved: 'saved',
+      onRequest: 'On request',
+      request: 'Ask for a quote',
+      requestMessage: 'Hello, we are interested in four or more NFC stands.',
+    },
+    website: {
+      title: 'Website',
+      from: 'from',
+      range: 'Up to €750, depending on scope.',
+      factors: 'The price depends on things like how many pages you need, whether a menu is included and whether the site should be in two languages.',
+    },
+    hosting: {
+      title: 'Setup and hosting',
+      from: 'from',
+      unit: 'a year',
+      range: 'That’s from €4.17 a month. Up to €100 a year, depending on scope.',
+    },
+    cta: 'Ask for a quote',
+  },
+  team: {
+    title: 'Linus and Kristian',
+    lead: 'We founded WebDesignBR in Bad Rothenfelde. You always talk to us directly.',
+    skills: 'Responsibilities',
+    home: 'From Bad Rothenfelde. For everywhere.',
+    homeText: 'In the Osnabrück region we’re happy to visit you. With businesses further away we work by phone and email.',
+  },
+  faq: {
+    title: 'Questions',
+    items: [
+      {
+        q: 'How does an NFC stand work?',
+        a: 'The stand contains a small NFC chip. When a guest holds their phone to it, your Google review page opens right away. This works with most current smartphones, no app needed.',
+      },
+      {
+        q: 'Is this in line with Google’s rules?',
+        a: 'Yes. You ask your guests for an honest review, and everyone is free to review. Google forbids rewarding reviews or only asking happy guests. We do neither.',
+      },
+      {
+        q: 'How much does a website cost?',
+        a: 'Between €250 and €750, depending on scope. After a short conversation you get an exact offer.',
+      },
+      {
+        q: 'Do we need our own domain already?',
+        a: 'No. We choose a suitable address with you and set it up.',
+      },
+      {
+        q: 'Do you only work in Bad Rothenfelde?',
+        a: 'We’re based in Bad Rothenfelde and happy to visit businesses in the Osnabrück region. With businesses further away we work by phone and email.',
+      },
+    ],
+  },
+  contact: {
+    title: 'Write to us',
+    lead: 'Tell us briefly what you need. We’ll get back to you personally. We reply in German or English.',
+    interest: 'What is it about?',
+    interests: { website: 'Website', nfc: 'NFC stand', hosting: 'Hosting' },
+    name: 'Name',
+    business: 'Business',
+    email: 'Email',
+    phone: 'Phone',
+    message: 'Message',
+    optional: 'optional',
+    placeholder: 'For example: We run a café in Bad Laer and want our menu online.',
+    privacy: 'We only use your details to answer your enquiry. Read more in our',
+    privacyLink: 'privacy policy',
+    submit: 'Send enquiry',
+    sending: 'Sending',
+    successTitle: 'Enquiry sent',
+    successText: 'Thank you! We’ll get back to you personally.',
+    previewNote: 'Preview: the form is not connected yet. Nothing was sent.',
+    again: 'Write another enquiry',
+    error: 'Your enquiry was not sent. Check your internet connection and try again.',
+    errors: {
+      name: 'Please enter your name.',
+      email: 'Please enter a valid email address, for example name@business.com.',
+      message: 'Please tell us briefly what it is about.',
+    },
+    direct: 'Reach us directly',
+    place: 'Bad Rothenfelde, Osnabrück region, Germany',
+  },
+  footer: {
+    imprint: 'Imprint',
+    privacy: 'Privacy',
+    rights: 'Websites and Google reviews from Bad Rothenfelde.',
+    top: 'Back to top',
+  },
+  legal: {
+    back: 'Back to homepage',
+    pending: 'to be added',
+    imprintTitle: 'Imprint',
+    privacyTitle: 'Privacy policy',
+  },
+  notFound: {
+    title: 'This page doesn’t exist.',
+    text: 'Maybe the address has changed. The homepage has everything about WebDesignBR.',
+    cta: 'Go to homepage',
+  },
+  lensHint: 'Easter egg found',
+};
+
+export const ui: Record<Lang, Dict> = { de, en };
+
+export const t = (lang: Lang) => ui[lang];

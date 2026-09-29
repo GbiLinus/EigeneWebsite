@@ -1,0 +1,391 @@
+@import "tailwindcss";
+@import "@fontsource-variable/mona-sans/standard.css";
+@import "lenis/dist/lenis.css";
+
+/* ------------------------------------------------------------------
+   Tokens: Gradierwerk bei Nacht
+   ------------------------------------------------------------------ */
+@theme {
+  --color-nacht: #041b20;
+  --color-tiefsole: #0a2c33;
+  --color-sole: #3be3c9;
+  --color-salz: #edf6f3;
+  --color-abend: #8c7bff;
+  --color-gold: #ffc24b;
+  --font-sans: "Mona Sans Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+
+  --nacht: #041b20;
+  --tiefsole: #0a2c33;
+  --sole: #3be3c9;
+  --sole-deep: #1fb8a0;
+  --salz: #edf6f3;
+  --abend: #8c7bff;
+  --gold: #ffc24b;
+
+  --text: var(--salz);
+  --text-soft: rgb(237 246 243 / 0.74);
+  --text-faint: rgb(237 246 243 / 0.52);
+  --line: rgb(237 246 243 / 0.12);
+
+  --r-xl: 32px;
+  --r-lg: 22px;
+  --r-md: 14px;
+  --r-sm: 10px;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-liquid: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+  --maxw: 1240px;
+  --section-y: clamp(5rem, 10vw, 8.5rem);
+  --glass-blur: 18px;
+}
+
+/* ------------------------------------------------------------------
+   Base
+   ------------------------------------------------------------------ */
+html {
+  background: var(--nacht);
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 6rem;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--nacht);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  font-weight: 420;
+  font-stretch: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+::selection {
+  background: rgb(59 227 201 / 0.35);
+  color: var(--salz);
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--sole);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.container {
+  width: 100%;
+  max-width: calc(var(--maxw) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  position: relative;
+  padding-block: var(--section-y);
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  border-radius: 999px;
+  background: var(--salz);
+  color: var(--nacht);
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.2s var(--ease-out);
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ------------------------------------------------------------------
+   Typography (scale: 14 / 18 / 21 / 24 / 36 / 48 / 72)
+   ------------------------------------------------------------------ */
+.t-display {
+  font-size: clamp(3.1rem, 9.4vw, 9rem);
+  font-weight: 800;
+  font-stretch: 118%;
+  line-height: 0.94;
+  letter-spacing: -0.042em;
+  margin: 0;
+}
+
+.t-h2 {
+  font-size: clamp(2.25rem, 5.4vw, 4.5rem);
+  font-weight: 760;
+  font-stretch: 114%;
+  line-height: 1;
+  letter-spacing: -0.034em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.t-h3 {
+  font-size: 1.5rem;
+  font-weight: 660;
+  font-stretch: 106%;
+  line-height: 1.2;
+  letter-spacing: -0.012em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.t-lead {
+  font-size: clamp(1.125rem, 1.6vw, 1.3125rem);
+  line-height: 1.55;
+  color: var(--text-soft);
+  max-width: 36em;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.t-body {
+  color: var(--text-soft);
+  max-width: 34em;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.t-small {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text-faint);
+  margin: 0;
+}
+
+.t-num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.section-head {
+  display: grid;
+  gap: 1.25rem;
+  margin-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+/* ------------------------------------------------------------------
+   Liquid glass
+   ------------------------------------------------------------------ */
+.glass {
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--r, var(--r-xl));
+  background:
+    linear-gradient(160deg, rgb(237 246 243 / 0.12), rgb(237 246 243 / 0.035) 55%, rgb(237 246 243 / 0.06));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    inset 0 -1px 0 rgb(255 255 255 / 0.05),
+    0 40px 80px -40px rgb(0 10 12 / 0.8);
+}
+
+/* Lichtkante: heller oben links, Sole-Schimmer unten rechts */
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    140deg,
+    rgb(255 255 255 / 0.5),
+    rgb(255 255 255 / 0.08) 28%,
+    rgb(255 255 255 / 0.03) 62%,
+    rgb(59 227 201 / 0.4)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Glanzpunkt, der dem Zeiger folgt */
+.glass[data-spec]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    380px circle at var(--mx, 50%) var(--my, 0%),
+    rgb(255 255 255 / 0.14),
+    transparent 55%
+  );
+  opacity: var(--spec, 0);
+  transition: opacity 0.5s var(--ease-out);
+  pointer-events: none;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background: rgb(10 44 51 / 0.92);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Buttons
+   ------------------------------------------------------------------ */
+.btn {
+  --r: 999px;
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6em;
+  min-height: 3.25rem;
+  padding: 0.85em 1.6em;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 640;
+  font-stretch: 108%;
+  line-height: 1.1;
+  letter-spacing: -0.005em;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    transform 0.5s var(--ease-liquid),
+    box-shadow 0.4s var(--ease-out),
+    background-color 0.3s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+/* Getöntes Flüssigglas in Sole */
+.btn-primary {
+  color: var(--nacht);
+  background:
+    radial-gradient(120% 90% at 30% 0%, rgb(255 255 255 / 0.6), transparent 55%),
+    linear-gradient(180deg, #7ff3e1, var(--sole) 45%, var(--sole-deep));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.7),
+    inset 0 -2px 6px rgb(4 27 32 / 0.25),
+    0 10px 30px -8px rgb(59 227 201 / 0.55);
+}
+.btn-primary:hover {
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.8),
+    inset 0 -2px 6px rgb(4 27 32 / 0.25),
+    0 16px 40px -8px rgb(59 227 201 / 0.75);
+}
+
+.btn-ghost {
+  color: var(--salz);
+}
+.btn-ghost:hover {
+  background-color: rgb(237 246 243 / 0.06);
+}
+
+.link {
+  color: var(--sole);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: rgb(59 227 201 / 0.45);
+  transition: text-decoration-color 0.3s;
+}
+.link:hover {
+  text-decoration-color: var(--sole);
+}
+
+/* ------------------------------------------------------------------
+   Chips
+   ------------------------------------------------------------------ */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.35em 0.85em;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 560;
+  font-stretch: 104%;
+  line-height: 1.3;
+  color: var(--text-soft);
+  background: rgb(237 246 243 / 0.07);
+  box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.1);
+}
+
+.price-chip {
+  color: var(--gold);
+  background: rgb(255 194 75 / 0.1);
+  box-shadow: inset 0 0 0 1px rgb(255 194 75 / 0.25);
+}
+
+/* ------------------------------------------------------------------
+   Seitenwechsel (Sprachumschalter)
+   ------------------------------------------------------------------ */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: 0.35s var(--ease-out) both vt-out;
+}
+::view-transition-new(root) {
+  animation: 0.55s var(--ease-out) both vt-in;
+}
+
+@keyframes vt-out {
+  to {
+    opacity: 0;
+    filter: blur(8px);
+  }
+}
+@keyframes vt-in {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}

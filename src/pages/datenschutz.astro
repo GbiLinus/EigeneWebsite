@@ -1,0 +1,9 @@
+---
+import Page from '../layouts/Page.astro';
+import Privacy from '../components/Privacy.astro';
+import { routes } from '../i18n/ui';
+---
+
+<Page lang="de" title="Datenschutz" alternates={routes.privacy}>
+  <Privacy lang="de" />
+</Page>

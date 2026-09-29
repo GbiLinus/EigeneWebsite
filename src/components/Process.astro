@@ -1,0 +1,174 @@
+---
+import { t, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+---
+
+<section class="section process" id={d.ids.process} data-process>
+  <div class="container">
+    <header class="section-head">
+      <h2 class="t-h2">{d.process.title}</h2>
+    </header>
+
+    <div class="steps-wrap">
+      <div class="steps-line" aria-hidden="true"><span data-line></span></div>
+      <ol class="steps" role="list">
+      {
+        d.process.steps.map((step, i) => (
+          <li class="step" data-step>
+            <span class="step-num" aria-hidden="true">
+              {i + 1}
+            </span>
+            <h3 class="t-h3">{step.title}</h3>
+            <p class="t-body">{step.text}</p>
+          </li>
+        ))
+      }
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .steps-wrap {
+    position: relative;
+  }
+
+  .steps {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .steps-line {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    right: 0;
+    height: 2px;
+    background: rgb(237 246 243 / 0.1);
+    border-radius: 2px;
+  }
+
+  .steps-line span {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--sole), var(--abend));
+    transform-origin: left center;
+    box-shadow: 0 0 16px rgb(59 227 201 / 0.6);
+  }
+
+  .step {
+    position: relative;
+    display: grid;
+    gap: 0.9rem;
+    align-content: start;
+  }
+
+  .step-num {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 0.75rem;
+    border-radius: 50%;
+    font-weight: 780;
+    font-stretch: 118%;
+    font-size: 1.125rem;
+    color: var(--text-soft);
+    background: var(--nacht);
+    box-shadow:
+      inset 0 0 0 1.5px rgb(237 246 243 / 0.18),
+      0 0 0 6px var(--nacht);
+    transition:
+      color 0.4s,
+      background-color 0.4s,
+      box-shadow 0.4s,
+      transform 0.6s var(--ease-liquid);
+  }
+
+  .step.is-reached .step-num {
+    color: var(--nacht);
+    background: var(--sole);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.6),
+      0 0 0 6px var(--nacht),
+      0 0 30px 2px rgb(59 227 201 / 0.5);
+    transform: scale(1.08);
+  }
+
+  @media (max-width: 860px) {
+    .steps-wrap {
+      padding-left: 4.5rem;
+    }
+    .steps {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+    .steps-line {
+      top: 1.5rem;
+      bottom: 1.5rem;
+      left: 1.5rem;
+      right: auto;
+      width: 2px;
+      height: auto;
+    }
+    .steps-line span {
+      transform-origin: center top;
+    }
+    .step-num {
+      position: absolute;
+      left: -4.5rem;
+      top: -0.6rem;
+      margin: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .step .step-num {
+      color: var(--nacht);
+      background: var(--sole);
+    }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduced } from '../scripts/motion';
+
+  const root = document.querySelector<HTMLElement>('[data-process]');
+  if (root && !reduced) {
+    const line = root.querySelector<HTMLElement>('[data-line]')!;
+    const steps = [...root.querySelectorAll<HTMLElement>('[data-step]')];
+    const mm = gsap.matchMedia();
+
+    const build = (axis: 'scaleX' | 'scaleY') => {
+      gsap.set(line, { [axis]: 0 });
+      const st = ScrollTrigger.create({
+        trigger: root.querySelector('.steps-wrap'),
+        start: 'top 75%',
+        end: axis === 'scaleX' ? 'top 30%' : 'bottom 60%',
+        scrub: 0.6,
+        onUpdate: (self) => {
+          gsap.set(line, { [axis]: self.progress });
+          steps.forEach((s, i) => s.classList.toggle('is-reached', self.progress >= i / (steps.length - 1) - 0.02));
+        },
+      });
+      return () => st.kill();
+    };
+
+    mm.add('(min-width: 861px)', () => build('scaleX'));
+    mm.add('(max-width: 860px)', () => build('scaleY'));
+  } else if (root) {
+    root.querySelectorAll('[data-step]').forEach((s) => s.classList.add('is-reached'));
+  }
+</script>

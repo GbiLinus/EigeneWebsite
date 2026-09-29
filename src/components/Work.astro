@@ -1,0 +1,167 @@
+---
+import { getCollection } from 'astro:content';
+import { t, projectPath, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const projects = (await getCollection('projects', (p) => p.id.startsWith(`${lang}/`) && !p.data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const slug = (id: string) => id.split('/').slice(1).join('/');
+---
+
+<section class="section work" id={d.ids.work}>
+  <div class="container">
+    <header class="section-head">
+      <h2 class="t-h2">{d.work.title}</h2>
+    </header>
+
+    {
+      projects.length > 0 ? (
+        <ul class="work-grid" role="list">
+          {projects.map((p) => (
+            <li>
+              <a class="work-card glass" href={projectPath(lang, slug(p.id))} data-spec>
+                <span class="work-meta t-small">
+                  {p.data.client}, {p.data.year}
+                </span>
+                <span class="t-h3">{p.data.title}</span>
+                <span class="t-body">{p.data.summary}</span>
+                <span class="work-tags">
+                  {p.data.services.map((s) => (
+                    <span class="chip">{d.work.services[s]}</span>
+                  ))}
+                </span>
+                <span class="work-open">{d.work.open}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div class="work-empty glass" data-spec>
+          <div class="work-empty-slots" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div class="work-empty-copy">
+            <p class="t-h3">{d.work.emptyTitle}</p>
+            <p class="t-body">{d.work.emptyText}</p>
+            <a class="btn btn-primary" href={`#${d.ids.contact}`} data-magnetic>
+              {d.work.emptyCta}
+            </a>
+          </div>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .work-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .work-card {
+    --r: var(--r-xl);
+    display: grid;
+    gap: 0.9rem;
+    align-content: start;
+    height: 100%;
+    padding: 2rem;
+    text-decoration: none;
+    transition: transform 0.6s var(--ease-liquid);
+  }
+
+  .work-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .work-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .work-open {
+    margin-top: 0.5rem;
+    color: var(--sole);
+    font-weight: 600;
+  }
+
+  .work-empty {
+    --r: var(--r-xl);
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+    padding: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  /* Drei leere Rahmen, in die bald Projekte kommen */
+  .work-empty-slots {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 0.75rem;
+    aspect-ratio: 5 / 4;
+  }
+
+  .work-empty-slots span {
+    border-radius: var(--r-lg);
+    border: 1.5px dashed rgb(237 246 243 / 0.2);
+    background: rgb(4 27 32 / 0.25);
+    animation: slot 6s ease-in-out infinite;
+  }
+
+  .work-empty-slots span:first-child {
+    grid-row: 1 / span 2;
+  }
+
+  .work-empty-slots span:nth-child(2) {
+    animation-delay: 2s;
+  }
+
+  .work-empty-slots span:nth-child(3) {
+    animation-delay: 4s;
+  }
+
+  @keyframes slot {
+    0%,
+    70%,
+    100% {
+      border-color: rgb(237 246 243 / 0.2);
+    }
+    35% {
+      border-color: rgb(59 227 201 / 0.7);
+    }
+  }
+
+  .work-empty-copy {
+    display: grid;
+    gap: 1.1rem;
+    justify-items: start;
+  }
+
+  .work-empty-copy .btn {
+    margin-top: 0.75rem;
+  }
+
+  @media (max-width: 760px) {
+    .work-empty {
+      grid-template-columns: 1fr;
+    }
+    .work-empty-slots {
+      aspect-ratio: 2 / 1;
+    }
+  }
+</style>

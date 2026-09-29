@@ -1,0 +1,397 @@
+---
+import { site } from '../config/site';
+import { t, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const p = d.pricing;
+const nfc = site.pricing.nfc;
+const fmt = (n: number, digits = 0) =>
+  new Intl.NumberFormat(lang === 'de' ? 'de-DE' : 'en-GB', {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  }).format(n);
+const money = (n: number, digits = 0) => (lang === 'de' ? `${fmt(n, digits)} €` : `€${fmt(n, digits)}`);
+const single = nfc[0].price;
+const taxNote = site.pricing.taxNote[lang];
+---
+
+<section class="section pricing" id={d.ids.pricing}>
+  <div class="container">
+    <header class="section-head">
+      <h2 class="t-h2">{p.title}</h2>
+      <p class="t-lead">{p.lead}</p>
+    </header>
+
+    <div class="price-grid">
+      <div class="price-nfc glass" data-spec data-nfc-price data-lang={lang}>
+        <div class="price-nfc-copy">
+          <h3 class="t-h3">{p.nfc.title}</h3>
+          <p class="t-body">{p.nfc.text}</p>
+        </div>
+
+        <fieldset class="qty">
+          <legend class="sr-only">{p.nfc.qtyLabel}</legend>
+          <span class="qty-thumb" aria-hidden="true" data-qty-thumb></span>
+          {
+            p.nfc.qty.map((label, i) => {
+              const tier = nfc[i];
+              return (
+                <label class="qty-opt">
+                  <input
+                    class="sr-only"
+                    type="radio"
+                    name={`nfc-qty-${lang}`}
+                    value={tier ? tier.qty : 'more'}
+                    checked={i === 0}
+                    data-price={tier ? tier.price : ''}
+                    data-per={tier ? tier.price / tier.qty : ''}
+                    data-saved={tier ? single * tier.qty - tier.price : ''}
+                  />
+                  <span>{label}</span>
+                </label>
+              );
+            })
+          }
+        </fieldset>
+
+        <div class="price-out" aria-live="polite">
+          <p class="price-big t-num" data-price-big>
+            <span data-price-value>{money(single)}</span>
+          </p>
+          <p class="price-sub">
+            <span data-price-per>{`${money(single)} ${p.nfc.perPiece}`}</span>
+            <span class="price-saved" data-price-saved hidden></span>
+          </p>
+          <a class="btn btn-primary price-request" href={`#${d.ids.contact}`} data-price-request data-message={p.nfc.requestMessage} hidden>
+            {p.nfc.request}
+          </a>
+        </div>
+
+        <template data-i18n data-on-request={p.nfc.onRequest} data-per-piece={p.nfc.perPiece} data-saved-label={p.nfc.saved}></template>
+      </div>
+
+      <div class="price-side">
+        <div class="price-row glass" data-spec>
+          <h3 class="t-h3">{p.website.title}</h3>
+          <p class="price-mid t-num">
+            <span class="price-from">{p.website.from}</span>
+            {money(site.pricing.website.from)}
+          </p>
+          <p class="t-small price-range">{p.website.range}</p>
+          <p class="t-body price-factors">{p.website.factors}</p>
+        </div>
+
+        <div class="price-row glass" data-spec>
+          <h3 class="t-h3">{p.hosting.title}</h3>
+          <p class="price-mid t-num">
+            <span class="price-from">{p.hosting.from}</span>
+            {money(site.pricing.hosting.from)}
+            <span class="price-unit">{p.hosting.unit}</span>
+          </p>
+          <p class="t-small price-range">{p.hosting.range}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="price-foot">
+      {taxNote && <p class="t-small">{taxNote}</p>}
+      <a class="btn btn-ghost glass" href={`#${d.ids.contact}`} data-spec>{p.cta}</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .price-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 1.5rem;
+    align-items: stretch;
+  }
+
+  .price-nfc {
+    --r: var(--r-xl);
+    display: grid;
+    gap: 2rem;
+    align-content: space-between;
+    padding: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .price-nfc-copy {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .qty {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 0;
+    padding: 0.3rem;
+    border: 0;
+    border-radius: 999px;
+    background: rgb(4 27 32 / 0.5);
+    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.1);
+  }
+
+  .qty-opt {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    min-height: 3rem;
+    padding: 0.5rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.9375rem;
+    font-weight: 620;
+    font-stretch: 104%;
+    text-align: center;
+    color: var(--text-soft);
+    cursor: pointer;
+    transition: color 0.35s;
+  }
+
+  .qty-opt:has(input:checked) {
+    color: var(--nacht);
+  }
+
+  .qty-opt:has(input:focus-visible) {
+    outline: 2px solid var(--sole);
+    outline-offset: 2px;
+  }
+
+  .qty-thumb {
+    position: absolute;
+    top: 0.3rem;
+    bottom: 0.3rem;
+    left: 0.3rem;
+    width: calc((100% - 0.6rem) / 4);
+    border-radius: 999px;
+    background:
+      radial-gradient(120% 90% at 30% 0%, rgb(255 255 255 / 0.6), transparent 55%),
+      linear-gradient(180deg, #7ff3e1, var(--sole) 45%, var(--sole-deep));
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.7),
+      0 8px 24px -8px rgb(59 227 201 / 0.6);
+  }
+
+  .price-out {
+    display: grid;
+    gap: 0.5rem;
+    justify-items: start;
+    min-height: 11rem;
+    align-content: end;
+  }
+
+  .price-big {
+    margin: 0;
+    font-size: clamp(3.5rem, 8vw, 6rem);
+    font-weight: 820;
+    font-stretch: 125%;
+    letter-spacing: -0.045em;
+    line-height: 1;
+    color: var(--salz);
+  }
+
+  .price-big.is-text {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .price-sub {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0;
+    color: var(--text-soft);
+  }
+
+  .price-saved {
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 680;
+    color: var(--nacht);
+    background: var(--gold);
+    box-shadow: 0 6px 20px -6px rgb(255 194 75 / 0.7);
+  }
+
+  .price-request {
+    margin-top: 0.5rem;
+  }
+
+  .price-side {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .price-row {
+    --r: var(--r-lg);
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .price-mid {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0.4rem 0 0;
+    font-size: clamp(2.25rem, 4vw, 3rem);
+    font-weight: 800;
+    font-stretch: 122%;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .price-from,
+  .price-unit {
+    font-size: 1rem;
+    font-weight: 560;
+    font-stretch: 100%;
+    letter-spacing: 0;
+    color: var(--text-soft);
+  }
+
+  .price-range {
+    color: var(--text-soft);
+  }
+
+  .price-factors {
+    margin-top: 0.4rem;
+    font-size: 0.9375rem;
+  }
+
+  .price-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .price-foot .btn {
+    margin-left: auto;
+  }
+
+  @media (max-width: 960px) {
+    .price-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .price-out {
+      min-height: 0;
+    }
+    .qty {
+      border-radius: var(--r-lg);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .qty-thumb {
+      display: none;
+    }
+    .qty-opt:has(input:checked) {
+      background: var(--sole);
+    }
+  }
+</style>
+
+<script>
+  import { gsap, reduced } from '../scripts/motion';
+
+  document.querySelectorAll<HTMLElement>('[data-nfc-price]').forEach((root) => {
+    const lang = root.dataset.lang === 'en' ? 'en' : 'de';
+    const i18n = root.querySelector<HTMLTemplateElement>('[data-i18n]')!.dataset;
+    const inputs = [...root.querySelectorAll<HTMLInputElement>('input[type="radio"]')];
+    const thumb = root.querySelector<HTMLElement>('[data-qty-thumb]')!;
+    const valueEl = root.querySelector<HTMLElement>('[data-price-value]')!;
+    const perEl = root.querySelector<HTMLElement>('[data-price-per]')!;
+    const savedEl = root.querySelector<HTMLElement>('[data-price-saved]')!;
+    const request = root.querySelector<HTMLAnchorElement>('[data-price-request]')!;
+
+    const nf = (n: number, digits: number) =>
+      new Intl.NumberFormat(lang === 'de' ? 'de-DE' : 'en-GB', {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits,
+      }).format(n);
+    const money = (n: number, digits = 0) => (lang === 'de' ? `${nf(n, digits)} €` : `€${nf(n, digits)}`);
+
+    const state = { value: Number(inputs[0].dataset.price) };
+
+    const placeThumb = (animate: boolean) => {
+      const checked = inputs.find((i) => i.checked)!;
+      const label = checked.closest('label')!;
+      gsap.to(thumb, { x: label.offsetLeft - thumb.offsetLeft, duration: animate && !reduced ? 0.6 : 0, ease: 'back.out(1.3)' });
+    };
+
+    const update = () => {
+      const checked = inputs.find((i) => i.checked)!;
+      placeThumb(true);
+      if (checked.value === 'more') {
+        gsap.killTweensOf(state);
+        valueEl.textContent = i18n.onRequest ?? '';
+        valueEl.parentElement!.classList.add('is-text');
+        perEl.hidden = true;
+        savedEl.hidden = true;
+        request.hidden = false;
+        if (!reduced) {
+          gsap.fromTo(valueEl, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.45 });
+          gsap.fromTo(request, { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(2)' });
+        }
+        return;
+      }
+      request.hidden = true;
+      perEl.hidden = false;
+      valueEl.parentElement!.classList.remove('is-text');
+      const target = Number(checked.dataset.price);
+      const per = Number(checked.dataset.per);
+      const saved = Number(checked.dataset.saved);
+      const perDigits = Number.isInteger(per) ? 0 : 2;
+      perEl.textContent = `${money(per, perDigits)} ${i18n.perPiece}`;
+
+      if (reduced) {
+        valueEl.textContent = money(target);
+      } else {
+        gsap.to(state, {
+          value: target,
+          duration: 0.7,
+          ease: 'power3.out',
+          onUpdate: () => (valueEl.textContent = money(Math.round(state.value))),
+        });
+        gsap.fromTo(valueEl, { opacity: 0.6 }, { opacity: 1, duration: 0.3 });
+      }
+
+      if (saved > 0) {
+        savedEl.textContent = `${money(saved)} ${i18n.savedLabel}`;
+        const wasHidden = savedEl.hidden;
+        savedEl.hidden = false;
+        if (!reduced) {
+          gsap.fromTo(
+            savedEl,
+            { scale: wasHidden ? 0.4 : 0.85, opacity: wasHidden ? 0 : 1 },
+            { scale: 1, opacity: 1, duration: 0.7, ease: 'elastic.out(1, 0.45)' },
+          );
+        }
+      } else {
+        savedEl.hidden = true;
+      }
+    };
+
+    inputs.forEach((i) => i.addEventListener('change', update));
+    window.addEventListener('resize', () => placeThumb(false));
+    document.fonts?.ready.then(() => placeThumb(false));
+
+    // Anfrage für größere Mengen: Formular vorbereiten
+    request.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('wdbr:prefill', { detail: { interest: 'nfc', message: request.dataset.message } }));
+    });
+  });
+</script>

@@ -1,0 +1,12 @@
+{
+  "name": "Kristian Wachholz",
+  "initials": "KW",
+  "order": 2,
+  "role": { "de": "Mitgründer", "en": "Co-founder" },
+  "tone": "abend",
+  "skills": [
+    { "de": "Design", "en": "Design" },
+    { "de": "Entwicklung", "en": "Development" },
+    { "de": "Beratung", "en": "Consulting" }
+  ]
+}

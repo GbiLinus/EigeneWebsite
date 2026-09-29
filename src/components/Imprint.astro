@@ -1,0 +1,65 @@
+---
+import { site } from '../config/site';
+import { t, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const c = site.company;
+const ct = site.contact;
+const missing = [c.owner, c.street, c.zip, ct.email].some((v) => !v);
+const de = lang === 'de';
+---
+
+<h1 class="t-h2">{d.legal.imprintTitle}</h1>
+
+{
+  missing && (
+    <p class="notice">
+      {de
+        ? 'Vorschau: Diese Angaben werden vor dem Launch vervollständigt und geprüft.'
+        : 'Preview: these details will be completed and checked before launch.'}
+    </p>
+  )
+}
+
+<h2>{de ? 'Angaben gemäß § 5 DDG' : 'Information according to § 5 DDG (German Digital Services Act)'}</h2>
+<p>
+  {site.name}
+  <br />
+  {de ? 'Inhaber' : 'Owner'}: {c.owner ?? <span class="pending">{d.legal.pending}</span>}
+  {c.legalForm && <br />}
+  {c.legalForm}
+  <br />
+  {c.street ?? <span class="pending">{de ? 'Straße und Hausnummer' : 'Street and number'}</span>}
+  <br />
+  {c.zip ?? <span class="pending">{de ? 'PLZ' : 'Postcode'}</span>} {c.city}
+  <br />
+  {de ? 'Deutschland' : 'Germany'}
+</p>
+
+<h2>{de ? 'Kontakt' : 'Contact'}</h2>
+<p>
+  {de ? 'E-Mail' : 'Email'}: {ct.email ? <a class="link" href={`mailto:${ct.email}`}>{ct.email}</a> : <span class="pending">{d.legal.pending}</span>}
+  <br />
+  {de ? 'Telefon' : 'Phone'}: {ct.phone ?? <span class="pending">{d.legal.pending}</span>}
+</p>
+
+{
+  c.vatId && (
+    <>
+      <h2>{de ? 'Umsatzsteuer-ID' : 'VAT ID'}</h2>
+      <p>
+        {de ? 'Umsatzsteuer-Identifikationsnummer gemäß § 27a UStG' : 'VAT identification number according to § 27a UStG'}: {c.vatId}
+      </p>
+    </>
+  )
+}
+
+<h2>{de ? 'Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV' : 'Responsible for content according to § 18 (2) MStV'}</h2>
+<p>
+  {c.owner ?? <span class="pending">{d.legal.pending}</span>}, {c.city}
+</p>

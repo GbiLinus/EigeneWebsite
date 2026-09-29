@@ -1,0 +1,46 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import Page from '../layouts/Page.astro';
+import { t, projectPath, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  entry: CollectionEntry<'projects'>;
+  otherSlug: string | null;
+}
+
+const { lang, entry, otherSlug } = Astro.props;
+const d = t(lang);
+const slug = entry.id.split('/').slice(1).join('/');
+const other: Lang = lang === 'de' ? 'en' : 'de';
+const alternates = {
+  [lang]: projectPath(lang, slug),
+  [other]: otherSlug ? projectPath(other, otherSlug) : other === 'de' ? '/' : '/en/',
+} as { de: string; en: string };
+const { Content } = await render(entry);
+---
+
+<Page lang={lang} title={entry.data.title} alternates={alternates}>
+  <p class="t-small">{entry.data.client}{entry.data.place ? `, ${entry.data.place}` : ''}, {entry.data.year}</p>
+  <h1 class="t-h2">{entry.data.title}</h1>
+  <p class="t-lead">{entry.data.summary}</p>
+  <div class="project-tags">
+    {entry.data.services.map((s) => <span class="chip">{d.work.services[s]}</span>)}
+  </div>
+  {entry.data.url && <a class="btn btn-primary" href={entry.data.url} rel="noopener">{d.work.visit}</a>}
+  <div class="project-body">
+    <Content />
+  </div>
+</Page>
+
+<style>
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 1.5rem 0 2rem;
+  }
+  .project-body {
+    margin-top: 3rem;
+  }
+</style>

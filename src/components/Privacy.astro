@@ -1,0 +1,74 @@
+---
+import { site } from '../config/site';
+import { t, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const de = lang === 'de';
+---
+
+<h1 class="t-h2">{d.legal.privacyTitle}</h1>
+
+<p class="notice">
+  {
+    de
+      ? 'Vorschau: Diese Datenschutzerklärung ist ein Entwurf. Sie wird vor dem Launch vervollständigt und rechtlich geprüft.'
+      : 'Preview: this privacy policy is a draft. It will be completed and legally reviewed before launch.'
+  }
+</p>
+
+<h2>{de ? 'Verantwortlicher' : 'Controller'}</h2>
+<p>
+  {site.name}, {site.company.owner ?? <span class="pending">{d.legal.pending}</span>}, {site.company.city}.{' '}
+  {de ? 'Kontaktdaten siehe Impressum.' : 'Contact details: see imprint.'}
+</p>
+
+<h2>{de ? 'Hosting' : 'Hosting'}</h2>
+<p>
+  {
+    de
+      ? 'Beim Aufruf der Website verarbeitet unser Hosting-Anbieter technisch notwendige Daten wie IP-Adresse, Datum und Uhrzeit sowie die aufgerufene Seite (Art. 6 Abs. 1 lit. f DSGVO).'
+      : 'When you visit this website, our hosting provider processes technically necessary data such as IP address, date and time and the page requested (Art. 6(1)(f) GDPR).'
+  }{' '}
+  <span class="pending">{de ? 'Anbieter wird ergänzt' : 'provider to be added'}</span>
+</p>
+
+<h2>{de ? 'Kontaktformular' : 'Contact form'}</h2>
+<p>
+  {
+    de
+      ? 'Wenn ihr uns über das Formular schreibt, verarbeiten wir eure Angaben, um eure Anfrage zu beantworten (Art. 6 Abs. 1 lit. b DSGVO). Wir geben sie nicht an Dritte weiter und löschen sie, wenn sie nicht mehr gebraucht werden.'
+      : 'When you write to us using the form, we process your details to answer your enquiry (Art. 6(1)(b) GDPR). We do not pass them on to third parties and delete them when they are no longer needed.'
+  }
+</p>
+
+<h2>{de ? 'Schriften und Skripte' : 'Fonts and scripts'}</h2>
+<p>
+  {
+    de
+      ? 'Alle Schriften und Skripte liegen auf unserem eigenen Server. Beim Aufruf der Seite wird keine Verbindung zu Google oder anderen Drittanbietern aufgebaut.'
+      : 'All fonts and scripts are served from our own server. No connection to Google or other third parties is made when you visit the site.'
+  }
+</p>
+
+<h2>{de ? 'Cookies und Speicher im Browser' : 'Cookies and browser storage'}</h2>
+<p>
+  {
+    de
+      ? 'Wir setzen keine Cookies und kein Tracking ein. Wenn ihr die Sprache wechselt, speichern wir eure Auswahl nur lokal in eurem Browser.'
+      : 'We use no cookies and no tracking. If you switch the language, we store your choice only locally in your browser.'
+  }
+</p>
+
+<h2>{de ? 'Eure Rechte' : 'Your rights'}</h2>
+<p>
+  {
+    de
+      ? 'Ihr habt das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch. Außerdem könnt ihr euch bei einer Datenschutz-Aufsichtsbehörde beschweren, in Niedersachsen bei der Landesbeauftragten für den Datenschutz.'
+      : 'You have the right to access, rectification, erasure, restriction of processing, data portability and objection. You can also lodge a complaint with a data protection supervisory authority, in Lower Saxony the State Commissioner for Data Protection.'
+  }
+</p>

@@ -1,0 +1,38 @@
+---
+import Page from '../layouts/Page.astro';
+import { t, routes } from '../i18n/ui';
+
+const de = t('de').notFound;
+const en = t('en').notFound;
+---
+
+<Page lang="de" title="404" alternates={routes.home} noindex>
+  <p class="nf-code t-num" aria-hidden="true">404</p>
+  <h1 class="t-h2">{de.title}</h1>
+  <p class="t-lead nf-text">{de.text}</p>
+  <a class="btn btn-primary" href={routes.home.de}>{de.cta}</a>
+  <p class="t-small nf-en" lang="en">
+    {en.title} <a class="link" href={routes.home.en}>{en.cta}</a>
+  </p>
+</Page>
+
+<style>
+  .nf-code {
+    margin: 0 0 1rem;
+    font-size: clamp(6rem, 22vw, 14rem);
+    font-weight: 860;
+    font-stretch: 125%;
+    letter-spacing: -0.06em;
+    line-height: 0.85;
+    background: linear-gradient(120deg, var(--sole), var(--abend));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .nf-text {
+    margin: 1.5rem 0 2rem;
+  }
+  .nf-en {
+    margin-top: 3rem;
+  }
+</style>

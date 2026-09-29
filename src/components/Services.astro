@@ -1,0 +1,1207 @@
+---
+import { t, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const s = d.services;
+const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-6.5-4.8-4.55 6.55-.8z';
+---
+
+<section class="section services" id={d.ids.services}>
+  <div class="container">
+    <header class="section-head">
+      <h2 class="t-h2">{s.title}</h2>
+      <p class="t-lead">{s.lead}</p>
+    </header>
+
+    <!-- NFC-Aufsteller -->
+    <article class="svc svc-nfc" data-nfc>
+      <div class="svc-copy">
+        <h3 class="t-h3">{s.nfc.title}</h3>
+        <p class="t-body">{s.nfc.text}</p>
+
+        <div class="seg" role="tablist" aria-label={s.nfc.tabs} data-nfc-tabs>
+          <span class="seg-thumb" aria-hidden="true" data-thumb></span>
+          {
+            s.nfc.products.map((p, i) => (
+              <button
+                class="seg-btn"
+                type="button"
+                role="tab"
+                id={`nfc-tab-${p.id}`}
+                aria-controls="nfc-panel"
+                aria-selected={i === 0 ? 'true' : 'false'}
+                tabindex={i === 0 ? 0 : -1}
+                data-product-id={p.id}
+                data-where={p.where}
+              >
+                {p.name}
+              </button>
+            ))
+          }
+        </div>
+        <p class="nfc-where" id="nfc-panel" role="tabpanel" aria-labelledby={`nfc-tab-${s.nfc.products[0].id}`} data-nfc-where>{s.nfc.products[0].where}</p>
+
+        <p class="t-small">{s.nfc.extra}</p>
+        <a class="chip price-chip svc-price" href={`#${d.ids.pricing}`}>{s.nfc.price}</a>
+      </div>
+
+      <div class="nfc-stage glass" data-spec data-nfc-stage>
+        <p class="sr-only">{s.nfc.stage}</p>
+        <div class="nfc-scene" aria-hidden="true">
+          <div class="nfc-table"></div>
+
+          {
+            s.nfc.products.map((p, i) => (
+              <div class={`nfc-product nfc-product--${p.id}`} data-product={p.id} hidden={i !== 0}>
+                <div class="tag">
+                  <svg class="tag-nfc" data-nfc-point viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                    <circle cx="5" cy="12" r="1.4" fill="currentColor" stroke="none" />
+                    <path d="M8.6 8.6a4.8 4.8 0 0 1 0 6.8" />
+                    <path d="M11.9 5.8a8.8 8.8 0 0 1 0 12.4" />
+                    <path d="M15.2 3a12.8 12.8 0 0 1 0 18" />
+                  </svg>
+                  <span class="tag-title">{s.nfc.tag}</span>
+                  <span class="tag-stars">
+                    {Array.from({ length: 5 }, () => (
+                      <svg viewBox="0 0 24 24">
+                        <path d={star} />
+                      </svg>
+                    ))}
+                  </span>
+                  <span class="tag-sub">{s.nfc.tagSub}</span>
+                </div>
+                {p.id === 'aufsteller' && <div class="stand-foot"></div>}
+              </div>
+            ))
+          }
+
+          <div class="nfc-rings" data-rings>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
+          <div class="phone" data-phone>
+            <div class="phone-screen">
+              <span class="phone-notch"></span>
+              <span class="phone-badge">
+                <svg viewBox="0 0 24 24">
+                  <path d={star} />
+                </svg>
+              </span>
+              <span class="phone-title">{s.nfc.phoneTitle}</span>
+              <span class="phone-stars" data-phone-stars>
+                {Array.from({ length: 5 }, () => (
+                  <svg viewBox="0 0 24 24">
+                    <path d={star} />
+                  </svg>
+                ))}
+              </span>
+              <span class="phone-done" data-phone-done>{s.nfc.phoneDone}</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="replay" type="button" data-replay aria-label={s.nfc.replay} title={s.nfc.replay}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3" />
+            <path d="M4.5 4.5v3.8h3.8" />
+          </svg>
+        </button>
+      </div>
+    </article>
+
+    <!-- Websites -->
+    <article class="svc svc-web" data-menu>
+      <div class="web-demo glass" data-spec>
+        <div class="browser-bar" aria-hidden="true">
+          <span class="browser-dots"><i></i><i></i><i></i></span>
+          <span class="browser-url">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <rect x="5" y="11" width="14" height="9" rx="2" />
+              <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+            </svg>
+            {s.web.url}
+          </span>
+        </div>
+
+        <div class="menu" role="group" aria-label={s.web.demoLabel}>
+          <p class="menu-name">{s.web.restaurant}</p>
+
+          <div class="menu-tabs seg" role="tablist" aria-label={s.web.demoLabel} data-menu-tabs>
+            <span class="seg-thumb" aria-hidden="true" data-thumb></span>
+            {
+              s.web.menu.map((cat, i) => (
+                <button
+                  class="seg-btn"
+                  type="button"
+                  role="tab"
+                  id={`menu-tab-${cat.id}`}
+                  aria-controls={`menu-panel-${cat.id}`}
+                  aria-selected={i === 0 ? 'true' : 'false'}
+                  tabindex={i === 0 ? 0 : -1}
+                >
+                  {cat.name}
+                </button>
+              ))
+            }
+          </div>
+
+          <div class="menu-panels">
+            {
+              s.web.menu.map((cat, i) => (
+                <ul class="menu-list" role="tabpanel" id={`menu-panel-${cat.id}`} aria-labelledby={`menu-tab-${cat.id}`} hidden={i !== 0}>
+                  {cat.items.map((item) => (
+                    <li class="menu-item">
+                      <span class="menu-item-name">{item.name}</span>
+                      <span class="menu-item-price t-num">{item.price}</span>
+                      <span class="menu-item-desc">{item.desc}</span>
+                      <span class="menu-allergens">
+                        {item.allergens.map((a, j) => (
+                          <span class="allergen" style={`--i:${j}`}>
+                            {a}
+                          </span>
+                        ))}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ))
+            }
+          </div>
+
+          <div class="menu-foot">
+            <button class="switch" type="button" role="switch" aria-checked="false" data-allergen-switch>
+              <span class="switch-track" aria-hidden="true"><span class="switch-knob"></span></span>
+              {s.web.allergens}
+            </button>
+            <p class="menu-legend">{s.web.legend}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="svc-copy">
+        <h3 class="t-h3">{s.web.title}</h3>
+        <p class="t-body">{s.web.text}</p>
+        <p class="t-small">{s.web.note}</p>
+        <a class="chip price-chip svc-price" href={`#${d.ids.pricing}`}>{s.web.price}</a>
+      </div>
+    </article>
+
+    <!-- Hosting -->
+    <article class="svc svc-host">
+      <div class="svc-copy">
+        <h3 class="t-h3">{s.hosting.title}</h3>
+        <p class="t-body">{s.hosting.text}</p>
+        <a class="chip price-chip svc-price" href={`#${d.ids.pricing}`}>{s.hosting.price}</a>
+      </div>
+
+      <div class="host-card glass" data-spec data-host>
+        <div class="host-domain">
+          <svg class="host-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <rect x="5" y="11" width="14" height="9" rx="2" />
+            <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+          </svg>
+          <span class="sr-only">{s.hosting.domain}</span>
+          <span class="host-typed" aria-hidden="true" data-typed={s.hosting.domain}>{s.hosting.domain}</span>
+          <span class="host-caret" aria-hidden="true"></span>
+        </div>
+        <ul class="host-list" role="list">
+          {
+            s.hosting.items.map((item, i) => (
+              <li style={`--i:${i}`}>
+                <svg class="host-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M5 12.5l4.2 4.2L19 7" pathLength="1" />
+                </svg>
+                {item}
+              </li>
+            ))
+          }
+        </ul>
+        <p class="host-status">
+          <span class="host-dot" aria-hidden="true"></span>
+          {s.hosting.status}
+        </p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<style>
+  .svc {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: clamp(2rem, 4vw, 4rem);
+    align-items: center;
+  }
+
+  .svc + .svc {
+    margin-top: clamp(6rem, 11vw, 9rem);
+  }
+
+  .svc-copy {
+    display: grid;
+    gap: 1.1rem;
+    justify-items: start;
+    align-content: center;
+  }
+
+  .svc-price {
+    margin-top: 0.5rem;
+    text-decoration: none;
+    font-size: 0.9375rem;
+  }
+
+  .svc-nfc .svc-copy {
+    grid-column: 1 / span 5;
+  }
+  .svc-nfc .nfc-stage {
+    grid-column: 6 / span 7;
+  }
+  .svc-web .web-demo {
+    grid-column: 1 / span 7;
+  }
+  .svc-web .svc-copy {
+    grid-column: 9 / span 4;
+  }
+  .svc-host .svc-copy {
+    grid-column: 1 / span 5;
+  }
+  .svc-host .host-card {
+    grid-column: 7 / span 5;
+  }
+
+  @media (max-width: 960px) {
+    .svc > * {
+      grid-column: 1 / -1 !important;
+    }
+    .svc-web .svc-copy {
+      order: -1;
+    }
+  }
+
+  /* ---------- Segment-Umschalter (NFC-Formen und Speisekarte) ---------- */
+  .seg {
+    position: relative;
+    display: inline-flex;
+    flex-wrap: nowrap;
+    max-width: 100%;
+    padding: 0.25rem;
+    border-radius: 999px;
+    background: rgb(4 27 32 / 0.45);
+    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.1);
+  }
+
+  .seg-btn {
+    position: relative;
+    z-index: 1;
+    padding: 0.6rem 1.05rem;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    font: inherit;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    font-stretch: 104%;
+    color: var(--text-soft);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.35s;
+  }
+
+  .seg-btn[aria-selected='true'] {
+    color: var(--nacht);
+  }
+
+  .seg-btn:not([aria-selected='true']):hover {
+    color: var(--salz);
+  }
+
+  .seg-thumb {
+    position: absolute;
+    top: 0.25rem;
+    bottom: 0.25rem;
+    left: 0;
+    width: 0;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #f6fbfa, #cfe3de);
+    box-shadow: inset 0 1px 0 #fff, 0 6px 16px -6px rgb(0 0 0 / 0.6);
+  }
+
+  .nfc-where {
+    margin: 0;
+    font-weight: 560;
+    color: var(--salz);
+    min-height: 1.6em;
+  }
+
+  /* ---------- NFC-Bühne ---------- */
+  .nfc-stage {
+    --r: var(--r-xl);
+    position: relative;
+    aspect-ratio: 6 / 5;
+    min-height: 22rem;
+    overflow: hidden;
+  }
+
+  .nfc-scene {
+    position: absolute;
+    inset: 0;
+    perspective: 900px;
+  }
+
+  .nfc-table {
+    position: absolute;
+    left: -10%;
+    right: -10%;
+    bottom: 0;
+    height: 30%;
+    background:
+      linear-gradient(180deg, rgb(237 246 243 / 0.1), transparent 1px),
+      linear-gradient(180deg, rgb(10 44 51 / 0.7), rgb(4 27 32 / 0.2));
+    border-top: 1px solid rgb(237 246 243 / 0.12);
+  }
+
+  .nfc-product {
+    position: absolute;
+    left: 34%;
+    bottom: 22%;
+    transform-style: preserve-3d;
+  }
+
+  .nfc-product[hidden] {
+    display: none;
+  }
+
+  .tag {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 0.45rem;
+    width: 9.5rem;
+    height: 13rem;
+    padding: 1rem;
+    border-radius: 1.2rem;
+    color: var(--nacht);
+    text-align: center;
+    background:
+      radial-gradient(120% 80% at 20% 0%, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0) 60%),
+      linear-gradient(170deg, #f4faf8, #d7e9e5);
+    box-shadow:
+      inset 0 1px 0 #fff,
+      inset 0 -2px 0 rgb(4 27 32 / 0.08),
+      0 24px 40px -18px rgb(0 0 0 / 0.7);
+    transition: box-shadow 0.5s;
+  }
+
+  .tag.is-glow {
+    box-shadow:
+      inset 0 1px 0 #fff,
+      0 0 0 2px rgb(59 227 201 / 0.8),
+      0 0 40px 4px rgb(59 227 201 / 0.45),
+      0 24px 40px -18px rgb(0 0 0 / 0.7);
+  }
+
+  .tag-nfc {
+    width: 2.4rem;
+    height: 2.4rem;
+    color: var(--sole-deep);
+  }
+
+  .tag-title {
+    font-size: 1.125rem;
+    font-weight: 780;
+    font-stretch: 112%;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .tag-stars {
+    display: flex;
+    gap: 2px;
+  }
+
+  .tag-stars svg {
+    width: 0.95rem;
+    height: 0.95rem;
+    fill: #e7a92c;
+  }
+
+  .tag-sub {
+    font-size: 0.6875rem;
+    line-height: 1.3;
+    color: rgb(4 27 32 / 0.6);
+  }
+
+  .nfc-product--aufsteller .tag {
+    transform: rotateY(-16deg) rotateX(4deg);
+  }
+
+  .stand-foot {
+    width: 7rem;
+    height: 0.8rem;
+    margin: -0.2rem auto 0;
+    border-radius: 0 0 0.6rem 0.6rem;
+    background: linear-gradient(180deg, #b9ccc8, #7d9591);
+    transform: rotateY(-16deg);
+  }
+
+  .nfc-product--sticker {
+    bottom: 30%;
+  }
+
+  .nfc-product--sticker .tag {
+    width: 10.5rem;
+    height: 10.5rem;
+    border-radius: 1.4rem;
+    transform: rotate(-6deg);
+    /* abgezogene Ecke */
+    clip-path: polygon(0 0, 100% 0, 100% 78%, 78% 100%, 0 100%);
+  }
+
+  .nfc-product--sticker::after {
+    content: '';
+    position: absolute;
+    right: 0.35rem;
+    bottom: 0.3rem;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 0 0 0 1.2rem;
+    background: linear-gradient(135deg, #ffffff 0%, #cfe0dc 45%, #93aaa6 100%);
+    box-shadow: -4px -4px 12px rgb(0 0 0 / 0.35);
+    transform: rotate(-6deg);
+    transform-origin: top left;
+  }
+
+  .nfc-product--sticker .tag-sub {
+    display: none;
+  }
+
+  .nfc-product--tisch {
+    left: 22%;
+    bottom: 12%;
+  }
+
+  .nfc-product--tisch .tag {
+    width: 15rem;
+    height: 10rem;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto auto;
+    justify-items: start;
+    text-align: left;
+    column-gap: 1rem;
+    transform: rotateX(56deg) rotateZ(-10deg);
+    transform-origin: bottom center;
+  }
+
+  .nfc-product--tisch .tag-nfc {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .nfc-rings {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .nfc-rings span {
+    position: absolute;
+    left: -2.5rem;
+    top: -2.5rem;
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    border: 2px solid var(--sole);
+    opacity: 0;
+  }
+
+  /* ---------- Handy ---------- */
+  .phone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 7.25rem;
+    height: 14.5rem;
+    padding: 0.3rem;
+    border-radius: 1.5rem;
+    background: linear-gradient(160deg, #3b4a4d, #11191b 40%, #0b1113);
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.15),
+      0 30px 50px -20px rgb(0 0 0 / 0.9);
+    opacity: 0;
+  }
+
+  .phone-screen {
+    position: relative;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 0.5rem;
+    height: 100%;
+    border-radius: 1.25rem;
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+    background: linear-gradient(180deg, #f5faf9, #dfeeea);
+    color: var(--nacht);
+    overflow: hidden;
+  }
+
+  .phone-notch {
+    position: absolute;
+    top: 0.4rem;
+    left: 50%;
+    width: 2rem;
+    height: 0.5rem;
+    margin-left: -1rem;
+    border-radius: 999px;
+    background: #0b1113;
+  }
+
+  .phone-badge {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #ffd47a, #e7a92c);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7);
+  }
+
+  .phone-badge svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    fill: #fff;
+  }
+
+  .phone-title {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .phone-stars {
+    display: flex;
+    gap: 1px;
+  }
+
+  .phone-stars svg {
+    width: 1.1rem;
+    height: 1.1rem;
+    fill: rgb(4 27 32 / 0.12);
+  }
+
+  .phone-done {
+    font-size: 0.625rem;
+    line-height: 1.25;
+    color: rgb(4 27 32 / 0.65);
+    opacity: 0;
+  }
+
+  .replay {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 0;
+    border-radius: 50%;
+    color: var(--salz);
+    background: rgb(237 246 243 / 0.1);
+    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.14);
+    cursor: pointer;
+    transition:
+      transform 0.6s var(--ease-liquid),
+      background-color 0.3s;
+  }
+
+  .replay:hover {
+    background: rgb(237 246 243 / 0.16);
+    transform: rotate(-120deg);
+  }
+
+  .replay svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  @media (max-width: 560px) {
+    .nfc-stage {
+      aspect-ratio: 4 / 5;
+    }
+    .phone {
+      width: 5.75rem;
+      height: 11.5rem;
+      border-radius: 1.25rem;
+    }
+    .phone-screen {
+      border-radius: 1.05rem;
+    }
+    .phone-title {
+      font-size: 0.5625rem;
+    }
+    .phone-stars svg {
+      width: 0.85rem;
+      height: 0.85rem;
+    }
+    .nfc-product {
+      left: 16%;
+    }
+    .nfc-product--tisch {
+      left: 6%;
+    }
+    .seg-btn {
+      padding: 0.55rem 0.8rem;
+      font-size: 0.875rem;
+    }
+  }
+
+  /* ---------- Speisekarten-Demo ---------- */
+  .web-demo {
+    --r: var(--r-xl);
+    overflow: hidden;
+  }
+
+  .browser-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem 1.1rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .browser-dots {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .browser-dots i {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    background: rgb(237 246 243 / 0.18);
+  }
+
+  .browser-url {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-inline: auto;
+    padding: 0.3rem 1rem;
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    color: var(--text-faint);
+    background: rgb(4 27 32 / 0.4);
+  }
+
+  .browser-url svg {
+    width: 0.8rem;
+    height: 0.8rem;
+  }
+
+  .menu {
+    display: grid;
+    gap: 1.4rem;
+    padding: clamp(1.25rem, 3vw, 2.25rem);
+  }
+
+  /* Speisekarte bewusst schmal gesetzt: Kontrast zu den breiten Überschriften */
+  .menu-name {
+    margin: 0;
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    font-weight: 700;
+    font-stretch: 78%;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+  }
+
+  .menu-tabs {
+    justify-self: start;
+  }
+
+  .menu-panels {
+    min-height: 15.5rem;
+  }
+
+  .menu-list {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .menu-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 1rem;
+    row-gap: 0.15rem;
+    padding: 0.8rem 0;
+    border-bottom: 1px dashed rgb(237 246 243 / 0.12);
+  }
+
+  .menu-item:last-child {
+    border-bottom: 0;
+  }
+
+  .menu-item-name {
+    font-weight: 640;
+    font-stretch: 84%;
+    font-size: 1.1875rem;
+    line-height: 1.3;
+  }
+
+  .menu-item-price {
+    font-weight: 640;
+    font-stretch: 84%;
+    font-size: 1.1875rem;
+    color: var(--gold);
+  }
+
+  .menu-item-desc {
+    grid-column: 1 / -1;
+    font-size: 0.9375rem;
+    font-stretch: 90%;
+    color: var(--text-faint);
+    line-height: 1.4;
+  }
+
+  .menu-allergens {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 0.3rem;
+    height: 0;
+    overflow: hidden;
+    transition: height 0.45s var(--ease-out);
+  }
+
+  .show-allergens .menu-allergens {
+    height: 1.7rem;
+  }
+
+  .allergen {
+    display: grid;
+    place-items: center;
+    width: 1.45rem;
+    height: 1.45rem;
+    margin-top: 0.25rem;
+    border-radius: 50%;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--nacht);
+    background: var(--sole);
+    transform: scale(0);
+    transition: transform 0.5s var(--ease-liquid) calc(var(--i) * 60ms);
+  }
+
+  .show-allergens .allergen {
+    transform: scale(1);
+  }
+
+  .menu-foot {
+    display: grid;
+    gap: 0.6rem;
+    padding-top: 0.4rem;
+  }
+
+  .menu-legend {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--text-faint);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .show-allergens .menu-legend {
+    opacity: 1;
+  }
+
+  .switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    justify-self: start;
+    padding: 0.25rem 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: 0.9375rem;
+    font-weight: 560;
+    color: var(--salz);
+    cursor: pointer;
+  }
+
+  .switch-track {
+    position: relative;
+    width: 2.9rem;
+    height: 1.75rem;
+    border-radius: 999px;
+    background: rgb(237 246 243 / 0.14);
+    box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.4);
+    transition: background-color 0.35s;
+  }
+
+  .switch-knob {
+    position: absolute;
+    top: 0.15rem;
+    left: 0.15rem;
+    width: 1.45rem;
+    height: 1.45rem;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #fff, #d9e8e4);
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.4);
+    transition:
+      transform 0.5s var(--ease-liquid),
+      width 0.25s var(--ease-out);
+  }
+
+  .switch:active .switch-knob {
+    width: 1.8rem;
+  }
+
+  .switch[aria-checked='true'] .switch-track {
+    background: var(--sole);
+  }
+
+  .switch[aria-checked='true'] .switch-knob {
+    transform: translateX(1.15rem);
+  }
+
+  .switch[aria-checked='true']:active .switch-knob {
+    transform: translateX(0.8rem);
+  }
+
+  /* ---------- Hosting ---------- */
+  .host-card {
+    --r: var(--r-xl);
+    display: grid;
+    gap: 1.4rem;
+    padding: clamp(1.4rem, 3vw, 2rem);
+  }
+
+  .host-domain {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1rem;
+    border-radius: var(--r-md);
+    background: rgb(4 27 32 / 0.5);
+    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.08);
+    font-size: 1.0625rem;
+    font-weight: 560;
+  }
+
+  .host-lock {
+    width: 1rem;
+    height: 1rem;
+    color: var(--sole);
+    flex: none;
+  }
+
+  .host-caret {
+    width: 2px;
+    height: 1.2em;
+    background: var(--sole);
+    animation: caret 1s steps(1) infinite;
+  }
+
+  @keyframes caret {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  .host-list {
+    display: grid;
+    gap: 0.8rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .host-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--text-soft);
+  }
+
+  .host-check {
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0.25rem;
+    border-radius: 50%;
+    color: var(--nacht);
+    background: var(--sole);
+  }
+
+  .host-check path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+
+  .host-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    justify-self: start;
+    margin: 0;
+    padding: 0.4rem 0.9rem 0.4rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--sole);
+    background: rgb(59 227 201 / 0.1);
+  }
+
+  .host-dot {
+    position: relative;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: var(--sole);
+  }
+
+  .host-dot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--sole);
+    animation: pulse 2.2s var(--ease-out) infinite;
+  }
+
+  @keyframes pulse {
+    from {
+      transform: scale(1);
+      opacity: 0.7;
+    }
+    to {
+      transform: scale(3.2);
+      opacity: 0;
+    }
+  }
+
+  /* Startzustand der Hosting-Animation (nur mit JS) */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) [data-host]:not(.is-live) .host-check {
+      background: rgb(237 246 243 / 0.1);
+    }
+    :global(.js) [data-host]:not(.is-live) .host-check path {
+      stroke-dashoffset: 1;
+    }
+    :global(.js) [data-host]:not(.is-live) .host-status {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    [data-host] .host-check {
+      transition: background-color 0.4s calc(0.9s + var(--i) * 0.28s);
+    }
+    [data-host] .host-check path {
+      transition: stroke-dashoffset 0.45s var(--ease-out) calc(0.9s + var(--i) * 0.28s);
+    }
+    [data-host] .host-status {
+      transition:
+        opacity 0.5s 2.2s,
+        transform 0.6s var(--ease-liquid) 2.2s;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduced } from '../scripts/motion';
+
+  // Segment-Umschalter mit gleitendem Daumen und Pfeiltasten
+  function setupTabs(list: HTMLElement, onSelect: (tab: HTMLButtonElement, index: number) => void) {
+    const tabs = [...list.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const thumb = list.querySelector<HTMLElement>('[data-thumb]')!;
+    const place = (tab: HTMLButtonElement, animate: boolean) => {
+      gsap.to(thumb, {
+        x: tab.offsetLeft,
+        width: tab.offsetWidth,
+        duration: animate && !reduced ? 0.6 : 0,
+        ease: 'back.out(1.4)',
+      });
+    };
+    const select = (i: number, focus = false) => {
+      tabs.forEach((t, j) => {
+        t.setAttribute('aria-selected', String(i === j));
+        t.tabIndex = i === j ? 0 : -1;
+      });
+      if (focus) tabs[i].focus();
+      place(tabs[i], true);
+      onSelect(tabs[i], i);
+    };
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => {
+        if (tab.getAttribute('aria-selected') !== 'true') select(i);
+      });
+      tab.addEventListener('keydown', (e) => {
+        const dir = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (!dir) return;
+        e.preventDefault();
+        select((i + dir + tabs.length) % tabs.length, true);
+      });
+    });
+    const current = () => tabs.find((t) => t.getAttribute('aria-selected') === 'true') ?? tabs[0];
+    place(current(), false);
+    document.fonts?.ready.then(() => place(current(), false));
+    window.addEventListener('resize', () => place(current(), false));
+  }
+
+  // ---------------- NFC ----------------
+  const nfc = document.querySelector<HTMLElement>('[data-nfc]');
+  if (nfc) {
+    const stage = nfc.querySelector<HTMLElement>('[data-nfc-stage]')!;
+    const where = nfc.querySelector<HTMLElement>('[data-nfc-where]')!;
+    const phone = stage.querySelector<HTMLElement>('[data-phone]')!;
+    const rings = stage.querySelectorAll<HTMLElement>('[data-rings] span');
+    const ringBox = stage.querySelector<HTMLElement>('[data-rings]')!;
+    const stars = stage.querySelectorAll<SVGElement>('[data-phone-stars] svg');
+    const done = stage.querySelector<HTMLElement>('[data-phone-done]')!;
+    const products = [...stage.querySelectorAll<HTMLElement>('[data-product]')];
+    let current = products[0];
+    let tl: gsap.core.Timeline | null = null;
+
+    const play = () => {
+      tl?.kill();
+      const tag = current.querySelector<HTMLElement>('.tag')!;
+      const point = current.querySelector<SVGElement>('[data-nfc-point]')!;
+      const sr = stage.getBoundingClientRect();
+      const pr = point.getBoundingClientRect();
+      const px = pr.left - sr.left + pr.width / 2;
+      const py = pr.top - sr.top + pr.height / 2;
+      const pw = phone.offsetWidth;
+      const ph = phone.offsetHeight;
+      // Untere linke Ecke des Handys berührt das NFC-Symbol
+      const tx = Math.min(px - pw * 0.08, sr.width - pw - 12);
+      const ty = Math.max(py - ph * 0.97, 12);
+
+      gsap.set(ringBox, { x: px, y: py });
+      gsap.set(stars, { fill: 'rgba(4,27,32,0.12)', scale: 1, transformOrigin: '50% 50%' });
+      gsap.set(done, { opacity: 0 });
+      tag.classList.remove('is-glow');
+
+      if (reduced) {
+        gsap.set(phone, { x: tx, y: ty, rotation: 0, opacity: 1 });
+        gsap.set(stars, { fill: '#e7a92c' });
+        gsap.set(done, { opacity: 1 });
+        return;
+      }
+
+      tl = gsap
+        .timeline()
+        .fromTo(
+          phone,
+          { x: sr.width + 20, y: ty + 40, rotation: 14, opacity: 1 },
+          { x: tx, y: ty, rotation: -6, duration: 1.1, ease: 'power3.inOut' },
+        )
+        .to(phone, { scale: 0.95, duration: 0.12, yoyo: true, repeat: 1, ease: 'power2.inOut' })
+        .add(() => tag.classList.add('is-glow'), '<')
+        .fromTo(rings, { scale: 0.3, opacity: 0.9 }, { scale: 2.8, opacity: 0, duration: 1.1, stagger: 0.18, ease: 'power2.out' }, '<')
+        .to(stars, { fill: '#e7a92c', duration: 0.2, stagger: 0.13 }, '-=0.7')
+        .fromTo(stars, { scale: 0.4 }, { scale: 1, duration: 0.5, stagger: 0.13, ease: 'back.out(3)' }, '<')
+        .to(done, { opacity: 1, duration: 0.4 }, '-=0.1')
+        .add(() => tag.classList.remove('is-glow'), '+=0.6');
+    };
+
+    const show = (id: string) => {
+      const next = products.find((p) => p.dataset.product === id);
+      if (!next || next === current) return;
+      const prev = current;
+      current = next;
+      tl?.kill();
+      if (reduced) {
+        prev.hidden = true;
+        next.hidden = false;
+        play();
+        return;
+      }
+      gsap.to(phone, { opacity: 0, duration: 0.25 });
+      gsap.to(prev, {
+        opacity: 0,
+        y: 24,
+        scale: 0.92,
+        duration: 0.3,
+        ease: 'power2.in',
+        onComplete: () => {
+          prev.hidden = true;
+          gsap.set(prev, { clearProps: 'all' });
+          next.hidden = false;
+          gsap.fromTo(next, { opacity: 0, y: 30, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: 'back.out(1.6)', onComplete: play });
+        },
+      });
+    };
+
+    setupTabs(nfc.querySelector<HTMLElement>('[data-nfc-tabs]')!, (tab) => {
+      where.textContent = tab.dataset.where ?? '';
+      where.setAttribute('aria-labelledby', tab.id);
+      if (!reduced) gsap.fromTo(where, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.4 });
+      show(tab.dataset.productId!);
+    });
+
+    stage.querySelector('[data-replay]')!.addEventListener('click', play);
+    ScrollTrigger.create({ trigger: stage, start: 'top 70%', once: true, onEnter: play });
+  }
+
+  // ---------------- Speisekarte ----------------
+  const menu = document.querySelector<HTMLElement>('[data-menu]');
+  if (menu) {
+    const panels = [...menu.querySelectorAll<HTMLElement>('[role="tabpanel"]')];
+    setupTabs(menu.querySelector<HTMLElement>('[data-menu-tabs]')!, (tab) => {
+      const next = document.getElementById(tab.getAttribute('aria-controls')!)!;
+      const prev = panels.find((p) => !p.hidden && p !== next);
+      if (prev) prev.hidden = true;
+      next.hidden = false;
+      if (!reduced) {
+        gsap.fromTo(
+          next.children,
+          { opacity: 0, x: 18 },
+          { opacity: 1, x: 0, duration: 0.5, stagger: 0.06, ease: 'power3.out' },
+        );
+      }
+    });
+
+    const sw = menu.querySelector<HTMLButtonElement>('[data-allergen-switch]')!;
+    sw.addEventListener('click', () => {
+      const on = sw.getAttribute('aria-checked') !== 'true';
+      sw.setAttribute('aria-checked', String(on));
+      menu.classList.toggle('show-allergens', on);
+    });
+  }
+
+  // ---------------- Hosting ----------------
+  const host = document.querySelector<HTMLElement>('[data-host]');
+  if (host) {
+    const typed = host.querySelector<HTMLElement>('[data-typed]')!;
+    const text = typed.dataset.typed ?? '';
+    const start = () => {
+      if (reduced) {
+        host.classList.add('is-live');
+        return;
+      }
+      typed.textContent = '';
+      let i = 0;
+      const id = window.setInterval(() => {
+        typed.textContent = text.slice(0, ++i);
+        if (i >= text.length) window.clearInterval(id);
+      }, 45);
+      host.classList.add('is-live');
+    };
+    if (!reduced) typed.textContent = '';
+    ScrollTrigger.create({ trigger: host, start: 'top 75%', once: true, onEnter: start });
+  }
+</script>

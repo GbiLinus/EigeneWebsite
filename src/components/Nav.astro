@@ -1,0 +1,388 @@
+---
+import { t, routes, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  alternates: { de: string; en: string };
+  onHome?: boolean;
+}
+
+const { lang, alternates, onHome = true } = Astro.props;
+const d = t(lang);
+const home = routes.home[lang];
+const anchor = (id: string) => (onHome ? `#${id}` : `${home}#${id}`);
+
+const links = [
+  { id: d.ids.services, label: d.nav.services },
+  { id: d.ids.pricing, label: d.nav.pricing },
+  { id: d.ids.team, label: d.nav.team },
+  { id: d.ids.faq, label: d.nav.faq },
+];
+---
+
+<header class="nav-wrap" data-nav>
+  <nav class="nav glass" aria-label={d.nav.label} data-spec>
+    <a class="nav-brand" href={onHome ? '#top' : home} aria-label={d.nav.home}>WebDesignBR</a>
+
+    <ul class="nav-links" role="list" data-nav-links>
+      <li class="nav-indicator" aria-hidden="true" data-nav-indicator></li>
+      {
+        links.map((l) => (
+          <li>
+            <a href={anchor(l.id)} data-nav-link={l.id}>{l.label}</a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="nav-lang" role="group" aria-label={d.nav.lang}>
+      <span class="nav-lang-thumb" data-active={lang} aria-hidden="true"></span>
+      <a href={alternates.de} hreflang="de" lang="de" aria-label="Deutsch" aria-current={lang === 'de' ? 'true' : undefined} data-lang-link="de">DE</a>
+      <a href={alternates.en} hreflang="en" lang="en" aria-label="English" aria-current={lang === 'en' ? 'true' : undefined} data-lang-link="en">EN</a>
+    </div>
+
+    <a class="btn btn-primary nav-cta" href={anchor(d.ids.contact)}>{d.nav.cta}</a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-sheet" data-nav-toggle>
+      <span class="sr-only" data-label-open={d.nav.menu} data-label-close={d.nav.close}>{d.nav.menu}</span>
+      <span class="nav-toggle-bar" aria-hidden="true"></span>
+      <span class="nav-toggle-bar" aria-hidden="true"></span>
+    </button>
+  </nav>
+
+  <div id="nav-sheet" class="nav-sheet glass" data-nav-sheet hidden>
+    <ul role="list">
+      {
+        links.map((l) => (
+          <li>
+            <a href={anchor(l.id)} data-sheet-link>{l.label}</a>
+          </li>
+        ))
+      }
+    </ul>
+    <a class="btn btn-primary" href={anchor(d.ids.contact)} data-sheet-link>{d.nav.cta}</a>
+  </div>
+</header>
+
+<style>
+  .nav-wrap {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+    display: grid;
+    justify-items: center;
+    padding: 0.9rem var(--gutter) 0;
+    pointer-events: none;
+  }
+
+  .nav {
+    --r: 999px;
+    --glass-blur: 12px;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: min(100%, 1080px);
+    padding: 0.45rem 0.45rem 0.45rem 1.4rem;
+    border-radius: 999px;
+    transition:
+      width 0.7s var(--ease-out),
+      padding 0.7s var(--ease-out),
+      background-color 0.4s;
+  }
+
+  .nav-wrap[data-compact] .nav {
+    width: min(100%, 900px);
+    padding-block: 0.3rem;
+  }
+
+  .nav-brand {
+    font-weight: 780;
+    font-stretch: 116%;
+    font-size: 1.0625rem;
+    letter-spacing: -0.03em;
+    text-decoration: none;
+    margin-right: auto;
+    white-space: nowrap;
+  }
+
+  .nav-links {
+    position: relative;
+    display: flex;
+    gap: 0.15rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nav-links a {
+    position: relative;
+    z-index: 1;
+    display: block;
+    padding: 0.55rem 1rem;
+    border-radius: 999px;
+    font-size: 0.9375rem;
+    font-weight: 540;
+    color: var(--text-soft);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .nav-links a:hover,
+  .nav-links a[aria-current='true'] {
+    color: var(--salz);
+  }
+
+  .nav-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    border-radius: 999px;
+    background: rgb(237 246 243 / 0.1);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.18),
+      inset 0 0 0 1px rgb(255 255 255 / 0.06);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .nav-lang {
+    position: relative;
+    display: flex;
+    padding: 0.2rem;
+    border-radius: 999px;
+    background: rgb(4 27 32 / 0.35);
+    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.08);
+  }
+
+  .nav-lang a {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.2rem;
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    font-weight: 640;
+    font-stretch: 110%;
+    color: var(--text-faint);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .nav-lang a[aria-current='true'] {
+    color: var(--nacht);
+  }
+
+  .nav-lang a:not([aria-current='true']):hover {
+    color: var(--salz);
+  }
+
+  .nav-lang-thumb {
+    position: absolute;
+    top: 0.2rem;
+    left: 0.2rem;
+    width: 2.6rem;
+    height: 2.2rem;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #f6fbfa, #cfe3de);
+    box-shadow: inset 0 1px 0 #fff, 0 4px 12px -4px rgb(0 0 0 / 0.5);
+    transition: transform 0.6s var(--ease-liquid);
+  }
+
+  .nav-lang-thumb[data-active='en'] {
+    transform: translateX(2.6rem);
+  }
+
+  .nav-cta {
+    min-height: 2.75rem;
+    padding: 0.6em 1.25em;
+    font-size: 0.9375rem;
+  }
+
+  .nav-toggle {
+    display: none;
+    position: relative;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 0;
+    border-radius: 999px;
+    background: rgb(237 246 243 / 0.08);
+    color: var(--salz);
+    cursor: pointer;
+  }
+
+  .nav-toggle-bar {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 1.1rem;
+    height: 1.5px;
+    margin-left: -0.55rem;
+    border-radius: 2px;
+    background: currentColor;
+    transition: transform 0.5s var(--ease-liquid);
+  }
+  .nav-toggle-bar:nth-of-type(2) {
+    transform: translateY(-3.5px);
+  }
+  .nav-toggle-bar:nth-of-type(3) {
+    transform: translateY(3.5px);
+  }
+  .nav-toggle[aria-expanded='true'] .nav-toggle-bar:nth-of-type(2) {
+    transform: rotate(45deg);
+  }
+  .nav-toggle[aria-expanded='true'] .nav-toggle-bar:nth-of-type(3) {
+    transform: rotate(-45deg);
+  }
+
+  .nav-sheet {
+    --r: var(--r-xl);
+    pointer-events: auto;
+    width: min(100%, 1080px);
+    margin-top: 0.6rem;
+    padding: 1rem;
+    transform-origin: top center;
+  }
+
+  .nav-sheet ul {
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: 0;
+  }
+
+  .nav-sheet li a {
+    display: block;
+    padding: 0.8rem 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 680;
+    font-stretch: 112%;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    border-radius: var(--r-md);
+  }
+
+  .nav-sheet .btn {
+    width: 100%;
+  }
+
+  @media (max-width: 860px) {
+    .nav-links,
+    .nav-cta {
+      display: none;
+    }
+    .nav-toggle {
+      display: block;
+    }
+    .nav {
+      padding-left: 1.1rem;
+    }
+  }
+
+  @media (min-width: 861px) {
+    .nav-sheet {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduced, scrollToEl } from '../scripts/motion';
+
+  const wrap = document.querySelector<HTMLElement>('[data-nav]');
+  if (wrap) {
+    const list = wrap.querySelector<HTMLElement>('[data-nav-links]')!;
+    const indicator = wrap.querySelector<HTMLElement>('[data-nav-indicator]')!;
+    const links = [...wrap.querySelectorAll<HTMLAnchorElement>('[data-nav-link]')];
+    let active: HTMLAnchorElement | null = null;
+
+    const moveTo = (a: HTMLAnchorElement | null) => {
+      if (!a) {
+        gsap.to(indicator, { opacity: 0, duration: 0.3 });
+        return;
+      }
+      const li = a.parentElement!;
+      gsap.to(indicator, {
+        x: li.offsetLeft,
+        width: li.offsetWidth,
+        opacity: 1,
+        duration: reduced ? 0 : 0.55,
+        ease: 'power3.out',
+      });
+    };
+
+    const setActive = (a: HTMLAnchorElement | null) => {
+      active = a;
+      links.forEach((l) => (l === a ? l.setAttribute('aria-current', 'true') : l.removeAttribute('aria-current')));
+      moveTo(a);
+    };
+
+    // Kompakte Navigation nach dem ersten Scrollen
+    const compact = () => wrap.toggleAttribute('data-compact', window.scrollY > 60);
+    window.addEventListener('scroll', compact, { passive: true });
+    compact();
+
+    // Aktiver Abschnitt
+    links.forEach((a) => {
+      const section = document.getElementById(a.dataset.navLink!);
+      if (!section) return;
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top 55%',
+        end: 'bottom 55%',
+        onToggle: (self) => {
+          if (self.isActive) setActive(a);
+          else if (active === a) setActive(null);
+        },
+      });
+    });
+
+    // Indikator folgt beim Hovern
+    links.forEach((a) => a.addEventListener('pointerenter', () => moveTo(a)));
+    list.addEventListener('pointerleave', () => moveTo(active));
+
+    // Mobiles Menü
+    const toggle = wrap.querySelector<HTMLButtonElement>('[data-nav-toggle]')!;
+    const sheet = wrap.querySelector<HTMLElement>('[data-nav-sheet]')!;
+    const label = toggle.querySelector<HTMLElement>('.sr-only')!;
+
+    const open = () => {
+      sheet.hidden = false;
+      toggle.setAttribute('aria-expanded', 'true');
+      label.textContent = label.dataset.labelClose ?? '';
+      if (!reduced) {
+        gsap.fromTo(sheet, { opacity: 0, scale: 0.94, y: -12 }, { opacity: 1, scale: 1, y: 0, duration: 0.6, ease: 'back.out(1.6)' });
+        gsap.fromTo(sheet.querySelectorAll('li, .btn'), { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.05, delay: 0.08, ease: 'power3.out' });
+      }
+    };
+
+    const close = (focusToggle = false) => {
+      toggle.setAttribute('aria-expanded', 'false');
+      label.textContent = label.dataset.labelOpen ?? '';
+      const done = () => {
+        sheet.hidden = true;
+        if (focusToggle) toggle.focus();
+      };
+      if (reduced) done();
+      else gsap.to(sheet, { opacity: 0, scale: 0.96, y: -8, duration: 0.25, ease: 'power2.in', onComplete: done });
+    };
+
+    toggle.addEventListener('click', () => (sheet.hidden ? open() : close()));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !sheet.hidden) close(true);
+    });
+    sheet.querySelectorAll<HTMLAnchorElement>('[data-sheet-link]').forEach((a) =>
+      a.addEventListener('click', (e) => {
+        const hash = a.getAttribute('href') ?? '';
+        if (hash.startsWith('#')) {
+          e.preventDefault();
+          close();
+          scrollToEl(hash);
+        }
+      }),
+    );
+  }
+</script>

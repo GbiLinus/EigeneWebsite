@@ -1,0 +1,137 @@
+---
+import { site } from '../config/site';
+import { t, routes, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  alternates: { de: string; en: string };
+}
+
+const { lang, alternates } = Astro.props;
+const d = t(lang);
+const year = new Date().getFullYear();
+---
+
+<footer class="footer" data-footer>
+  <div class="container">
+    <div class="footer-top">
+      <p class="footer-claim">{d.footer.rights}</p>
+      <nav class="footer-links" aria-label="Footer">
+        <a href={routes.imprint[lang]}>{d.footer.imprint}</a>
+        <a href={routes.privacy[lang]}>{d.footer.privacy}</a>
+        <a href={lang === 'de' ? alternates.en : alternates.de} hreflang={lang === 'de' ? 'en' : 'de'} data-lang-link={lang === 'de' ? 'en' : 'de'}>
+          {lang === 'de' ? 'English' : 'Deutsch'}
+        </a>
+      </nav>
+    </div>
+
+    <p class="footer-mark" aria-hidden="true" data-mark>WebDesignBR</p>
+
+    <div class="footer-bottom t-small">
+      <span>© {year} {site.name}</span>
+      <span class="t-num">{site.location.town}, {site.location.coords}</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    position: relative;
+    padding-top: clamp(4rem, 8vw, 6rem);
+    padding-bottom: 2rem;
+    overflow: hidden;
+  }
+
+  .footer-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+  }
+
+  .footer-claim {
+    margin: 0;
+    color: var(--text-soft);
+  }
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .footer-links a {
+    padding: 0.5rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.9375rem;
+    font-weight: 560;
+    color: var(--text-soft);
+    text-decoration: none;
+    transition:
+      color 0.3s,
+      background-color 0.3s;
+  }
+
+  .footer-links a:hover {
+    color: var(--salz);
+    background: rgb(237 246 243 / 0.07);
+  }
+
+  /* Riesiger Schriftzug, Licht folgt dem Zeiger */
+  .footer-mark {
+    --fx: 30%;
+    --fy: 40%;
+    margin: clamp(2rem, 5vw, 4rem) 0 0;
+    font-size: min(10.4vw, 9.75rem);
+    font-weight: 860;
+    font-stretch: 125%;
+    letter-spacing: -0.055em;
+    line-height: 0.8;
+    white-space: nowrap;
+    text-align: center;
+    background: radial-gradient(
+      circle at var(--fx) var(--fy),
+      #c9fff5 0%,
+      var(--sole) 12%,
+      var(--abend) 30%,
+      rgb(237 246 243 / 0.08) 52%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    user-select: none;
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+    margin-top: 1.5rem;
+  }
+</style>
+
+<script>
+  import { gsap, finePointer, reduced } from '../scripts/motion';
+
+  const footer = document.querySelector<HTMLElement>('[data-footer]');
+  const mark = footer?.querySelector<HTMLElement>('[data-mark]');
+  if (footer && mark && finePointer && !reduced) {
+    const pos = { x: 30, y: 40 };
+    const apply = () => {
+      mark.style.setProperty('--fx', `${pos.x}%`);
+      mark.style.setProperty('--fy', `${pos.y}%`);
+    };
+    footer.addEventListener('pointermove', (e) => {
+      const r = mark.getBoundingClientRect();
+      gsap.to(pos, {
+        x: ((e.clientX - r.left) / r.width) * 100,
+        y: ((e.clientY - r.top) / r.height) * 100,
+        duration: 0.8,
+        ease: 'power3.out',
+        onUpdate: apply,
+      });
+    });
+  }
+</script>
