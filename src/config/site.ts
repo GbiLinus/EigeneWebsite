@@ -44,11 +44,16 @@ export const site = {
   pricing: {
     website: { from: 250, to: 750 },
     hosting: { from: 50, to: 100 },
+    // Aufsteller und Sticker
     nfc: [
       { qty: 1, price: 40 },
       { qty: 2, price: 70 },
       { qty: 3, price: 95 },
     ],
+    // Tischaufkleber mit NFC: Preis pro Stück, gestaffelt
+    tableTags: { first: 25, second: 20, third: 17.5, following: 15, max: 50 },
+    // Mega-Bundle (alles inklusive)
+    bundle: { from: 1000, to: 1200 },
     // TODO: Umsatzsteuer-Hinweis. Kleinunternehmer:
     // 'Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.'
     taxNote: { de: null as string | null, en: null as string | null },

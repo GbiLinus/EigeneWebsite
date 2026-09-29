@@ -35,8 +35,8 @@ import Intern from '../../layouts/Intern.astro';
   <script>
     import { ready, setNewCount } from '../../intern/app';
     import { openCustomerPanel } from '../../intern/customer-form';
-    import type { Enquiry, Staff, Status } from '../../intern/types';
-    import { avatar, confirmInline, formatDate, h, icons, openPanel, relativeTime, serviceLabel, statusLabel, svg, toast, urls } from '../../intern/ui';
+    import type { Enquiry, Service, Staff, Status } from '../../intern/types';
+    import { avatar, confirmInline, formatDate, h, icons, interestLabel, openPanel, relativeTime, statusLabel, svg, toast, urls } from '../../intern/ui';
 
     ready().then(async ({ store, session }) => {
       if (!session.staff) return;
@@ -90,7 +90,7 @@ import Intern from '../../layouts/Intern.astro';
                   h('span', { class: 'row-title' }, e.business ? `${e.business}, ${e.name}` : e.name),
                   h('span', { class: 'row-sub' }, e.message),
                 ),
-                h('span', { class: 'chips' }, e.interests.map((i) => h('span', { class: 'chip' }, serviceLabel[i]))),
+                h('span', { class: 'chips' }, e.interests.map((i) => h('span', { class: 'chip' }, interestLabel[i]))),
                 h('span', { class: 'row-meta' }, e.lang === 'en' ? h('span', { class: 'chip' }, 'EN') : null, relativeTime(e.created_at), h('span', { class: `pill pill-${e.status}` }, statusLabel[e.status])),
               ),
             ),
@@ -151,7 +151,7 @@ import Intern from '../../layouts/Intern.astro';
                 contact_name: e.name,
                 email: e.email,
                 phone: e.phone,
-                services: e.interests,
+                services: e.interests.includes('bundle') ? ['website', 'nfc', 'hosting'] : e.interests.filter((i): i is Service => i !== 'bundle'),
                 assignee: e.assignee ?? me.id,
               },
               onSaved: (c) => {
@@ -190,7 +190,7 @@ import Intern from '../../layouts/Intern.astro';
             { class: 'f-grid', style: 'margin:0' },
             h('div', { class: 'kv' }, h('dt', {}, 'Name'), h('dd', {}, e.name)),
             h('div', { class: 'kv' }, h('dt', {}, 'Betrieb'), h('dd', {}, e.business ?? '–')),
-            h('div', { class: 'kv' }, h('dt', {}, 'Interesse'), h('dd', { class: 'chips' }, e.interests.length ? e.interests.map((i) => h('span', { class: 'chip' }, serviceLabel[i])) : '–')),
+            h('div', { class: 'kv' }, h('dt', {}, 'Interesse'), h('dd', { class: 'chips' }, e.interests.length ? e.interests.map((i) => h('span', { class: 'chip' }, interestLabel[i])) : '–')),
             h('div', { class: 'kv' }, h('dt', {}, 'Sprache'), h('dd', {}, e.lang === 'en' ? 'Englisch' : 'Deutsch')),
           ),
           h(

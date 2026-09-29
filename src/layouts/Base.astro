@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import monaLatin from '@fontsource-variable/mona-sans/files/mona-sans-latin-standard-normal.woff2?url';
 import { site } from '../config/site';
 import { t, type Lang } from '../i18n/ui';
 
@@ -64,6 +65,7 @@ const jsonLd = {
     <link rel="alternate" hreflang="x-default" href={new URL(alternates.de, siteUrl).href} />
     <meta name="theme-color" content="#041b20" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href={monaLatin} as="font" type="font/woff2" crossorigin />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={site.name} />

@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
+import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   // TODO: echte Domain eintragen, sobald sie feststeht.
@@ -10,6 +11,16 @@ export default defineConfig({
     defaultLocale: 'de',
     routing: { prefixDefaultLocale: false },
   },
+  build: {
+    // CSS direkt ins HTML: keine blockierenden Stylesheet-Anfragen
+    inlineStylesheets: 'always',
+  },
+  integrations: [
+    sitemap({
+      filter: (page) => !/\/(intern|anmelden)\//.test(page),
+      i18n: { defaultLocale: 'de', locales: { de: 'de-DE', en: 'en-US' } },
+    }),
+  ],
   vite: {
     plugins: [tailwindcss()],
   },

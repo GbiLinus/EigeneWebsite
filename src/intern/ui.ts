@@ -1,4 +1,4 @@
-import type { Service, Staff, Status } from './types';
+import type { Interest, Service, Staff, Status } from './types';
 
 // Kleiner DOM-Baukasten. Inhalte immer als Textknoten, nie als HTML,
 // denn Anfragen kommen von außen.
@@ -55,6 +55,11 @@ export const serviceLabel: Record<Service, string> = {
   website: 'Website',
   nfc: 'NFC-Aufsteller',
   hosting: 'Hosting',
+};
+
+export const interestLabel: Record<Interest, string> = {
+  ...serviceLabel,
+  bundle: 'Mega-Bundle',
 };
 
 export const statusLabel: Record<Status, string> = {

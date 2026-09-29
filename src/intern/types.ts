@@ -1,4 +1,5 @@
 export type Service = 'website' | 'nfc' | 'hosting';
+export type Interest = Service | 'bundle';
 export type Status = 'neu' | 'in_arbeit' | 'erledigt';
 
 export interface Staff {
@@ -15,7 +16,7 @@ export interface Enquiry {
   email: string;
   phone: string | null;
   message: string;
-  interests: Service[];
+  interests: Interest[];
   lang: 'de' | 'en';
   status: Status;
   assignee: string | null;

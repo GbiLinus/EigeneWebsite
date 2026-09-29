@@ -155,7 +155,8 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
           <div class="menu-panels">
             {
               s.web.menu.map((cat, i) => (
-                <ul class="menu-list" role="tabpanel" id={`menu-panel-${cat.id}`} aria-labelledby={`menu-tab-${cat.id}`} hidden={i !== 0}>
+                <div role="tabpanel" id={`menu-panel-${cat.id}`} aria-labelledby={`menu-tab-${cat.id}`} hidden={i !== 0}>
+                <ul class="menu-list">
                   {cat.items.map((item) => (
                     <li class="menu-item">
                       <span class="menu-item-name">{item.name}</span>
@@ -171,6 +172,7 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
                     </li>
                   ))}
                 </ul>
+                </div>
               ))
             }
           </div>
@@ -1168,7 +1170,7 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
       next.hidden = false;
       if (!reduced) {
         gsap.fromTo(
-          next.children,
+          next.querySelectorAll('.menu-item'),
           { opacity: 0, x: 18 },
           { opacity: 1, x: 0, duration: 0.5, stagger: 0.06, ease: 'power3.out' },
         );

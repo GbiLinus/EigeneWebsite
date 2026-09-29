@@ -11,6 +11,7 @@ const d = t(lang);
 
 <section class="hero" id="top" data-hero>
   <div class="hero-layout" data-hero-layout>
+    <canvas class="hero-strands" data-strands-bg aria-hidden="true"></canvas>
     <canvas class="hero-strands" data-strands aria-hidden="true"></canvas>
     <div class="hero-inner container">
       <h1 class="t-display hero-title">
@@ -235,13 +236,14 @@ const d = t(lang);
 <script>
   import { gsap, reduced, finePointer } from '../scripts/motion';
 
-  type Drop = { x: number; lean: number; y: number; v: number; pause: number; len: number; size: number; glow: number };
+  type Drop = { x: number; y: number; v: number; pause: number; len: number; size: number; glow: number };
 
   const hero = document.querySelector<HTMLElement>('[data-hero]');
   if (hero) initHero(hero);
 
   function initHero(hero: HTMLElement) {
     const layout = hero.querySelector<HTMLElement>('[data-hero-layout]')!;
+    const bg = layout.querySelector<HTMLCanvasElement>('[data-strands-bg]')!;
     const canvas = layout.querySelector<HTMLCanvasElement>('[data-strands]')!;
     const title = layout.querySelector<HTMLElement>('.hero-title')!;
     const lens = hero.querySelector<HTMLElement>('[data-lens]')!;
@@ -254,15 +256,20 @@ const d = t(lang);
     clone.setAttribute('inert', '');
     clone.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
     clone.querySelectorAll('[data-magnetic]').forEach((el) => el.removeAttribute('data-magnetic'));
+    const lensBg = clone.querySelector<HTMLCanvasElement>('[data-strands-bg]')!;
     const lensCanvas = clone.querySelector<HTMLCanvasElement>('[data-strands]')!;
+    lensBg.removeAttribute('data-strands-bg');
     lensCanvas.removeAttribute('data-strands');
     inner.appendChild(clone);
 
-    // ---------------- Gradierwerk: Reisig und Sole-Tropfen ----------------
+    // Schwächere Geräte: halbe Bildrate, weniger Tropfen, einfache Pixeldichte
+    const small = window.matchMedia('(max-width: 700px)').matches;
+    const lowPower = small || !finePointer || (navigator.hardwareConcurrency ?? 8) <= 4;
+
+    const bctx = bg.getContext('2d')!;
     const ctx = canvas.getContext('2d')!;
+    const lbctx = lensBg.getContext('2d')!;
     const lctx = lensCanvas.getContext('2d')!;
-    const texture = document.createElement('canvas');
-    const tctx = texture.getContext('2d')!;
     let W = 0;
     let H = 0;
     let dpr = 1;
@@ -270,55 +277,93 @@ const d = t(lang);
     let starMode = false;
 
     const rand = (a: number, b: number) => a + Math.random() * (b - a);
+    const startX = () => (W < 700 ? 0 : W * 0.3);
 
-    function buildTexture() {
-      texture.width = W * dpr;
-      texture.height = H * dpr;
-      tctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      tctx.clearRect(0, 0, W, H);
-      const startX = W < 700 ? 0 : W * 0.28;
-      tctx.lineCap = 'round';
-      for (let x = startX; x < W + 10; x += rand(2.5, 6)) {
+    // ---------------- Vorgerenderte Bausteine ----------------
+    const makeSprite = (w: number, h: number, paint: (c: CanvasRenderingContext2D) => void) => {
+      const c = document.createElement('canvas');
+      c.width = w;
+      c.height = h;
+      paint(c.getContext('2d')!);
+      return c;
+    };
+
+    const head = makeSprite(32, 32, (c) => {
+      const g = c.createRadialGradient(16, 16, 0, 16, 16, 16);
+      g.addColorStop(0, 'rgba(237,246,243,1)');
+      g.addColorStop(0.18, 'rgba(237,246,243,0.95)');
+      g.addColorStop(0.3, 'rgba(59,227,201,0.35)');
+      g.addColorStop(1, 'rgba(59,227,201,0)');
+      c.fillStyle = g;
+      c.fillRect(0, 0, 32, 32);
+    });
+
+    const trail = makeSprite(4, 64, (c) => {
+      const g = c.createLinearGradient(0, 0, 0, 64);
+      g.addColorStop(0, 'rgba(59,227,201,0)');
+      g.addColorStop(1, 'rgba(59,227,201,0.55)');
+      c.fillStyle = g;
+      c.fillRect(0, 0, 4, 64);
+    });
+
+    const star = makeSprite(32, 32, (c) => {
+      c.fillStyle = 'rgba(255,194,75,0.95)';
+      c.beginPath();
+      for (let i = 0; i < 10; i++) {
+        const a = -Math.PI / 2 + (i * Math.PI) / 5;
+        const r = i % 2 === 0 ? 15 : 6.5;
+        c.lineTo(16 + Math.cos(a) * r, 16 + Math.sin(a) * r);
+      }
+      c.closePath();
+      c.fill();
+    });
+
+    // ---------------- Gradierwerk: Reisig (einmal gezeichnet) ----------------
+    function paintBackground() {
+      bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      bctx.clearRect(0, 0, W, H);
+      bctx.lineCap = 'round';
+      const x0 = startX();
+      for (let x = x0; x < W + 10; x += rand(2.5, 6)) {
         const lean = rand(-0.05, 0.05);
         const top = rand(-20, H * 0.08);
-        const segs = 9;
         const alpha = rand(0.04, 0.15);
-        tctx.strokeStyle = `rgba(237,246,243,${alpha})`;
-        tctx.lineWidth = rand(0.5, 1.3);
-        tctx.beginPath();
-        tctx.moveTo(x, top);
-        for (let i = 1; i <= segs; i++) {
-          const y = top + ((H + 40 - top) * i) / segs;
-          tctx.lineTo(x + lean * (y - top) + rand(-1.4, 1.4), y);
+        bctx.strokeStyle = `rgba(237,246,243,${alpha})`;
+        bctx.lineWidth = rand(0.5, 1.3);
+        bctx.beginPath();
+        bctx.moveTo(x, top);
+        for (let i = 1; i <= 9; i++) {
+          const y = top + ((H + 40 - top) * i) / 9;
+          bctx.lineTo(x + lean * (y - top) + rand(-1.4, 1.4), y);
         }
-        tctx.stroke();
+        bctx.stroke();
         // kurze Seitenzweige wie beim Schwarzdorn-Reisig
         if (Math.random() < 0.35) {
           const by = rand(top, H);
           const bx = x + lean * (by - top);
-          tctx.strokeStyle = `rgba(237,246,243,${alpha * 0.7})`;
-          tctx.beginPath();
-          tctx.moveTo(bx, by);
-          tctx.lineTo(bx + rand(-9, 9), by + rand(6, 16));
-          tctx.stroke();
+          bctx.strokeStyle = `rgba(237,246,243,${alpha * 0.7})`;
+          bctx.beginPath();
+          bctx.moveTo(bx, by);
+          bctx.lineTo(bx + rand(-9, 9), by + rand(6, 16));
+          bctx.stroke();
         }
       }
       // Holzrahmen des Gradierwerks: zwei feine Querbalken
-      tctx.strokeStyle = 'rgba(237,246,243,0.05)';
-      tctx.lineWidth = 1;
+      bctx.strokeStyle = 'rgba(237,246,243,0.05)';
+      bctx.lineWidth = 1;
       [0.34, 0.68].forEach((f) => {
-        tctx.beginPath();
-        tctx.moveTo(startX, H * f);
-        tctx.lineTo(W, H * f);
-        tctx.stroke();
+        bctx.beginPath();
+        bctx.moveTo(x0, H * f);
+        bctx.lineTo(W, H * f);
+        bctx.stroke();
       });
+      lbctx.clearRect(0, 0, lensBg.width, lensBg.height);
+      lbctx.drawImage(bg, 0, 0);
     }
 
     function makeDrop(initial: boolean): Drop {
-      const startX = W < 700 ? 0 : W * 0.3;
       return {
-        x: rand(startX, W),
-        lean: rand(-0.04, 0.04),
+        x: rand(startX(), W),
         y: initial ? rand(-H * 0.2, H) : rand(-H * 0.3, -10),
         v: rand(10, 40),
         pause: Math.random() < 0.3 ? rand(0, 1.2) : 0,
@@ -328,82 +373,77 @@ const d = t(lang);
       };
     }
 
+    // Geometrie nur bei Größenänderung messen, nicht in jedem Frame
+    const geo = { left: 0, top: 0, textW: 0, h: 0 };
+    function measure() {
+      const hr = hero.getBoundingClientRect();
+      const tr = title.getBoundingClientRect();
+      geo.left = tr.left - hr.left;
+      geo.top = tr.top - hr.top;
+      geo.h = tr.height;
+      geo.textW = Math.max(...[...title.querySelectorAll('.hero-line')].map((l) => l.getBoundingClientRect().width));
+    }
+
     function resize() {
       const r = layout.getBoundingClientRect();
       W = Math.round(r.width);
       H = Math.round(r.height);
-      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-      for (const c of [canvas, lensCanvas]) {
+      dpr = lowPower ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
+      for (const c of [bg, canvas, lensBg, lensCanvas]) {
         c.width = W * dpr;
         c.height = H * dpr;
       }
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      lctx.setTransform(1, 0, 0, 1, 0, 0);
       inner.style.width = `${W}px`;
       inner.style.height = `${H}px`;
-      buildTexture();
-      const count = Math.round(Math.min(70, W / 22));
+      paintBackground();
+      const count = Math.round(Math.min(lowPower ? 36 : 64, W / 22));
       drops = Array.from({ length: count }, () => makeDrop(true));
+      measure();
     }
 
-    function drawStar(c: CanvasRenderingContext2D, x: number, y: number, r: number) {
-      c.beginPath();
-      for (let i = 0; i < 10; i++) {
-        const a = -Math.PI / 2 + (i * Math.PI) / 5;
-        const rr = i % 2 === 0 ? r : r * 0.45;
-        c.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr);
+    function step(dt: number) {
+      for (const d of drops) {
+        if (d.pause > 0) d.pause -= dt;
+        else {
+          d.v = Math.min(d.v + 28 * dt, 120);
+          d.y += d.v * dt;
+          // Oberflächenspannung: Tropfen bleiben manchmal kurz hängen
+          if (Math.random() < dt * 0.25) {
+            d.pause = rand(0.3, 1.4);
+            d.v = rand(6, 18);
+          }
+        }
+        if (d.y - d.len > H) Object.assign(d, makeDrop(false));
       }
-      c.closePath();
-      c.fill();
     }
 
-    function draw(dt: number) {
+    function draw() {
       ctx.clearRect(0, 0, W, H);
-      ctx.drawImage(texture, 0, 0, W, H);
       ctx.globalCompositeOperation = 'lighter';
       for (const d of drops) {
-        if (dt > 0) {
-          if (d.pause > 0) d.pause -= dt;
-          else {
-            d.v = Math.min(d.v + 28 * dt, 120);
-            d.y += d.v * dt;
-            // Oberflächenspannung: Tropfen bleiben manchmal kurz hängen
-            if (Math.random() < dt * 0.25) {
-              d.pause = rand(0.3, 1.4);
-              d.v = rand(6, 18);
-            }
-          }
-          if (d.y - d.len > H) Object.assign(d, makeDrop(false));
-        }
-        const x = d.x + d.lean * d.y;
-        const grad = ctx.createLinearGradient(x, d.y - d.len, x, d.y);
-        grad.addColorStop(0, 'rgba(59,227,201,0)');
-        grad.addColorStop(1, starMode ? 'rgba(255,194,75,0.55)' : `rgba(59,227,201,${0.5 * d.glow})`);
-        ctx.strokeStyle = grad;
-        ctx.lineWidth = d.size * 0.8;
-        ctx.beginPath();
-        ctx.moveTo(x - d.lean * d.len, d.y - d.len);
-        ctx.lineTo(x, d.y);
-        ctx.stroke();
-        if (starMode) {
-          ctx.fillStyle = 'rgba(255,194,75,0.95)';
-          drawStar(ctx, x, d.y, d.size * 3.2);
-        } else {
-          ctx.fillStyle = `rgba(59,227,201,${0.16 * d.glow})`;
-          ctx.beginPath();
-          ctx.arc(x, d.y, d.size * 3.2, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = `rgba(237,246,243,${0.9 * d.glow})`;
-          ctx.beginPath();
-          ctx.arc(x, d.y, d.size, 0, Math.PI * 2);
-          ctx.fill();
-        }
+        ctx.globalAlpha = starMode ? 1 : d.glow;
+        const w = Math.max(1, d.size * 0.9);
+        ctx.drawImage(trail, d.x - w / 2, d.y - d.len, w, d.len);
+        const s = d.size * (starMode ? 4 : 3.4);
+        ctx.drawImage(starMode ? star : head, d.x - s, d.y - s, s * 2, s * 2);
       }
+      ctx.globalAlpha = 1;
       ctx.globalCompositeOperation = 'source-over';
-      if (lensVisible) {
-        lctx.clearRect(0, 0, lensCanvas.width, lensCanvas.height);
-        lctx.drawImage(canvas, 0, 0);
-      }
+    }
+
+    // Nur den Ausschnitt unter der Linse in den Klon kopieren
+    function copyToLens() {
+      const rr = (R / MAG) * 1.3 + 6;
+      const cx = pos.x + R;
+      const cy = pos.y + R;
+      const sx = Math.max(0, Math.floor((cx - rr) * dpr));
+      const sy = Math.max(0, Math.floor((cy - rr) * dpr));
+      const sw = Math.min(canvas.width - sx, Math.ceil(rr * 2 * dpr));
+      const sh = Math.min(canvas.height - sy, Math.ceil(rr * 2 * dpr));
+      if (sw <= 0 || sh <= 0) return;
+      lctx.clearRect(sx, sy, sw, sh);
+      lctx.drawImage(canvas, sx, sy, sw, sh, sx, sy, sw, sh);
     }
 
     // ---------------- Linse ----------------
@@ -415,17 +455,13 @@ const d = t(lang);
     let idleTimer = 0;
     let lensVisible = false;
     let heroVisible = true;
+    let acc = 0;
 
     function idleTarget() {
-      const hr = hero.getBoundingClientRect();
-      const tr = title.getBoundingClientRect();
-      const textW = Math.max(...[...title.querySelectorAll('.hero-line')].map((l) => l.getBoundingClientRect().width));
-      const left = tr.left - hr.left;
-      const top = tr.top - hr.top;
-      const w = Math.max(textW - 2 * R, 0);
-      const h = Math.max(tr.height - 2 * R, 0);
-      pos.tx = left + w * (0.5 + 0.48 * Math.sin(idleT * 0.32));
-      pos.ty = top + h * (0.5 + 0.5 * Math.sin(idleT * 0.53 + 1.3));
+      const w = Math.max(geo.textW - 2 * R, 0);
+      const h = Math.max(geo.h - 2 * R, 0);
+      pos.tx = geo.left + w * (0.5 + 0.48 * Math.sin(idleT * 0.32));
+      pos.ty = geo.top + h * (0.5 + 0.5 * Math.sin(idleT * 0.53 + 1.3));
     }
 
     function applyLens() {
@@ -440,7 +476,16 @@ const d = t(lang);
     function tick(_time: number, deltaMs: number) {
       if (!heroVisible || document.hidden) return;
       const dt = Math.min(deltaMs / 1000, 0.05);
-      draw(dt);
+
+      // Tropfen: auf schwachen Geräten nur jedes zweite Bild zeichnen
+      acc += dt;
+      if (!lowPower || acc >= 1 / 30) {
+        step(acc);
+        acc = 0;
+        draw();
+        if (lensVisible) copyToLens();
+      }
+
       if (!lensVisible) return;
       if (mode === 'idle') {
         idleT += dt;
@@ -499,17 +544,22 @@ const d = t(lang);
     new IntersectionObserver(([entry]) => (heroVisible = entry.isIntersecting)).observe(hero);
 
     let resizeTimer = 0;
+    let lastW = window.innerWidth;
     window.addEventListener('resize', () => {
+      // Mobile Browser feuern resize beim Ein- und Ausblenden der Adressleiste
+      if (window.innerWidth === lastW && lowPower) return;
+      lastW = window.innerWidth;
       clearTimeout(resizeTimer);
       resizeTimer = window.setTimeout(() => {
         R = lens.offsetWidth / 2;
         resize();
-        if (reduced) {
-          draw(0);
-          placeStatic();
-        }
+        draw();
+        if (reduced) placeStatic();
+        lctx.clearRect(0, 0, lensCanvas.width, lensCanvas.height);
+        lctx.drawImage(canvas, 0, 0);
       }, 150);
     });
+    document.fonts?.ready.then(measure);
 
     function placeStatic() {
       const hr = hero.getBoundingClientRect();
@@ -521,19 +571,20 @@ const d = t(lang);
     }
 
     resize();
+    draw();
 
     // ---------------- Intro ----------------
     const showLens = () => {
+      lctx.clearRect(0, 0, lensCanvas.width, lensCanvas.height);
+      lctx.drawImage(canvas, 0, 0);
       lensVisible = true;
       lens.classList.add('is-ready');
     };
 
     if (reduced) {
-      draw(0);
       showLens();
       pop.style.transform = 'scale(1)';
       placeStatic();
-      lctx.drawImage(canvas, 0, 0);
       return;
     }
 
@@ -547,7 +598,7 @@ const d = t(lang);
     const fades = layout.querySelectorAll('[data-intro-fade]');
     gsap
       .timeline({ defaults: { ease: 'expo.out' } })
-      .to(canvas, { opacity: 1, duration: 2, ease: 'power1.out' }, 0)
+      .to([bg, canvas], { opacity: 1, duration: 2, ease: 'power1.out' }, 0)
       .to(lines, { y: 0, yPercent: 0, duration: 1.3, stagger: 0.13 }, 0.1)
       .fromTo(fades, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 1.1, stagger: 0.12 }, 0.55)
       .add(showLens, 1.05)

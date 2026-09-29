@@ -12,7 +12,8 @@ Zielgruppe: lokale Betriebe, vor allem Restaurants, Cafés und Hotels im Osnabr�
 | Look | Liquid Glass, dunkle Basis mit Farbverläufen |
 | Sprachen | Deutsch unter `/`, Englisch unter `/en/`. Erster Besuch mit nicht-deutschem Browser landet auf `/en/`, danach zählt die gewählte Sprache |
 | Leistungen | NFC Google Tags (Aufsteller, Sticker, Tischaufkleber), Websites, Einrichtung und Hosting |
-| Preise | Website 250–750 €, Hosting 50–100 € im Jahr, NFC 1 Stück 40 €, 2 Stück 70 €, 3 Stück 95 €, mehr auf Anfrage |
+| Preise | Website 250–750 €, Hosting 50–100 € im Jahr. Aufsteller und Sticker: 1 Stück 40 €, 2 Stück 70 €, 3 Stück 95 €, mehr auf Anfrage. Tischaufkleber mit NFC (für WLAN, Speisekarte oder Bewertungen): erster 25 €, zweiter 20 €, dritter 17,50 €, jeder weitere 15 € |
+| Mega-Bundle | 1.000–1.200 €. Kompakt: 1 Aufsteller oder Sticker, 1 Tischaufkleber (z. B. WLAN), Website nach Wünschen mit kleinen Einschränkungen, Einrichtung, 1 Jahr Hosting gratis. Komplett: 2 Aufsteller oder Sticker, bis zu 25 Tischaufkleber, ausführliche Website ganz nach Wünschen, Einrichtung, 1 Jahr Hosting gratis, auf Wunsch eigene Domain |
 | Fotos | Vorerst keine. Team als Monogramm-Karten, Fotos später über ein Feld nachrüstbar |
 | Portfolio | Leerer Zustand mit Einladung, Projekte kommen als Markdown-Dateien dazu |
 | Deadline | Keine. Erst komplett bauen, dann einmal sauber launchen |
@@ -31,7 +32,7 @@ Zielgruppe: lokale Betriebe, vor allem Restaurants, Cafés und Hotels im Osnabr�
 3. Leistungen: NFC-Bühne mit Tipp-Animation pro Form, Speisekarten-Demo mit Allergen-Schalter, Hosting-Checkliste
 4. Projekte: leerer Zustand, bis echte Projekte da sind
 5. Ablauf: vier Schritte, Linie zeichnet sich beim Scrollen
-6. Preise: interaktiver Mengenwähler für NFC, Website- und Hosting-Preise
+6. Preise: Mega-Bundle als hervorgehobenes Angebot, Mengenwähler für Aufsteller und Sticker, Rechner für Tischaufkleber (1–50 Stück), Website- und Hosting-Preise
 7. Team: Linus und Kristian, Herkunft Bad Rothenfelde mit Koordinaten
 8. Fragen: Akkordeon
 9. Kontakt: Formular mit Validierung und Erfolgs-Animation
@@ -79,6 +80,15 @@ Jeder legt ein eigenes Konto an und verbindet seinen Apple-Kalender. Die Schritt
 - **Texte (DE und EN):** `src/i18n/ui.ts`.
 - **Team:** `src/content/team/*.json`. Optionale Felder: `funFact`, `email`, `photo`.
 - **Projekte:** Vorlage `src/content/projects/_vorlage.md` kopieren nach `src/content/projects/de/<name>.md` und `src/content/projects/en/<name>.md`. Karten und Case-Study-Seiten entstehen automatisch.
+
+## Performance
+
+Lighthouse (lokal gemessen, Startseite): Desktop 100 / 100 / 100 / 100, Mobil 95 / 100 / 100 / 100 (Performance / Barrierefreiheit / Best Practices / SEO).
+
+- CSS steht direkt im HTML, keine blockierenden Stylesheets
+- Hauptschrift wird vorgeladen
+- Hero-Animation: Reisig einmal gezeichnet, Tropfen als vorgerenderte Grafiken, in die Linse wird nur der sichtbare Ausschnitt kopiert. Auf Handys und schwächeren Geräten halbe Bildrate und weniger Tropfen
+- Sitemap mit DE/EN-Verknüpfung (`/sitemap-index.xml`), `robots.txt`
 
 ## Entwicklung
 

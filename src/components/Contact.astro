@@ -535,7 +535,7 @@ const interests = Object.entries(c.interests) as [string, string][];
             email: value('email'),
             phone: value('phone') || null,
             message: value('message'),
-            interests: fd.getAll('interest').map(String) as ('website' | 'nfc' | 'hosting')[],
+            interests: fd.getAll('interest').map(String) as ('website' | 'nfc' | 'hosting' | 'bundle')[],
             lang,
           });
         }

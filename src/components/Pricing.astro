@@ -10,6 +10,8 @@ const { lang } = Astro.props;
 const d = t(lang);
 const p = d.pricing;
 const nfc = site.pricing.nfc;
+const tags = site.pricing.tableTags;
+const bundle = site.pricing.bundle;
 const fmt = (n: number, digits = 0) =>
   new Intl.NumberFormat(lang === 'de' ? 'de-DE' : 'en-GB', {
     minimumFractionDigits: digits,
@@ -18,6 +20,7 @@ const fmt = (n: number, digits = 0) =>
 const money = (n: number, digits = 0) => (lang === 'de' ? `${fmt(n, digits)} €` : `€${fmt(n, digits)}`);
 const single = nfc[0].price;
 const taxNote = site.pricing.taxNote[lang];
+const bundlePrices = [bundle.from, bundle.to];
 ---
 
 <section class="section pricing" id={d.ids.pricing}>
@@ -27,57 +30,165 @@ const taxNote = site.pricing.taxNote[lang];
       <p class="t-lead">{p.lead}</p>
     </header>
 
+    <!-- Mega-Bundle: das eine hervorgehobene Angebot -->
+    <article class="bundle glass" data-spec>
+      <div class="bundle-intro">
+        <span class="chip bundle-badge">{p.bundle.badge}</span>
+        <h3 class="bundle-title">{p.bundle.title}</h3>
+        <p class="t-body">{p.bundle.text}</p>
+        <p class="bundle-range t-num">
+          {money(bundle.from)}
+          <span class="bundle-dash" aria-hidden="true">–</span>
+          <span class="sr-only">{lang === 'de' ? 'bis' : 'to'}</span>
+          {money(bundle.to)}
+        </p>
+        <p class="t-small">{p.bundle.note}</p>
+        <a class="btn btn-primary bundle-cta" href={`#${d.ids.contact}`} data-magnetic data-prefill="bundle" data-message={p.bundle.requestMessage}>
+          {p.bundle.cta}
+        </a>
+      </div>
+
+      <div class="bundle-tiers">
+        {
+          p.bundle.tiers.map((tier, i) => (
+            <div class={`tier${i === 1 ? ' tier-full' : ''}`}>
+              <div class="tier-head">
+                <h4 class="tier-title">{tier.title}</h4>
+                <p class="tier-price t-num">
+                  <span>{tier.price}</span> {money(bundlePrices[i])}
+                </p>
+              </div>
+              <ul class="tier-list" role="list">
+                {tier.items.map((item) => (
+                  <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M5 12.5l4.2 4.2L19 7" />
+                    </svg>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </article>
+
+    <h3 class="singles-title">{p.singles}</h3>
+
     <div class="price-grid">
-      <div class="price-nfc glass" data-spec data-nfc-price data-lang={lang}>
-        <div class="price-nfc-copy">
-          <h3 class="t-h3">{p.nfc.title}</h3>
-          <p class="t-body">{p.nfc.text}</p>
+      <div class="price-main">
+        <!-- Aufsteller und Sticker -->
+        <div class="price-card glass" data-spec data-nfc-price data-lang={lang}>
+          <div class="price-card-copy">
+            <h4 class="t-h3">{p.nfc.title}</h4>
+            <p class="t-body">{p.nfc.text}</p>
+          </div>
+
+          <fieldset class="qty">
+            <legend class="sr-only">{p.nfc.qtyLabel}</legend>
+            <span class="qty-thumb" aria-hidden="true" data-qty-thumb></span>
+            {
+              p.nfc.qty.map((label, i) => {
+                const tier = nfc[i];
+                return (
+                  <label class="qty-opt">
+                    <input
+                      class="sr-only"
+                      type="radio"
+                      name={`nfc-qty-${lang}`}
+                      value={tier ? tier.qty : 'more'}
+                      checked={i === 0}
+                      data-price={tier ? tier.price : ''}
+                      data-per={tier ? tier.price / tier.qty : ''}
+                      data-saved={tier ? single * tier.qty - tier.price : ''}
+                    />
+                    <span>{label}</span>
+                  </label>
+                );
+              })
+            }
+          </fieldset>
+
+          <div class="price-out" aria-live="polite">
+            <p class="price-big t-num">
+              <span data-price-value>{money(single)}</span>
+            </p>
+            <p class="price-sub">
+              <span data-price-per>{`${money(single)} ${p.nfc.perPiece}`}</span>
+              <span class="price-saved" data-price-saved hidden></span>
+            </p>
+            <a class="btn btn-primary price-request" href={`#${d.ids.contact}`} data-price-request data-prefill="nfc" data-message={p.nfc.requestMessage} hidden>
+              {p.nfc.request}
+            </a>
+          </div>
+
+          <template data-i18n data-on-request={p.nfc.onRequest} data-per-piece={p.nfc.perPiece} data-saved-label={p.nfc.saved}></template>
         </div>
 
-        <fieldset class="qty">
-          <legend class="sr-only">{p.nfc.qtyLabel}</legend>
-          <span class="qty-thumb" aria-hidden="true" data-qty-thumb></span>
-          {
-            p.nfc.qty.map((label, i) => {
-              const tier = nfc[i];
-              return (
-                <label class="qty-opt">
-                  <input
-                    class="sr-only"
-                    type="radio"
-                    name={`nfc-qty-${lang}`}
-                    value={tier ? tier.qty : 'more'}
-                    checked={i === 0}
-                    data-price={tier ? tier.price : ''}
-                    data-per={tier ? tier.price / tier.qty : ''}
-                    data-saved={tier ? single * tier.qty - tier.price : ''}
-                  />
-                  <span>{label}</span>
-                </label>
-              );
-            })
-          }
-        </fieldset>
+        <!-- Tischaufkleber mit NFC: gestaffelter Preis -->
+        <div
+          class="price-card glass"
+          data-spec
+          data-tags-price
+          data-lang={lang}
+          data-first={tags.first}
+          data-second={tags.second}
+          data-third={tags.third}
+          data-following={tags.following}
+          data-max={tags.max}
+          data-per-label={p.tags.avg}
+          data-saved-label={p.tags.saved}
+        >
+          <div class="price-card-copy">
+            <h4 class="t-h3">{p.tags.title}</h4>
+            <p class="t-body">{p.tags.text}</p>
+          </div>
 
-        <div class="price-out" aria-live="polite">
-          <p class="price-big t-num" data-price-big>
-            <span data-price-value>{money(single)}</span>
-          </p>
-          <p class="price-sub">
-            <span data-price-per>{`${money(single)} ${p.nfc.perPiece}`}</span>
-            <span class="price-saved" data-price-saved hidden></span>
-          </p>
-          <a class="btn btn-primary price-request" href={`#${d.ids.contact}`} data-price-request data-message={p.nfc.requestMessage} hidden>
-            {p.nfc.request}
-          </a>
+          <div class="tags-controls">
+            <div class="stepper">
+              <button class="stepper-btn" type="button" data-step="-1" aria-label={p.tags.less}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12"></path></svg>
+              </button>
+              <label class="sr-only" for={`tags-qty-${lang}`}>{p.tags.qtyLabel}</label>
+              <input class="stepper-input t-num" id={`tags-qty-${lang}`} type="number" inputmode="numeric" min="1" max={tags.max} value="1" data-tags-input />
+              <button class="stepper-btn" type="button" data-step="1" aria-label={p.tags.more}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 6v12M6 12h12"></path></svg>
+              </button>
+            </div>
+            <div class="quick" role="group" aria-label={p.tags.qtyLabel}>
+              {
+                [1, 5, 10, 25].map((n) => (
+                  <button class="quick-btn" type="button" data-quick={n} aria-pressed={n === 1 ? 'true' : 'false'}>
+                    {n}
+                  </button>
+                ))
+              }
+            </div>
+          </div>
+
+          <!-- 25 Tische als Punkte, so viele leuchten wie gewählt -->
+          <div class="tables" aria-hidden="true" data-tables>
+            {Array.from({ length: 25 }, (_, i) => <span class={i === 0 ? 'is-on' : undefined}></span>)}
+          </div>
+
+          <div class="price-out" aria-live="polite">
+            <p class="price-big t-num">
+              <span data-tags-total>{money(tags.first)}</span>
+            </p>
+            <p class="price-sub">
+              <span data-tags-per>{`${money(tags.first, 2)} ${p.tags.avg}`}</span>
+              <span class="price-saved" data-tags-saved hidden></span>
+            </p>
+            <p class="t-small" data-tags-max hidden>{p.tags.maxNote}</p>
+          </div>
+          <p class="t-small">{p.tags.scale}</p>
         </div>
-
-        <template data-i18n data-on-request={p.nfc.onRequest} data-per-piece={p.nfc.perPiece} data-saved-label={p.nfc.saved}></template>
       </div>
 
       <div class="price-side">
         <div class="price-row glass" data-spec>
-          <h3 class="t-h3">{p.website.title}</h3>
+          <h4 class="t-h3">{p.website.title}</h4>
           <p class="price-mid t-num">
             <span class="price-from">{p.website.from}</span>
             {money(site.pricing.website.from)}
@@ -87,7 +198,7 @@ const taxNote = site.pricing.taxNote[lang];
         </div>
 
         <div class="price-row glass" data-spec>
-          <h3 class="t-h3">{p.hosting.title}</h3>
+          <h4 class="t-h3">{p.hosting.title}</h4>
           <p class="price-mid t-num">
             <span class="price-from">{p.hosting.from}</span>
             {money(site.pricing.hosting.from)}
@@ -106,24 +217,186 @@ const taxNote = site.pricing.taxNote[lang];
 </section>
 
 <style>
+  /* ---------- Mega-Bundle ---------- */
+  .bundle {
+    --r: var(--r-xl);
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(2rem, 4vw, 3.5rem);
+    padding: clamp(1.5rem, 4vw, 3rem);
+    margin-bottom: clamp(3.5rem, 7vw, 5rem);
+    background:
+      radial-gradient(90% 120% at 0% 0%, rgb(255 194 75 / 0.12), transparent 55%),
+      radial-gradient(80% 100% at 100% 100%, rgb(59 227 201 / 0.1), transparent 60%),
+      linear-gradient(160deg, rgb(237 246 243 / 0.12), rgb(237 246 243 / 0.035) 55%, rgb(237 246 243 / 0.06));
+  }
+
+  /* Goldene Lichtkante statt der normalen */
+  .bundle::before {
+    background: linear-gradient(140deg, rgb(255 214 130 / 0.75), rgb(255 255 255 / 0.08) 30%, rgb(255 255 255 / 0.03) 60%, rgb(59 227 201 / 0.45));
+  }
+
+  .bundle-intro {
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+    justify-items: start;
+  }
+
+  .bundle-badge {
+    color: var(--gold);
+    background: rgb(255 194 75 / 0.12);
+    box-shadow: inset 0 0 0 1px rgb(255 194 75 / 0.3);
+  }
+
+  .bundle-title {
+    margin: 0;
+    font-size: clamp(2.25rem, 4.6vw, 3.75rem);
+    font-weight: 800;
+    font-stretch: 120%;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .bundle-range {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35em;
+    margin: 0.5rem 0 0;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    font-stretch: 122%;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    color: var(--gold);
+  }
+
+  .bundle-dash {
+    color: rgb(255 194 75 / 0.55);
+  }
+
+  .bundle-cta {
+    margin-top: 0.75rem;
+  }
+
+  .bundle-tiers {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .tier {
+    display: grid;
+    align-content: start;
+    gap: 1.1rem;
+    padding: 1.35rem;
+    border-radius: var(--r-lg);
+    background: rgb(4 27 32 / 0.45);
+    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.1);
+  }
+
+  .tier-full {
+    background: rgb(4 27 32 / 0.6);
+    box-shadow:
+      inset 0 0 0 1px rgb(255 194 75 / 0.35),
+      0 20px 40px -24px rgb(255 194 75 / 0.35);
+  }
+
+  .tier-head {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .tier-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-stretch: 110%;
+    letter-spacing: -0.015em;
+  }
+
+  .tier-price {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 780;
+    font-stretch: 116%;
+    letter-spacing: -0.03em;
+  }
+
+  .tier-price span {
+    font-size: 0.9375rem;
+    font-weight: 540;
+    font-stretch: 100%;
+    letter-spacing: 0;
+    color: var(--text-soft);
+  }
+
+  .tier-list {
+    display: grid;
+    gap: 0.7rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tier-list li {
+    display: grid;
+    grid-template-columns: 1.25rem 1fr;
+    gap: 0.6rem;
+    align-items: start;
+    font-size: 0.9375rem;
+    line-height: 1.45;
+    color: var(--text-soft);
+  }
+
+  .tier-list svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    padding: 0.2rem;
+    border-radius: 50%;
+    color: var(--nacht);
+    background: var(--sole);
+    margin-top: 0.05rem;
+  }
+
+  .tier-full .tier-list svg {
+    background: var(--gold);
+  }
+
+  .singles-title {
+    margin: 0 0 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-stretch: 110%;
+    letter-spacing: -0.02em;
+  }
+
+  /* ---------- Einzelpreise ---------- */
   .price-grid {
     display: grid;
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     gap: 1.5rem;
-    align-items: stretch;
+    align-items: start;
   }
 
-  .price-nfc {
+  .price-main,
+  .price-side {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .price-card {
     --r: var(--r-xl);
     display: grid;
-    gap: 2rem;
-    align-content: space-between;
-    padding: clamp(1.5rem, 4vw, 3rem);
+    gap: 1.75rem;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
   }
 
-  .price-nfc-copy {
+  .price-card-copy {
     display: grid;
-    gap: 0.9rem;
+    gap: 0.8rem;
   }
 
   .qty {
@@ -183,13 +456,11 @@ const taxNote = site.pricing.taxNote[lang];
     display: grid;
     gap: 0.5rem;
     justify-items: start;
-    min-height: 11rem;
-    align-content: end;
   }
 
   .price-big {
     margin: 0;
-    font-size: clamp(3.5rem, 8vw, 6rem);
+    font-size: clamp(3rem, 7vw, 5rem);
     font-weight: 820;
     font-stretch: 125%;
     letter-spacing: -0.045em;
@@ -198,7 +469,7 @@ const taxNote = site.pricing.taxNote[lang];
   }
 
   .price-big.is-text {
-    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-size: clamp(2.25rem, 4.5vw, 3.5rem);
   }
 
   .price-sub {
@@ -224,11 +495,128 @@ const taxNote = site.pricing.taxNote[lang];
     margin-top: 0.5rem;
   }
 
-  .price-side {
-    display: grid;
-    gap: 1.5rem;
+  /* ---------- Tischaufkleber-Rechner ---------- */
+  .tags-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
   }
 
+  .stepper {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem;
+    border-radius: 999px;
+    background: rgb(4 27 32 / 0.5);
+    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.1);
+  }
+
+  .stepper-btn {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 0;
+    border-radius: 50%;
+    color: var(--nacht);
+    background: linear-gradient(180deg, #f6fbfa, #cfe3de);
+    box-shadow: inset 0 1px 0 #fff;
+    cursor: pointer;
+    transition: transform 0.4s var(--ease-liquid);
+  }
+
+  .stepper-btn:active {
+    transform: scale(0.9);
+  }
+
+  .stepper-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .stepper-btn svg {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  .stepper-input {
+    width: 4rem;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: 1.5rem;
+    font-weight: 780;
+    font-stretch: 118%;
+    text-align: center;
+    color: var(--salz);
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  .stepper-input::-webkit-outer-spin-button,
+  .stepper-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .stepper-input:focus-visible {
+    outline: 2px solid var(--sole);
+    border-radius: var(--r-sm);
+  }
+
+  .quick {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .quick-btn {
+    min-width: 2.75rem;
+    height: 2.75rem;
+    padding: 0 0.75rem;
+    border: 0;
+    border-radius: 999px;
+    font: inherit;
+    font-size: 0.9375rem;
+    font-weight: 640;
+    color: var(--text-soft);
+    background: rgb(237 246 243 / 0.07);
+    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.12);
+    cursor: pointer;
+    transition:
+      background-color 0.3s,
+      color 0.3s;
+  }
+
+  .quick-btn[aria-pressed='true'] {
+    color: var(--nacht);
+    background: var(--sole);
+    box-shadow: none;
+  }
+
+  .tables {
+    display: grid;
+    grid-template-columns: repeat(25, minmax(0, 1fr));
+    gap: 0.35rem;
+  }
+
+  .tables span {
+    aspect-ratio: 1;
+    border-radius: 30%;
+    background: rgb(237 246 243 / 0.08);
+    transition:
+      background-color 0.35s,
+      box-shadow 0.35s,
+      transform 0.5s var(--ease-liquid);
+  }
+
+  .tables span.is-on {
+    background: var(--sole);
+    box-shadow: 0 0 12px rgb(59 227 201 / 0.55);
+    transform: scale(1.08);
+  }
+
+  /* ---------- Website, Hosting ---------- */
   .price-row {
     --r: var(--r-lg);
     display: grid;
@@ -281,16 +669,28 @@ const taxNote = site.pricing.taxNote[lang];
     margin-left: auto;
   }
 
+  @media (max-width: 1060px) {
+    .bundle {
+      grid-template-columns: 1fr;
+    }
+  }
+
   @media (max-width: 960px) {
     .price-grid {
       grid-template-columns: 1fr;
     }
   }
 
-  @media (max-width: 520px) {
-    .price-out {
-      min-height: 0;
+  @media (max-width: 620px) {
+    .bundle-tiers {
+      grid-template-columns: 1fr;
     }
+    .tables {
+      grid-template-columns: repeat(13, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 520px) {
     .qty {
       border-radius: var(--r-lg);
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -307,8 +707,31 @@ const taxNote = site.pricing.taxNote[lang];
 <script>
   import { gsap, reduced } from '../scripts/motion';
 
+  const numberFormat = (lang: string) => (n: number, digits: number) =>
+    new Intl.NumberFormat(lang === 'de' ? 'de-DE' : 'en-GB', {
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits,
+    }).format(n);
+  const moneyFormat = (lang: string) => {
+    const nf = numberFormat(lang);
+    return (n: number, digits = 0) => (lang === 'de' ? `${nf(n, digits)} €` : `€${nf(n, digits)}`);
+  };
+
+  const popBadge = (el: HTMLElement, wasHidden: boolean) => {
+    if (reduced) return;
+    gsap.fromTo(el, { scale: wasHidden ? 0.4 : 0.85, opacity: wasHidden ? 0 : 1 }, { scale: 1, opacity: 1, duration: 0.7, ease: 'elastic.out(1, 0.45)' });
+  };
+
+  // Anfrage-Buttons füllen das Kontaktformular vor
+  document.querySelectorAll<HTMLAnchorElement>('[data-prefill]').forEach((a) =>
+    a.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('wdbr:prefill', { detail: { interest: a.dataset.prefill, message: a.dataset.message } }));
+    }),
+  );
+
+  // ---------------- Aufsteller und Sticker ----------------
   document.querySelectorAll<HTMLElement>('[data-nfc-price]').forEach((root) => {
-    const lang = root.dataset.lang === 'en' ? 'en' : 'de';
+    const money = moneyFormat(root.dataset.lang ?? 'de');
     const i18n = root.querySelector<HTMLTemplateElement>('[data-i18n]')!.dataset;
     const inputs = [...root.querySelectorAll<HTMLInputElement>('input[type="radio"]')];
     const thumb = root.querySelector<HTMLElement>('[data-qty-thumb]')!;
@@ -316,19 +739,10 @@ const taxNote = site.pricing.taxNote[lang];
     const perEl = root.querySelector<HTMLElement>('[data-price-per]')!;
     const savedEl = root.querySelector<HTMLElement>('[data-price-saved]')!;
     const request = root.querySelector<HTMLAnchorElement>('[data-price-request]')!;
-
-    const nf = (n: number, digits: number) =>
-      new Intl.NumberFormat(lang === 'de' ? 'de-DE' : 'en-GB', {
-        minimumFractionDigits: digits,
-        maximumFractionDigits: digits,
-      }).format(n);
-    const money = (n: number, digits = 0) => (lang === 'de' ? `${nf(n, digits)} €` : `€${nf(n, digits)}`);
-
     const state = { value: Number(inputs[0].dataset.price) };
 
     const placeThumb = (animate: boolean) => {
-      const checked = inputs.find((i) => i.checked)!;
-      const label = checked.closest('label')!;
+      const label = inputs.find((i) => i.checked)!.closest('label')!;
       gsap.to(thumb, { x: label.offsetLeft - thumb.offsetLeft, duration: animate && !reduced ? 0.6 : 0, ease: 'back.out(1.3)' });
     };
 
@@ -354,44 +768,89 @@ const taxNote = site.pricing.taxNote[lang];
       const target = Number(checked.dataset.price);
       const per = Number(checked.dataset.per);
       const saved = Number(checked.dataset.saved);
-      const perDigits = Number.isInteger(per) ? 0 : 2;
-      perEl.textContent = `${money(per, perDigits)} ${i18n.perPiece}`;
-
-      if (reduced) {
-        valueEl.textContent = money(target);
-      } else {
-        gsap.to(state, {
-          value: target,
-          duration: 0.7,
-          ease: 'power3.out',
-          onUpdate: () => (valueEl.textContent = money(Math.round(state.value))),
-        });
-        gsap.fromTo(valueEl, { opacity: 0.6 }, { opacity: 1, duration: 0.3 });
-      }
+      perEl.textContent = `${money(per, Number.isInteger(per) ? 0 : 2)} ${i18n.perPiece}`;
+      if (reduced) valueEl.textContent = money(target);
+      else gsap.to(state, { value: target, duration: 0.7, ease: 'power3.out', onUpdate: () => (valueEl.textContent = money(Math.round(state.value))) });
 
       if (saved > 0) {
+        const wasHidden = savedEl.hidden === true;
         savedEl.textContent = `${money(saved)} ${i18n.savedLabel}`;
-        const wasHidden = savedEl.hidden;
         savedEl.hidden = false;
-        if (!reduced) {
-          gsap.fromTo(
-            savedEl,
-            { scale: wasHidden ? 0.4 : 0.85, opacity: wasHidden ? 0 : 1 },
-            { scale: 1, opacity: 1, duration: 0.7, ease: 'elastic.out(1, 0.45)' },
-          );
-        }
-      } else {
-        savedEl.hidden = true;
-      }
+        popBadge(savedEl, wasHidden);
+      } else savedEl.hidden = true;
     };
 
     inputs.forEach((i) => i.addEventListener('change', update));
     window.addEventListener('resize', () => placeThumb(false));
     document.fonts?.ready.then(() => placeThumb(false));
+  });
 
-    // Anfrage für größere Mengen: Formular vorbereiten
-    request.addEventListener('click', () => {
-      window.dispatchEvent(new CustomEvent('wdbr:prefill', { detail: { interest: 'nfc', message: request.dataset.message } }));
-    });
+  // ---------------- Tischaufkleber mit NFC ----------------
+  document.querySelectorAll<HTMLElement>('[data-tags-price]').forEach((root) => {
+    const ds = root.dataset;
+    const money = moneyFormat(ds.lang ?? 'de');
+    const first = Number(ds.first);
+    const second = Number(ds.second);
+    const third = Number(ds.third);
+    const following = Number(ds.following);
+    const max = Number(ds.max);
+    const input = root.querySelector<HTMLInputElement>('[data-tags-input]')!;
+    const minus = root.querySelector<HTMLButtonElement>('[data-step="-1"]')!;
+    const plus = root.querySelector<HTMLButtonElement>('[data-step="1"]')!;
+    const quick = [...root.querySelectorAll<HTMLButtonElement>('[data-quick]')];
+    const dots = [...root.querySelectorAll<HTMLElement>('[data-tables] span')];
+    const totalEl = root.querySelector<HTMLElement>('[data-tags-total]')!;
+    const perEl = root.querySelector<HTMLElement>('[data-tags-per]')!;
+    const savedEl = root.querySelector<HTMLElement>('[data-tags-saved]')!;
+    const maxEl = root.querySelector<HTMLElement>('[data-tags-max]')!;
+    const state = { value: first };
+
+    // Erster, zweiter und dritter Aufkleber haben eigene Preise, danach gleich
+    const total = (n: number) => {
+      const prices = [first, second, third];
+      let sum = 0;
+      for (let i = 0; i < n; i++) sum += prices[i] ?? following;
+      return sum;
+    };
+
+    let n = 1;
+    const set = (next: number) => {
+      n = Math.min(max, Math.max(1, Math.round(next) || 1));
+      input.value = String(n);
+      minus.disabled = n <= 1;
+      plus.disabled = n >= max;
+      quick.forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.quick) === n)));
+      dots.forEach((dot, i) => dot.classList.toggle('is-on', i < n));
+      maxEl.hidden = n < max;
+
+      const sum = total(n);
+      const saved = first * n - sum;
+      perEl.textContent = `${money(sum / n, 2)} ${ds.perLabel}`;
+      if (reduced) totalEl.textContent = money(sum, Number.isInteger(sum) ? 0 : 2);
+      else
+        gsap.to(state, {
+          value: sum,
+          duration: 0.6,
+          ease: 'power3.out',
+          overwrite: true,
+          onUpdate: () => {
+            const v = Math.round(state.value * 2) / 2;
+            totalEl.textContent = money(v, Number.isInteger(v) ? 0 : 2);
+          },
+        });
+
+      if (saved > 0) {
+        const wasHidden = savedEl.hidden === true;
+        savedEl.textContent = `${money(saved, Number.isInteger(saved) ? 0 : 2)} ${ds.savedLabel}`;
+        savedEl.hidden = false;
+        if (wasHidden) popBadge(savedEl, true);
+      } else savedEl.hidden = true;
+    };
+
+    minus.addEventListener('click', () => set(n - 1));
+    plus.addEventListener('click', () => set(n + 1));
+    quick.forEach((b) => b.addEventListener('click', () => set(Number(b.dataset.quick))));
+    input.addEventListener('change', () => set(Number(input.value)));
+    set(1);
   });
 </script>
