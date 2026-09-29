@@ -225,6 +225,9 @@ const de = {
     },
     direct: 'Direkt erreichen',
     place: 'Bad Rothenfelde, Osnabrücker Land',
+    booking: 'Lieber direkt einen Termin?',
+    bookingWith: 'Termin mit',
+    honeypot: 'Dieses Feld bitte leer lassen',
   },
   footer: {
     imprint: 'Impressum',
@@ -461,6 +464,9 @@ const en: Dict = {
     },
     direct: 'Reach us directly',
     place: 'Bad Rothenfelde, Osnabrück region, Germany',
+    booking: 'Prefer to book a call?',
+    bookingWith: 'Book with',
+    honeypot: 'Please leave this field empty',
   },
   footer: {
     imprint: 'Imprint',

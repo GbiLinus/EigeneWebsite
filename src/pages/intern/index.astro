@@ -1,0 +1,103 @@
+---
+import Intern from '../../layouts/Intern.astro';
+---
+
+<Intern title="Übersicht" active="home">
+  <header class="page-head">
+    <div>
+      <h1 class="page-title" data-greeting>Moin</h1>
+      <p class="page-sub" data-today></p>
+    </div>
+  </header>
+
+  <div class="tiles" data-tiles>
+    <div class="tile glass skeleton"></div>
+    <div class="tile glass skeleton"></div>
+    <div class="tile glass skeleton"></div>
+    <div class="tile glass skeleton"></div>
+  </div>
+
+  <div class="two-col">
+    <section>
+      <h2 class="section-t">Neueste Anfragen</h2>
+      <ul class="list" role="list" data-latest></ul>
+    </section>
+    <section>
+      <h2 class="section-t">Hosting-Verlängerungen</h2>
+      <ul class="list" role="list" data-renewals></ul>
+    </section>
+  </div>
+
+  <script>
+    import { ready } from '../../intern/app';
+    import { avatar, daysUntil, formatDate, h, hostingState, relativeTime, statusLabel, urls } from '../../intern/ui';
+
+    ready().then(async ({ store, session }) => {
+      if (!session.staff) return;
+      const me = session.staff;
+      const u = urls();
+
+      document.querySelector('[data-greeting]')!.textContent = `Moin, ${me.name.split(' ')[0]}`;
+      document.querySelector('[data-today]')!.textContent = new Intl.DateTimeFormat('de-DE', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date());
+
+      const [staff, enquiries, customers] = await Promise.all([store.staff(), store.enquiries(), store.customers()]);
+      const fresh = enquiries.filter((e) => e.status === 'neu');
+      const myOpen = enquiries.filter((e) => e.assignee === me.id && e.status !== 'erledigt');
+      const due = customers
+        .filter((c) => ['soon', 'over'].includes(hostingState(c.hosting_until) ?? ''))
+        .sort((a, b) => (a.hosting_until ?? '').localeCompare(b.hosting_until ?? ''));
+      const overdue = due.filter((c) => hostingState(c.hosting_until) === 'over');
+
+      const tile = (num: number, label: string, href: string, tone?: string) =>
+        h('a', { class: 'tile glass', href, 'data-spec': true, 'data-tone': num > 0 ? tone : undefined }, h('span', { class: 'tile-num' }, num), h('span', { class: 'tile-label' }, label));
+
+      document.querySelector('[data-tiles]')!.replaceChildren(
+        tile(fresh.length, fresh.length === 1 ? 'neue Anfrage' : 'neue Anfragen', u.enquiries, 'warn'),
+        tile(myOpen.length, myOpen.length === 1 ? 'offene Anfrage bei dir' : 'offene Anfragen bei dir', u.enquiries),
+        tile(due.length, overdue.length ? `Hosting fällig, ${overdue.length} abgelaufen` : 'Hosting in 30 Tagen fällig', u.customers, overdue.length ? 'danger' : 'warn'),
+        tile(customers.length, customers.length === 1 ? 'Kunde' : 'Kunden', u.customers),
+      );
+
+      const latest = document.querySelector<HTMLElement>('[data-latest]')!;
+      const top = enquiries.slice(0, 5);
+      latest.replaceChildren(
+        ...(top.length
+          ? top.map((e) =>
+              h(
+                'li',
+                {},
+                h(
+                  'a',
+                  { class: `row${e.status === 'neu' ? ' is-new' : ''}`, href: u.enquiries, style: 'grid-template-columns:auto minmax(0,1fr) auto' },
+                  avatar(staff.find((s) => s.id === e.assignee)),
+                  h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, e.business ?? e.name), h('span', { class: 'row-sub' }, relativeTime(e.created_at))),
+                  h('span', { class: `pill pill-${e.status}` }, statusLabel[e.status]),
+                ),
+              ),
+            )
+          : [h('li', { class: 'empty' }, h('strong', {}, 'Noch keine Anfragen.'), 'Neue Anfragen aus dem Kontaktformular erscheinen hier.')]),
+      );
+
+      const renewals = document.querySelector<HTMLElement>('[data-renewals]')!;
+      renewals.replaceChildren(
+        ...(due.length
+          ? due.map((c) => {
+              const d = daysUntil(c.hosting_until!);
+              const over = d < 0;
+              return h(
+                'li',
+                {},
+                h(
+                  'a',
+                  { class: 'row', href: `${u.customers}#${c.id}`, style: 'grid-template-columns:auto minmax(0,1fr) auto' },
+                  avatar(staff.find((s) => s.id === c.assignee)),
+                  h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, c.business), h('span', { class: 'row-sub' }, `bis ${formatDate(c.hosting_until)}`)),
+                  h('span', { class: `pill pill-${over ? 'over' : 'soon'}` }, over ? 'abgelaufen' : `in ${d} ${d === 1 ? 'Tag' : 'Tagen'}`),
+                ),
+              );
+            })
+          : [h('li', { class: 'empty' }, h('strong', {}, 'Nichts fällig.'), 'Kein Hosting läuft in den nächsten 30 Tagen ab.')]),
+      );
+    });
+  </script>
+</Intern>

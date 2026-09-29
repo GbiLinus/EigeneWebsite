@@ -1,0 +1,242 @@
+---
+import Intern from '../../layouts/Intern.astro';
+---
+
+<Intern title="Anfragen" active="enquiries">
+  <header class="page-head">
+    <div>
+      <h1 class="page-title">Anfragen</h1>
+      <p class="page-sub">Alles, was über das Kontaktformular kommt.</p>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="seg-i" role="group" aria-label="Status filtern" data-filter>
+      <button type="button" data-status="offen" aria-pressed="true">Offen</button>
+      <button type="button" data-status="neu" aria-pressed="false">Neu</button>
+      <button type="button" data-status="in_arbeit" aria-pressed="false">In Arbeit</button>
+      <button type="button" data-status="erledigt" aria-pressed="false">Erledigt</button>
+      <button type="button" data-status="alle" aria-pressed="false">Alle</button>
+    </div>
+    <label class="toggle-mine"><input type="checkbox" data-mine /> Nur meine</label>
+    <div class="search">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg>
+      <label class="sr-only" for="enq-search">Anfragen durchsuchen</label>
+      <input id="enq-search" type="search" placeholder="Name, Betrieb, Text" autocomplete="off" data-search />
+    </div>
+  </div>
+
+  <ul class="list" role="list" data-list>
+    <li class="skeleton"></li>
+    <li class="skeleton"></li>
+    <li class="skeleton"></li>
+  </ul>
+
+  <script>
+    import { ready, setNewCount } from '../../intern/app';
+    import { openCustomerPanel } from '../../intern/customer-form';
+    import type { Enquiry, Staff, Status } from '../../intern/types';
+    import { avatar, confirmInline, formatDate, h, icons, openPanel, relativeTime, serviceLabel, statusLabel, svg, toast, urls } from '../../intern/ui';
+
+    ready().then(async ({ store, session }) => {
+      if (!session.staff) return;
+      const me = session.staff;
+      const list = document.querySelector<HTMLElement>('[data-list]')!;
+      const search = document.querySelector<HTMLInputElement>('[data-search]')!;
+      const mine = document.querySelector<HTMLInputElement>('[data-mine]')!;
+      const filterBtns = [...document.querySelectorAll<HTMLButtonElement>('[data-filter] button')];
+
+      let staff: Staff[] = [];
+      let items: Enquiry[] = [];
+      let filter = 'offen';
+
+      const staffById = (id: string | null) => staff.find((s) => s.id === id);
+
+      const render = () => {
+        const q = search.value.trim().toLowerCase();
+        const shown = items.filter((e) => {
+          if (filter === 'offen' && e.status === 'erledigt') return false;
+          if (filter !== 'offen' && filter !== 'alle' && e.status !== filter) return false;
+          if (mine.checked && e.assignee !== me.id) return false;
+          if (q && ![e.name, e.business, e.message, e.email].some((t) => t?.toLowerCase().includes(q))) return false;
+          return true;
+        });
+        setNewCount(items.filter((e) => e.status === 'neu').length);
+
+        if (!shown.length) {
+          list.replaceChildren(
+            h(
+              'li',
+              { class: 'empty' },
+              h('strong', {}, items.length ? 'Keine Anfragen für diesen Filter.' : 'Noch keine Anfragen.'),
+              items.length ? 'Ändert den Filter oder die Suche.' : 'Sobald jemand das Kontaktformular abschickt, erscheint die Anfrage hier.',
+            ),
+          );
+          return;
+        }
+
+        list.replaceChildren(
+          ...shown.map((e) =>
+            h(
+              'li',
+              {},
+              h(
+                'button',
+                { class: `row${e.status === 'neu' ? ' is-new' : ''}`, type: 'button', onclick: () => openDetail(e) },
+                avatar(staffById(e.assignee)),
+                h(
+                  'span',
+                  { class: 'row-main' },
+                  h('span', { class: 'row-title' }, e.business ? `${e.business}, ${e.name}` : e.name),
+                  h('span', { class: 'row-sub' }, e.message),
+                ),
+                h('span', { class: 'chips' }, e.interests.map((i) => h('span', { class: 'chip' }, serviceLabel[i]))),
+                h('span', { class: 'row-meta' }, e.lang === 'en' ? h('span', { class: 'chip' }, 'EN') : null, relativeTime(e.created_at), h('span', { class: `pill pill-${e.status}` }, statusLabel[e.status])),
+              ),
+            ),
+          ),
+        );
+      };
+
+      const save = async (e: Enquiry, patch: Partial<Enquiry>, message?: string) => {
+        Object.assign(e, patch);
+        render();
+        try {
+          await store.updateEnquiry(e.id, patch);
+          if (message) toast(message);
+        } catch {
+          toast('Nicht gespeichert. Versucht es noch einmal.', 'error');
+        }
+      };
+
+      const seg = <T extends string>(label: string, options: [T, string][], value: T, onChange: (v: T) => void) => {
+        const group = h('div', { class: 'seg-i', role: 'group', 'aria-label': label });
+        options.forEach(([val, text]) => {
+          const b = h('button', { type: 'button', 'aria-pressed': String(val === value) }, text);
+          b.addEventListener('click', () => {
+            group.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+            onChange(val);
+          });
+          group.append(b);
+        });
+        return group;
+      };
+
+      const openDetail = (e: Enquiry) => {
+        const subject = encodeURIComponent('Eure Anfrage bei WebDesignBR');
+        const notes = h('textarea', { id: `notes-${e.id}`, rows: 4 }, e.notes ?? '');
+        const savedHint = h('p', { class: 'saved-hint', 'aria-live': 'polite' });
+        let timer = 0;
+        notes.addEventListener('input', () => {
+          clearTimeout(timer);
+          savedHint.textContent = '';
+          timer = window.setTimeout(async () => {
+            await save(e, { notes: notes.value.trim() || null });
+            savedHint.textContent = 'Notiz gespeichert';
+          }, 700);
+        });
+
+        const actions = h('div', { class: 'panel-actions' });
+        if (e.customer_id) {
+          actions.append(h('a', { class: 'btn-s', href: `${urls().customers}#${e.customer_id}` }, 'Kunde ansehen'));
+        } else {
+          const toCustomer = h('button', { class: 'btn-s btn-accent', type: 'button' }, svg(icons.plus), 'Als Kunde anlegen');
+          toCustomer.addEventListener('click', () => {
+            panel.close();
+            openCustomerPanel({
+              store,
+              staff,
+              prefill: {
+                business: e.business ?? e.name,
+                contact_name: e.name,
+                email: e.email,
+                phone: e.phone,
+                services: e.interests,
+                assignee: e.assignee ?? me.id,
+              },
+              onSaved: (c) => {
+                if (c) save(e, { customer_id: c.id });
+              },
+            });
+          });
+          actions.append(toCustomer);
+        }
+        const del = h('button', { class: 'btn-s', type: 'button' }, svg(icons.trash), 'Anfrage löschen');
+        del.addEventListener('click', () =>
+          confirmInline(del, 'Diese Anfrage endgültig löschen?', async () => {
+            try {
+              await store.deleteEnquiry(e.id);
+              items = items.filter((x) => x.id !== e.id);
+              render();
+              toast('Anfrage gelöscht');
+              panel.close();
+            } catch {
+              toast('Nicht gelöscht. Versucht es noch einmal.', 'error');
+            }
+          }),
+        );
+        actions.append(del);
+
+        const body = h(
+          'div',
+          { class: 'stack' },
+          h(
+            'div',
+            { class: 'kv' },
+            h('p', { class: 'row-meta', style: 'margin:0' }, h('span', { class: `pill pill-${e.status}` }, statusLabel[e.status]), `${formatDate(e.created_at)}, ${relativeTime(e.created_at)}`),
+          ),
+          h(
+            'dl',
+            { class: 'f-grid', style: 'margin:0' },
+            h('div', { class: 'kv' }, h('dt', {}, 'Name'), h('dd', {}, e.name)),
+            h('div', { class: 'kv' }, h('dt', {}, 'Betrieb'), h('dd', {}, e.business ?? '–')),
+            h('div', { class: 'kv' }, h('dt', {}, 'Interesse'), h('dd', { class: 'chips' }, e.interests.length ? e.interests.map((i) => h('span', { class: 'chip' }, serviceLabel[i])) : '–')),
+            h('div', { class: 'kv' }, h('dt', {}, 'Sprache'), h('dd', {}, e.lang === 'en' ? 'Englisch' : 'Deutsch')),
+          ),
+          h(
+            'div',
+            { class: 'contact-links' },
+            h('a', { class: 'btn-s', href: `mailto:${e.email}?subject=${subject}` }, svg(icons.mail), e.email),
+            e.phone ? h('a', { class: 'btn-s', href: `tel:${e.phone.replace(/[^\d+]/g, '')}` }, svg(icons.phone), e.phone) : null,
+          ),
+          h('p', { class: 'message' }, e.message),
+          h(
+            'div',
+            { class: 'f' },
+            h('span', {}, 'Status'),
+            seg<Status>('Status', [['neu', 'Neu'], ['in_arbeit', 'In Arbeit'], ['erledigt', 'Erledigt']], e.status, (v) => save(e, { status: v }, `Status: ${statusLabel[v]}`)),
+          ),
+          h(
+            'div',
+            { class: 'f' },
+            h('span', {}, 'Zuständig'),
+            seg<string>('Zuständig', [['', 'Niemand'], ...staff.map((s) => [s.id, s.name.split(' ')[0]] as [string, string])], e.assignee ?? '', (v) =>
+              save(e, { assignee: v || null, status: e.status === 'neu' && v ? 'in_arbeit' : e.status }, v ? `Zuständig: ${staffById(v)?.name}` : 'Zuständigkeit entfernt'),
+            ),
+          ),
+          h('div', { class: 'f' }, h('label', { for: `notes-${e.id}` }, 'Interne Notiz'), notes, savedHint),
+          actions,
+        );
+
+        const panel = openPanel(e.business ?? e.name, body);
+      };
+
+      filterBtns.forEach((b) =>
+        b.addEventListener('click', () => {
+          filter = b.dataset.status ?? 'offen';
+          filterBtns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+          render();
+        }),
+      );
+      search.addEventListener('input', render);
+      mine.addEventListener('change', render);
+
+      try {
+        [staff, items] = await Promise.all([store.staff(), store.enquiries()]);
+        render();
+      } catch {
+        list.replaceChildren(h('li', { class: 'empty' }, h('strong', {}, 'Anfragen konnten nicht geladen werden.'), 'Prüft die Verbindung und ladet die Seite neu.'));
+      }
+    });
+  </script>
+</Intern>

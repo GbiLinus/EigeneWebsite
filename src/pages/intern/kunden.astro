@@ -1,0 +1,137 @@
+---
+import Intern from '../../layouts/Intern.astro';
+---
+
+<Intern title="Kunden" active="customers">
+  <header class="page-head">
+    <div>
+      <h1 class="page-title">Kunden</h1>
+      <p class="page-sub">Betriebe, Leistungen und wann das Hosting verlängert werden muss.</p>
+    </div>
+    <button class="btn-s btn-accent" type="button" data-new>
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+      Kunde anlegen
+    </button>
+  </header>
+
+  <div class="toolbar">
+    <div class="seg-i" role="group" aria-label="Kunden filtern" data-filter>
+      <button type="button" data-f="alle" aria-pressed="true">Alle</button>
+      <button type="button" data-f="hosting" aria-pressed="false">Hosting fällig</button>
+    </div>
+    <label class="toggle-mine"><input type="checkbox" data-mine /> Nur meine</label>
+    <div class="search">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"></path></svg>
+      <label class="sr-only" for="cust-search">Kunden durchsuchen</label>
+      <input id="cust-search" type="search" placeholder="Betrieb, Name, Ort" autocomplete="off" data-search />
+    </div>
+  </div>
+
+  <ul class="list" role="list" data-list>
+    <li class="skeleton"></li>
+    <li class="skeleton"></li>
+  </ul>
+
+  <script>
+    import { ready } from '../../intern/app';
+    import { openCustomerPanel } from '../../intern/customer-form';
+    import type { Customer, Staff } from '../../intern/types';
+    import { avatar, daysUntil, formatDate, h, hostingState, serviceLabel } from '../../intern/ui';
+
+    ready().then(async ({ store, session }) => {
+      if (!session.staff) return;
+      const me = session.staff;
+      const list = document.querySelector<HTMLElement>('[data-list]')!;
+      const search = document.querySelector<HTMLInputElement>('[data-search]')!;
+      const mine = document.querySelector<HTMLInputElement>('[data-mine]')!;
+      const filterBtns = [...document.querySelectorAll<HTMLButtonElement>('[data-filter] button')];
+
+      let staff: Staff[] = [];
+      let items: Customer[] = [];
+      let filter = 'alle';
+
+      const hostingPill = (c: Customer) => {
+        const state = hostingState(c.hosting_until);
+        if (!state || !c.hosting_until) return null;
+        const d = daysUntil(c.hosting_until);
+        const text = state === 'over' ? `Hosting abgelaufen seit ${formatDate(c.hosting_until)}` : state === 'soon' ? `Hosting läuft in ${d} ${d === 1 ? 'Tag' : 'Tagen'} ab` : `Hosting bis ${formatDate(c.hosting_until)}`;
+        return h('span', { class: `pill pill-${state}` }, text);
+      };
+
+      const upsert = (c: Customer | null, removedId?: string) => {
+        if (removedId) items = items.filter((x) => x.id !== removedId);
+        if (c) items = [...items.filter((x) => x.id !== c.id), c].sort((a, b) => a.business.localeCompare(b.business, 'de'));
+        render();
+      };
+
+      const open = (c?: Customer) =>
+        openCustomerPanel({
+          store,
+          staff,
+          customer: c,
+          prefill: c ? undefined : { assignee: me.id, services: [] },
+          onSaved: (saved) => upsert(saved, saved ? undefined : c?.id),
+        });
+
+      const render = () => {
+        const q = search.value.trim().toLowerCase();
+        const shown = items.filter((c) => {
+          if (filter === 'hosting' && !['soon', 'over'].includes(hostingState(c.hosting_until) ?? '')) return false;
+          if (mine.checked && c.assignee !== me.id) return false;
+          if (q && ![c.business, c.contact_name, c.address, c.email].some((t) => t?.toLowerCase().includes(q))) return false;
+          return true;
+        });
+
+        if (!shown.length) {
+          list.replaceChildren(
+            h(
+              'li',
+              { class: 'empty' },
+              h('strong', {}, items.length ? 'Keine Kunden für diesen Filter.' : 'Noch keine Kunden.'),
+              items.length ? 'Ändert den Filter oder die Suche.' : 'Legt den ersten Kunden an oder übernehmt eine Anfrage als Kunde.',
+            ),
+          );
+          return;
+        }
+
+        list.replaceChildren(
+          ...shown.map((c) =>
+            h(
+              'li',
+              {},
+              h(
+                'button',
+                { class: 'row', type: 'button', onclick: () => open(c) },
+                avatar(staff.find((s) => s.id === c.assignee)),
+                h('span', { class: 'row-main' }, h('span', { class: 'row-title' }, c.business), h('span', { class: 'row-sub' }, [c.contact_name, c.address].filter(Boolean).join(', ') || '–')),
+                h('span', { class: 'chips' }, c.services.map((s) => h('span', { class: 'chip' }, serviceLabel[s]))),
+                h('span', { class: 'row-meta' }, hostingPill(c)),
+              ),
+            ),
+          ),
+        );
+      };
+
+      document.querySelector('[data-new]')!.addEventListener('click', () => open());
+      filterBtns.forEach((b) =>
+        b.addEventListener('click', () => {
+          filter = b.dataset.f ?? 'alle';
+          filterBtns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+          render();
+        }),
+      );
+      search.addEventListener('input', render);
+      mine.addEventListener('change', render);
+
+      try {
+        [staff, items] = await Promise.all([store.staff(), store.customers()]);
+        render();
+        // Direktlink auf einen Kunden, z.B. aus einer Anfrage
+        const target = items.find((c) => c.id === location.hash.slice(1));
+        if (target) open(target);
+      } catch {
+        list.replaceChildren(h('li', { class: 'empty' }, h('strong', {}, 'Kunden konnten nicht geladen werden.'), 'Prüft die Verbindung und ladet die Seite neu.'));
+      }
+    });
+  </script>
+</Intern>

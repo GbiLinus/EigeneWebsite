@@ -1,0 +1,99 @@
+---
+import Intern from '../../layouts/Intern.astro';
+---
+
+<Intern title="Passwort" active="password">
+  <header class="page-head">
+    <div>
+      <h1 class="page-title">Passwort ändern</h1>
+      <p class="page-sub">Apple Passwörter schlägt ein starkes Passwort vor und speichert es für euer Konto.</p>
+    </div>
+  </header>
+
+  <form class="pw-card glass" method="post" data-pw-form novalidate>
+    <!-- Verstecktes Benutzerfeld: so ordnet der Schlüsselbund das neue Passwort dem richtigen Konto zu -->
+    <input class="sr-only" type="email" name="username" autocomplete="username" tabindex="-1" aria-hidden="true" data-username />
+    <div class="f">
+      <label for="new-password">Neues Passwort</label>
+      <input
+        id="new-password"
+        name="new-password"
+        type="password"
+        autocomplete="new-password"
+        passwordrules="minlength: 12; required: lower; required: upper; required: digit;"
+        minlength="12"
+        required
+        aria-describedby="pw-rules"
+      />
+      <p class="saved-hint" id="pw-rules">Mindestens 12 Zeichen mit Groß- und Kleinbuchstaben und einer Ziffer.</p>
+    </div>
+    <div class="f">
+      <label for="confirm-password">Neues Passwort wiederholen</label>
+      <input id="confirm-password" name="confirm-password" type="password" autocomplete="new-password" minlength="12" required />
+    </div>
+    <p class="login-error" role="alert" data-pw-error></p>
+    <button class="btn-s btn-accent" type="submit" data-pw-submit>Passwort speichern</button>
+  </form>
+
+  <style>
+    .pw-card {
+      --r: var(--r-lg);
+      display: grid;
+      gap: 1.1rem;
+      max-width: 28rem;
+      padding: 1.5rem;
+    }
+
+    .pw-card .btn-s {
+      justify-self: start;
+    }
+
+    .login-error {
+      margin: 0;
+      font-size: 0.875rem;
+      color: #ffa99c;
+    }
+
+    .login-error:empty {
+      display: none;
+    }
+  </style>
+
+  <script>
+    import { ready } from '../../intern/app';
+    import { toast, urls } from '../../intern/ui';
+
+    ready().then(({ store, session }) => {
+      const form = document.querySelector<HTMLFormElement>('[data-pw-form]')!;
+      const user = form.querySelector<HTMLInputElement>('[data-username]')!;
+      const error = form.querySelector<HTMLElement>('[data-pw-error]')!;
+      const submit = form.querySelector<HTMLButtonElement>('[data-pw-submit]')!;
+      user.value = session.email;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const pw = (form.elements.namedItem('new-password') as HTMLInputElement).value;
+        const confirm = (form.elements.namedItem('confirm-password') as HTMLInputElement).value;
+        error.textContent = '';
+        if (pw.length < 12 || !/[a-z]/.test(pw) || !/[A-Z]/.test(pw) || !/\d/.test(pw)) {
+          error.textContent = 'Das Passwort braucht mindestens 12 Zeichen, Groß- und Kleinbuchstaben und eine Ziffer.';
+          return;
+        }
+        if (pw !== confirm) {
+          error.textContent = 'Die beiden Passwörter sind nicht gleich.';
+          return;
+        }
+        submit.disabled = true;
+        try {
+          await store.updatePassword(pw);
+          toast('Passwort gespeichert');
+          // Seitenwechsel, damit Safari das neue Passwort übernimmt
+          setTimeout(() => location.assign(urls().home), 700);
+        } catch (err) {
+          error.textContent = err instanceof Error && store.demo ? err.message : 'Passwort nicht gespeichert. Versucht es noch einmal.';
+          submit.disabled = false;
+        }
+      });
+    });
+  </script>
+</Intern>

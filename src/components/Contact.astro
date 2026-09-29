@@ -1,5 +1,6 @@
 ---
 import { site } from '../config/site';
+import { isConfigured } from '../intern/store';
 import { t, routes, type Lang } from '../i18n/ui';
 
 interface Props {
@@ -10,6 +11,11 @@ const { lang } = Astro.props;
 const d = t(lang);
 const c = d.contact;
 const { email, phone, instagram, linkedin, formEndpoint } = site.contact;
+const connected = Boolean(formEndpoint) || isConfigured;
+const booking = [
+  { name: 'Linus', link: site.booking.linus },
+  { name: 'Kristian', link: site.booking.kristian },
+].filter((b) => b.link);
 const interests = Object.entries(c.interests) as [string, string][];
 ---
 
@@ -27,10 +33,29 @@ const interests = Object.entries(c.interests) as [string, string][];
         {linkedin && <a class="link" href={linkedin} rel="noopener">LinkedIn</a>}
         <p class="contact-place">{c.place}</p>
       </div>
+
+      {
+        booking.length > 0 && (
+          <div class="contact-booking">
+            <p class="t-small">{c.booking}</p>
+            <div class="contact-booking-links">
+              {booking.map((b) => (
+                <a class="btn btn-ghost glass" href={b.link!} target="_blank" rel="noopener" data-spec>
+                  {c.bookingWith} {b.name}
+                </a>
+              ))}
+            </div>
+          </div>
+        )
+      }
     </div>
 
     <div class="form-card glass" data-spec>
-      <form class="form" novalidate data-form data-endpoint={formEndpoint ?? ''}>
+      <form class="form" novalidate data-form data-endpoint={formEndpoint ?? ''} data-lang={lang}>
+        <div class="hp" aria-hidden="true">
+          <label for={`f-website-${lang}`}>{c.honeypot}</label>
+          <input id={`f-website-${lang}`} name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
         <fieldset class="interests">
           <legend>{c.interest}</legend>
           <div class="interest-list">
@@ -95,7 +120,7 @@ const interests = Object.entries(c.interests) as [string, string][];
         </svg>
         <p class="t-h3">{c.successTitle}</p>
         <p class="t-body">{c.successText}</p>
-        {!formEndpoint && <p class="t-small preview-note">{c.previewNote}</p>}
+        {!connected && <p class="t-small preview-note">{c.previewNote}</p>}
         <button class="btn btn-ghost glass" type="button" data-again>{c.again}</button>
       </div>
     </div>
@@ -127,6 +152,27 @@ const interests = Object.entries(c.interests) as [string, string][];
   .contact-place {
     margin: 0;
     font-weight: 560;
+  }
+
+  .contact-booking {
+    display: grid;
+    gap: 0.6rem;
+    margin-top: 1rem;
+  }
+
+  .contact-booking-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  /* Fangfeld für Spam-Bots, für Menschen unsichtbar */
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
   }
 
   .form-card {
@@ -405,6 +451,7 @@ const interests = Object.entries(c.interests) as [string, string][];
     const label = submit.querySelector<HTMLElement>('.submit-label')!;
     const formError = form.querySelector<HTMLElement>('[data-form-error]')!;
     const endpoint = form.dataset.endpoint;
+    const lang = form.dataset.lang === 'en' ? 'en' : 'de';
 
     const fields = ['name', 'email', 'message'] as const;
 
@@ -466,16 +513,31 @@ const interests = Object.entries(c.interests) as [string, string][];
       if (!validate()) return;
       setBusy(true);
       try {
-        if (endpoint) {
+        const fd = new FormData(form);
+        const value = (k: string) => String(fd.get(k) ?? '').trim();
+        if (value('website')) {
+          // Fangfeld ausgefüllt: vermutlich ein Bot, nichts speichern
+          await new Promise((r) => setTimeout(r, 900));
+        } else if (endpoint) {
           const res = await fetch(endpoint, {
             method: 'POST',
             headers: { Accept: 'application/json' },
-            body: new FormData(form),
+            body: fd,
           });
           if (!res.ok) throw new Error(String(res.status));
         } else {
-          // Vorschau ohne Versand
-          await new Promise((r) => setTimeout(r, 900));
+          // Landet im Mitarbeiterbereich (Supabase, im Demo-Modus nur in diesem Browser)
+          const { getStore } = await import('../intern/store');
+          const store = await getStore();
+          await store.createEnquiry({
+            name: value('name'),
+            business: value('business') || null,
+            email: value('email'),
+            phone: value('phone') || null,
+            message: value('message'),
+            interests: fd.getAll('interest').map(String) as ('website' | 'nfc' | 'hosting')[],
+            lang,
+          });
         }
         form.reset();
         showSuccess();

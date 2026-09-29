@@ -39,6 +39,40 @@ Zielgruppe: lokale Betriebe, vor allem Restaurants, Cafés und Hotels im Osnabr�
 
 Easter Egg: Konami-Code (↑ ↑ ↓ ↓ ← → ← → B A) lässt goldene Sterne statt Sole-Tropfen fallen.
 
+## Mitarbeiterbereich
+
+Nur für Linus und Kristian. Nirgends auf der Website verlinkt, für Suchmaschinen gesperrt.
+
+| Adresse | Inhalt |
+| --- | --- |
+| `/anmelden/` | Login (eigene Seite, getrennt vom Bereich) |
+| `/intern/` | Übersicht: neue Anfragen, eigene offene Anfragen, fälliges Hosting, Kunden |
+| `/intern/anfragen/` | Alle Anfragen aus dem Kontaktformular mit Status, Zuständigkeit und Notizen. Eine Anfrage lässt sich als Kunde übernehmen |
+| `/intern/kunden/` | Kundenliste mit Leistungen und Hosting-Laufzeit, Markierung bei fälliger Verlängerung |
+| `/intern/termine/` | Buchungslinks von Cal.com und Anleitung für den Apple-Kalender |
+| `/intern/passwort/` | Passwort ändern |
+
+**Apple Passwörter:** Das Login-Formular nutzt `autocomplete="username"` und `current-password`, nach der Anmeldung folgt ein echter Seitenwechsel. Safari bietet danach das Sichern an. Beim Ändern schlägt Apple über `autocomplete="new-password"` und `passwordrules` ein starkes Passwort vor (mindestens 12 Zeichen). `/.well-known/change-password` führt zu „Passwort ändern“, damit Apple Passwörter direkt dorthin springen kann. Der Bereich lässt sich auf dem iPhone über „Zum Home-Bildschirm“ wie eine App ablegen.
+
+**Demo-Modus:** Ohne Supabase-Zugangsdaten läuft alles mit Beispieldaten im Browser. Anmeldung mit `linus@webdesignbr.de` oder `kristian@webdesignbr.de`, Passwort `vorschau`. Anfragen aus dem Kontaktformular landen dann nur im eigenen Browser.
+
+### Supabase einrichten
+
+1. Auf supabase.com ein Projekt anlegen, Region **Frankfurt (eu-central-1)**.
+2. Unter Settings den Vertrag zur Auftragsverarbeitung (DPA) abschließen.
+3. Authentication > Sign In / Providers: „Allow new users to sign up“ ausschalten, Mindestlänge für Passwörter auf 12 setzen.
+4. Authentication > URL Configuration: Site URL auf die Domain setzen, `https://<domain>/intern/passwort/` als Redirect URL eintragen.
+5. SQL Editor: `supabase/schema.sql` ausführen.
+6. Authentication > Users: Linus und Kristian einladen („Invite user“). Über den Link in der Einladung legt jeder sein Passwort fest.
+7. Die beiden User-IDs in den `insert`-Befehl am Ende von `supabase/schema.sql` eintragen und ausführen.
+8. `PUBLIC_SUPABASE_URL` und `PUBLIC_SUPABASE_KEY` (Publishable Key) beim Hosting als Umgebungsvariablen eintragen, lokal in `.env` (Vorlage: `.env.example`).
+
+Hinweis: Kostenlose Supabase-Projekte pausieren nach einer Woche ohne Nutzung. Abhilfe: ein automatischer wöchentlicher Aufruf oder der Pro-Tarif.
+
+### Cal.com einrichten
+
+Jeder legt ein eigenes Konto an und verbindet seinen Apple-Kalender. Die Schritte stehen unter `/intern/termine/`. Die Buchungslinks kommen in `site.booking` in `src/config/site.ts`, danach erscheint auf der Website „Termin mit Linus“ und „Termin mit Kristian“.
+
 ## Inhalte pflegen
 
 - **Firmendaten, Kontakt, Preise:** `src/config/site.ts`. Felder mit `null` werden auf der Seite ausgeblendet.
@@ -63,8 +97,12 @@ npm run preview
 - [ ] Kleinunternehmer nach § 19 UStG? Preise netto oder brutto? → `site.pricing.taxNote`
 - [ ] Hosting-Umfang: Sind Domain, E-Mail und Updates enthalten?
 - [ ] Hosting-Anbieter wählen (z. B. Vercel, Netlify, Cloudflare Pages) und in der Datenschutzerklärung nennen
-- [ ] Ziel für das Kontaktformular (`site.contact.formEndpoint`)
-- [ ] Datenschutzerklärung fertigstellen und prüfen lassen
+- [ ] Supabase-Projekt einrichten (siehe oben), sonst erreichen Anfragen das Team nicht
+- [ ] Cal.com-Konten und Buchungslinks für Linus und Kristian
+- [ ] Optional: E-Mail-Benachrichtigung bei neuer Anfrage (Supabase Database Webhook)
+- [ ] Optional: Spam-Schutz mit Captcha, falls das Fangfeld nicht reicht
+- [ ] Optional: Mitarbeiterbereich unter eigener Subdomain, z. B. `intern.webdesignbr.de`
+- [ ] Datenschutzerklärung fertigstellen und prüfen lassen, Supabase und Cal.com aufnehmen
 - [ ] Erste Projekte
 
 ## Annahmen im Text, bitte prüfen
@@ -79,7 +117,7 @@ npm run preview
 
 1. Alle offenen Punkte oben erledigt, Vorschau-Hinweise auf Impressum und Datenschutz verschwunden
 2. Domain in `astro.config.mjs` und `src/config/site.ts` eingetragen
-3. Kontaktformular mit echtem Versand getestet
+3. Supabase eingetragen, Kontaktformular getestet: Anfrage erscheint unter `/intern/anfragen/`
 4. Test auf iPhone (Safari), Android (Chrome) und Desktop (Chrome, Safari, Firefox)
 5. Lighthouse-Werte prüfen
 6. Google-Unternehmensprofil für WebDesignBR anlegen

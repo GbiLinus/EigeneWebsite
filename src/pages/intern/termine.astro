@@ -1,0 +1,176 @@
+---
+import Intern from '../../layouts/Intern.astro';
+import { site } from '../../config/site';
+
+const people = [
+  { key: 'linus', name: 'Linus Asche', initials: 'LA', tone: 'sole', link: site.booking.linus },
+  { key: 'kristian', name: 'Kristian Wachholz', initials: 'KW', tone: 'abend', link: site.booking.kristian },
+] as const;
+---
+
+<Intern title="Termine" active="appointments">
+  <header class="page-head">
+    <div>
+      <h1 class="page-title">Termine</h1>
+      <p class="page-sub">Kunden buchen über Cal.com. Jeder hat einen eigenen Kalender, verbunden mit seinem Apple-Kalender.</p>
+    </div>
+    <a class="btn-s" href="https://app.cal.com/bookings/upcoming" target="_blank" rel="noopener">Alle Buchungen in Cal.com</a>
+  </header>
+
+  <div class="cal-grid">
+    {
+      people.map((p) => (
+        <section class="cal-card glass" data-spec>
+          <div class="cal-head">
+            <span class="avatar avatar-md" data-tone={p.tone}>
+              {p.initials}
+            </span>
+            <div>
+              <h2 class="section-t" style="margin:0">
+                {p.name}
+              </h2>
+              {p.link ? <p class="cal-status is-on">Buchungsseite aktiv</p> : <p class="cal-status">Noch nicht eingerichtet</p>}
+            </div>
+          </div>
+          {p.link ? (
+            <div class="cal-link">
+              <code>{p.link.replace(/^https?:\/\//, '')}</code>
+              <div class="contact-links">
+                <a class="btn-s btn-accent" href={p.link} target="_blank" rel="noopener">
+                  Buchungsseite öffnen
+                </a>
+                <button class="btn-s" type="button" data-copy={p.link}>
+                  Link kopieren
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p class="page-sub">Sobald der Buchungslink in src/config/site.ts eingetragen ist, erscheint er hier und auf der Website.</p>
+          )}
+        </section>
+      ))
+    }
+  </div>
+
+  <section class="guide glass">
+    <h2 class="section-t">Apple-Kalender verbinden</h2>
+    <p class="page-sub">Einmal pro Person. Danach landen gebuchte Termine in eurem Apple-Kalender, und private Termine blockieren die Buchung.</p>
+    <ol class="steps-i">
+      <li>
+        <strong>Konto anlegen.</strong> Auf cal.com mit eurer Firmen-E-Mail registrieren. Jeder bekommt sein eigenes Konto.
+      </li>
+      <li>
+        <strong>App-spezifisches Passwort erstellen.</strong> Auf account.apple.com anmelden, unter „Anmelden und Sicherheit“ ein app-spezifisches Passwort mit dem Namen „Cal.com“ erzeugen.
+      </li>
+      <li>
+        <strong>Apple-Kalender in Cal.com hinzufügen.</strong> In Cal.com unter „Apps“ nach „Apple Calendar“ suchen, installieren und Apple-ID-E-Mail plus das app-spezifische Passwort eintragen.
+      </li>
+      <li>
+        <strong>Kalender auswählen.</strong> In den Cal.com-Einstellungen unter „Kalender“ festlegen, welche Kalender auf Konflikte geprüft werden und in welchen neue Buchungen eingetragen werden.
+      </li>
+      <li>
+        <strong>Buchungslink eintragen.</strong> Den Link eurer Buchungsseite in src/config/site.ts eintragen lassen. Er erscheint dann hier und als „Termin buchen“ auf der Website.
+      </li>
+    </ol>
+  </section>
+
+  <style>
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .cal-card {
+      --r: var(--r-lg);
+      display: grid;
+      gap: 1rem;
+      align-content: start;
+      padding: 1.35rem;
+    }
+
+    .cal-head {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .cal-status {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin: 0.2rem 0 0;
+      font-size: 0.8125rem;
+      color: var(--text-faint);
+    }
+
+    .cal-status::before {
+      content: '';
+      width: 0.45rem;
+      height: 0.45rem;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .cal-status.is-on {
+      color: var(--ok);
+    }
+
+    .cal-link {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .cal-link code {
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--r-sm);
+      font-size: 0.875rem;
+      background: rgb(4 27 32 / 0.5);
+      overflow-wrap: anywhere;
+    }
+
+    .guide {
+      --r: var(--r-lg);
+      display: grid;
+      gap: 0.5rem;
+      padding: 1.5rem;
+    }
+
+    .steps-i {
+      display: grid;
+      gap: 0.9rem;
+      margin: 1rem 0 0;
+      padding-left: 1.25rem;
+      color: var(--text-soft);
+    }
+
+    .steps-i strong {
+      color: var(--salz);
+      font-weight: 640;
+    }
+
+    .steps-i li::marker {
+      color: var(--sole);
+      font-weight: 700;
+    }
+  </style>
+
+  <script>
+    import { ready } from '../../intern/app';
+    import { toast } from '../../intern/ui';
+
+    ready().then(() => {
+      document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((btn) =>
+        btn.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(btn.dataset.copy ?? '');
+            toast('Link kopiert');
+          } catch {
+            toast('Kopieren nicht möglich. Link bitte markieren und kopieren.', 'error');
+          }
+        }),
+      );
+    });
+  </script>
+</Intern>

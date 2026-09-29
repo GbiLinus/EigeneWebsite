@@ -24,6 +24,13 @@ export const site = {
     formEndpoint: null as string | null,
   },
 
+  // Cal.com-Buchungslinks, z.B. 'https://cal.com/linus-webdesignbr'.
+  // Solange null, erscheint auf der Website kein "Termin buchen".
+  booking: {
+    linus: null as string | null,
+    kristian: null as string | null,
+  },
+
   // Angaben für das Impressum.
   company: {
     owner: null as string | null, // z.B. 'Linus Asche'

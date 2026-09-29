@@ -1,0 +1,290 @@
+---
+import '../styles/global.css';
+import '../styles/intern.css';
+import { isConfigured } from '../intern/store';
+import { DEMO_PASSWORD } from '../intern/demo';
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Anmelden – WebDesignBR intern</title>
+    <meta name="theme-color" content="#041b20" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/intern.webmanifest" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="WDBR intern" />
+  </head>
+  <body class="intern login-page" data-url-home="/intern/" data-url-password="/intern/passwort/">
+    <div class="scene" aria-hidden="true">
+      <div class="blob blob-sole"></div>
+      <div class="blob blob-abend"></div>
+    </div>
+
+    <main class="login">
+      <div class="login-card glass">
+        <div class="login-orb" aria-hidden="true">BR</div>
+
+        <!-- Anmelden: Felder so benannt, dass Apple Passwörter sie erkennt und speichert -->
+        <section data-view="login">
+          <h1 class="page-title">Anmelden</h1>
+          <p class="page-sub">Mitarbeiterbereich von WebDesignBR</p>
+
+          <form class="login-form" method="post" data-login-form novalidate>
+            <div class="f">
+              <label for="login-email">E-Mail</label>
+              <input
+                id="login-email"
+                name="email"
+                type="email"
+                inputmode="email"
+                autocomplete="username"
+                autocapitalize="none"
+                autocorrect="off"
+                spellcheck="false"
+                required
+              />
+            </div>
+            <div class="f">
+              <label for="login-password">Passwort</label>
+              <div class="pw">
+                <input id="login-password" name="password" type="password" autocomplete="current-password" required />
+                <button class="pw-toggle" type="button" data-pw-toggle aria-controls="login-password" aria-pressed="false">Zeigen</button>
+              </div>
+            </div>
+            <p class="login-error" role="alert" data-error></p>
+            <button class="btn btn-primary login-submit" type="submit" data-submit>Anmelden</button>
+          </form>
+
+          <button class="link-btn login-switch" type="button" data-show="reset">Passwort vergessen?</button>
+        </section>
+
+        <section data-view="reset" hidden>
+          <h1 class="page-title">Passwort zurücksetzen</h1>
+          <p class="page-sub">Ihr bekommt einen Link per E-Mail. Darüber legt ihr ein neues Passwort fest.</p>
+          <form class="login-form" method="post" data-reset-form novalidate>
+            <div class="f">
+              <label for="reset-email">E-Mail</label>
+              <input id="reset-email" name="email" type="email" inputmode="email" autocomplete="username" autocapitalize="none" spellcheck="false" required />
+            </div>
+            <p class="login-error" role="alert" data-reset-msg></p>
+            <button class="btn btn-primary login-submit" type="submit">Link senden</button>
+          </form>
+          <button class="link-btn login-switch" type="button" data-show="login">Zurück zur Anmeldung</button>
+        </section>
+
+        {
+          !isConfigured && (
+            <p class="login-demo">
+              Demo-Modus: <strong>linus@webdesignbr.de</strong> oder <strong>kristian@webdesignbr.de</strong>, Passwort <strong>{DEMO_PASSWORD}</strong>
+            </p>
+          )
+        }
+      </div>
+    </main>
+
+    <style>
+      .login {
+        display: grid;
+        place-items: center;
+        min-height: 100dvh;
+        padding: 1.5rem 1rem;
+      }
+
+      .login-card {
+        --r: var(--r-xl);
+        display: grid;
+        gap: 1.5rem;
+        width: min(100%, 25rem);
+        padding: clamp(1.75rem, 5vw, 2.5rem);
+      }
+
+      .login-orb {
+        display: grid;
+        place-items: center;
+        width: 3.5rem;
+        height: 3.5rem;
+        border-radius: 50%;
+        font-weight: 850;
+        font-stretch: 120%;
+        letter-spacing: -0.04em;
+        color: rgb(4 27 32 / 0.85);
+        background:
+          radial-gradient(circle at 30% 25%, rgb(255 255 255 / 0.6), transparent 40%),
+          linear-gradient(150deg, var(--sole), var(--abend));
+        box-shadow: 0 12px 30px -10px rgb(59 227 201 / 0.6);
+      }
+
+      .login section {
+        display: grid;
+        gap: 0.4rem;
+      }
+
+      .login-form {
+        display: grid;
+        gap: 1.1rem;
+        margin-top: 1.25rem;
+      }
+
+      .pw {
+        position: relative;
+      }
+
+      .pw input {
+        padding-right: 5rem;
+      }
+
+      .pw-toggle {
+        position: absolute;
+        top: 50%;
+        right: 0.4rem;
+        padding: 0.35rem 0.7rem;
+        border: 0;
+        border-radius: 999px;
+        font: inherit;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--text-soft);
+        background: rgb(237 246 243 / 0.08);
+        transform: translateY(-50%);
+        cursor: pointer;
+      }
+
+      .login-submit {
+        width: 100%;
+        margin-top: 0.25rem;
+      }
+
+      .login-error {
+        margin: 0;
+        font-size: 0.875rem;
+        color: #ffa99c;
+      }
+
+      .login-error:empty {
+        display: none;
+      }
+
+      .login-error.is-ok {
+        color: var(--sole);
+      }
+
+      .login-switch {
+        justify-content: center;
+        margin-top: 0.5rem;
+      }
+
+      .login-demo {
+        margin: 0;
+        padding: 0.75rem 1rem;
+        border-radius: var(--r-md);
+        font-size: 0.8125rem;
+        line-height: 1.5;
+        color: var(--gold);
+        background: rgb(255 194 75 / 0.08);
+        overflow-wrap: anywhere;
+      }
+
+      .login-demo strong {
+        font-weight: 700;
+      }
+    </style>
+
+    <script>
+      import { getStore } from '../intern/store';
+
+      const body = document.body.dataset;
+      const home = body.urlHome ?? '/intern/';
+      const param = new URLSearchParams(location.search).get('weiter');
+      // Nur Ziele im Mitarbeiterbereich, keine fremden Adressen
+      const next = param && /^\/intern\/[\w\-/]*$/.test(param) ? param : home;
+
+      const views = document.querySelectorAll<HTMLElement>('[data-view]');
+      document.querySelectorAll<HTMLButtonElement>('[data-show]').forEach((btn) =>
+        btn.addEventListener('click', () => {
+          views.forEach((v) => (v.hidden = v.dataset.view !== btn.dataset.show));
+          const email = (document.getElementById('login-email') as HTMLInputElement).value;
+          const resetEmail = document.getElementById('reset-email') as HTMLInputElement;
+          if (btn.dataset.show === 'reset' && email) resetEmail.value = email;
+          document.querySelector<HTMLInputElement>(`[data-view="${btn.dataset.show}"] input`)?.focus();
+        }),
+      );
+
+      const toggle = document.querySelector<HTMLButtonElement>('[data-pw-toggle]')!;
+      const pw = document.getElementById('login-password') as HTMLInputElement;
+      toggle.addEventListener('click', () => {
+        const show = pw.type === 'password';
+        pw.type = show ? 'text' : 'password';
+        toggle.textContent = show ? 'Verbergen' : 'Zeigen';
+        toggle.setAttribute('aria-pressed', String(show));
+      });
+
+      const message = (err: unknown) => {
+        const m = err instanceof Error ? err.message : '';
+        if (/invalid login credentials/i.test(m)) return 'E-Mail oder Passwort stimmt nicht.';
+        if (/email not confirmed/i.test(m)) return 'Die E-Mail-Adresse ist noch nicht bestätigt. Öffnet zuerst den Link aus der Einladung.';
+        if (/fetch|network/i.test(m)) return 'Keine Verbindung. Prüft euer Internet und versucht es noch einmal.';
+        return 'Anmeldung nicht möglich. Versucht es noch einmal.';
+      };
+
+      getStore().then(async (store) => {
+        // Schon angemeldet: direkt weiter
+        if (await store.session()) {
+          location.replace(next);
+          return;
+        }
+
+        const form = document.querySelector<HTMLFormElement>('[data-login-form]')!;
+        const error = form.querySelector<HTMLElement>('[data-error]')!;
+        const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          error.textContent = '';
+          const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
+          const password = pw.value;
+          if (!email || !password) {
+            error.textContent = 'Bitte E-Mail und Passwort eingeben.';
+            return;
+          }
+          submit.disabled = true;
+          submit.textContent = 'Wird angemeldet';
+          try {
+            await store.signIn(email, password);
+            // Echte Seitennavigation: danach bietet Safari das Sichern im Schlüsselbund an
+            location.assign(next);
+          } catch (err) {
+            error.textContent = message(err);
+            submit.disabled = false;
+            submit.textContent = 'Anmelden';
+            pw.select();
+          }
+        });
+
+        const resetForm = document.querySelector<HTMLFormElement>('[data-reset-form]')!;
+        const resetMsg = resetForm.querySelector<HTMLElement>('[data-reset-msg]')!;
+        resetForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const email = (resetForm.elements.namedItem('email') as HTMLInputElement).value.trim();
+          resetMsg.classList.remove('is-ok');
+          if (!email) {
+            resetMsg.textContent = 'Bitte eure E-Mail-Adresse eingeben.';
+            return;
+          }
+          try {
+            const target = new URL(body.urlPassword ?? '/intern/passwort/', location.href).href;
+            await store.requestPasswordReset(email, target);
+            resetMsg.classList.add('is-ok');
+            resetMsg.textContent = 'Falls die Adresse zu einem Konto gehört, ist der Link unterwegs.';
+          } catch (err) {
+            resetMsg.textContent = message(err);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
