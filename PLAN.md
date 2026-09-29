@@ -13,7 +13,7 @@ Zielgruppe: lokale Betriebe, vor allem Restaurants, Cafés und Hotels im Osnabr�
 | Sprachen | Deutsch unter `/`, Englisch unter `/en/`. Erster Besuch mit nicht-deutschem Browser landet auf `/en/`, danach zählt die gewählte Sprache |
 | Leistungen | NFC Google Tags (Aufsteller, Sticker, Tischaufkleber), Websites, Einrichtung und Hosting |
 | Preise | Website 250–750 €, Hosting 50–100 € im Jahr. Aufsteller und Sticker: 1 Stück 40 €, 2 Stück 70 €, 3 Stück 95 €, mehr auf Anfrage. Tischaufkleber mit NFC (für WLAN, Speisekarte oder Bewertungen): erster 25 €, zweiter 20 €, dritter 17,50 €, jeder weitere 15 € |
-| Mega-Bundle | 1.000–1.200 €. Kompakt: 1 Aufsteller oder Sticker, 1 Tischaufkleber (z. B. WLAN), Website nach Wünschen mit kleinen Einschränkungen, Einrichtung, 1 Jahr Hosting gratis. Komplett: 2 Aufsteller oder Sticker, bis zu 25 Tischaufkleber, ausführliche Website ganz nach Wünschen, Einrichtung, 1 Jahr Hosting gratis, auf Wunsch eigene Domain |
+| Mega-Bundle | 800–1.100 €. Kompakt (800 €): 1 Aufsteller oder Sticker, 1 Tischaufkleber (z. B. WLAN), Website nach Wünschen mit kleinen Einschränkungen, Einrichtung, 1 Jahr Hosting gratis. Komplett (1.100 €): 2 Aufsteller oder Sticker, bis zu 25 Tischaufkleber, ausführliche Website ganz nach Wünschen, Einrichtung, 1 Jahr Hosting gratis, auf Wunsch eigene Domain |
 | Fotos | Vorerst keine. Team als Monogramm-Karten, Fotos später über ein Feld nachrüstbar |
 | Portfolio | Leerer Zustand mit Einladung, Projekte kommen als Markdown-Dateien dazu |
 | Deadline | Keine. Erst komplett bauen, dann einmal sauber launchen |

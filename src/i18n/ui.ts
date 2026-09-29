@@ -235,7 +235,7 @@ const de = {
       },
       {
         q: 'Was ist im Mega-Bundle enthalten?',
-        a: 'Alles für den Start: eine fertige Website nach euren Wünschen, ein bis zwei Aufsteller oder Sticker, bis zu 25 Tischaufkleber mit NFC, die Einrichtung und das erste Jahr Hosting. Je nach Umfang kostet es zwischen 1.000 und 1.200 €.',
+        a: 'Alles für den Start: eine fertige Website nach euren Wünschen, ein bis zwei Aufsteller oder Sticker, bis zu 25 Tischaufkleber mit NFC, die Einrichtung und das erste Jahr Hosting. Je nach Umfang kostet es zwischen 800 und 1.100 €.',
       },
       {
         q: 'Brauchen wir schon eine eigene Domain?',
@@ -524,7 +524,7 @@ const en: Dict = {
       },
       {
         q: 'What is in the mega bundle?',
-        a: 'Everything to get started: a finished website to your wishes, one or two stands or stickers, up to 25 NFC table stickers, setup and the first year of hosting. Depending on scope it costs between €1,000 and €1,200.',
+        a: 'Everything to get started: a finished website to your wishes, one or two stands or stickers, up to 25 NFC table stickers, setup and the first year of hosting. Depending on scope it costs between €800 and €1,100.',
       },
       {
         q: 'Do we need our own domain already?',
