@@ -123,7 +123,8 @@ npm run preview
 
 - [ ] Gewerbe anmelden (Gemeinde Bad Rothenfelde). Danach kommt vom Finanzamt der Fragebogen zur steuerlichen Erfassung, dort entscheidet ihr über die Kleinunternehmerregelung. Zu zweit seid ihr automatisch eine GbR
 - [ ] Domain (steuert auch die Firmen-E-Mails)
-- [ ] Firmen-E-Mails, Telefon, Socials → `site.contact`
+- [x] Kontakt-E-Mail vorerst `linus.webdesignbr@gmail.com` (später Adresse mit eigener Domain)
+- [ ] Telefon, Socials → `site.contact`
 - [ ] Impressum: Inhaber, Rechtsform, Anschrift, ggf. USt-ID → `site.company`
 - [ ] Kleinunternehmer nach § 19 UStG? Preise netto oder brutto? → `site.pricing.taxNote` (noch unklar, mit Steuerberater oder Finanzamt klären)
 - [ ] Hosting-Umfang: Sind Domain, E-Mail und Updates enthalten?

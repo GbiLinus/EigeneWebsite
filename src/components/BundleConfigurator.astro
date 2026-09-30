@@ -10,6 +10,8 @@ interface Props {
 const { lang } = Astro.props;
 const d = t(lang);
 const c = d.pricing.config;
+const mail = site.contact.email;
+const errorMsg = mail ? `${c.error} ${d.contact.errorMail.replace('{email}', mail)}` : c.error;
 const f = d.contact;
 const id = (name: string) => `cfg-${name}-${lang}`;
 const connected = Boolean(site.contact.formEndpoint) || isConfigured;
@@ -224,7 +226,7 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
         <p class="cfg-price t-num" data-cfg-price></p>
         <p class="cfg-note" data-note></p>
         <ul class="cfg-lines" role="list" data-lines></ul>
-        <p class="cfg-error cfg-form-error" role="alert" data-form-error data-msg={c.error}></p>
+        <p class="cfg-error cfg-form-error" role="alert" data-form-error data-msg={errorMsg}></p>
         <button class="btn btn-primary cfg-send" type="submit" data-send data-label={c.summary.send} data-busy={c.summary.sending}>
           {c.summary.send}
         </button>

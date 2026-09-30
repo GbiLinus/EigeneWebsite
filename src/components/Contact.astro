@@ -17,6 +17,8 @@ const booking = [
   { name: 'Kristian', link: site.booking.kristian },
 ].filter((b) => b.link);
 const interests = Object.entries(c.interests) as [string, string][];
+// Fehlertext mit E-Mail als Ausweg, falls das Senden scheitert
+const errorMsg = email ? `${c.error} ${c.errorMail.replace('{email}', email)}` : c.error;
 ---
 
 <section class="section contact" id={d.ids.contact}>
@@ -110,7 +112,7 @@ const interests = Object.entries(c.interests) as [string, string][];
             <span class="submit-spinner" aria-hidden="true"></span>
           </button>
         </div>
-        <p class="form-error" role="alert" data-form-error data-msg={c.error}></p>
+        <p class="form-error" role="alert" data-form-error data-msg={errorMsg}></p>
       </form>
 
       <div class="form-success" data-success hidden tabindex="-1">

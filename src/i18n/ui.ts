@@ -340,6 +340,7 @@ const de = {
     previewNote: 'Vorschau: Das Formular ist noch nicht verbunden. Es wurde nichts gesendet.',
     again: 'Weitere Anfrage schreiben',
     error: 'Die Anfrage wurde nicht gesendet. Prüft eure Internetverbindung und versucht es noch einmal.',
+    errorMail: 'Oder schreibt uns direkt an {email}.',
     errors: {
       name: 'Bitte gebt euren Namen an.',
       email: 'Bitte gebt eine gültige E-Mail-Adresse an, zum Beispiel name@betrieb.de.',
@@ -701,6 +702,7 @@ const en: Dict = {
     previewNote: 'Preview: the form is not connected yet. Nothing was sent.',
     again: 'Write another enquiry',
     error: 'Your enquiry was not sent. Check your internet connection and try again.',
+    errorMail: 'Or email us directly at {email}.',
     errors: {
       name: 'Please enter your name.',
       email: 'Please enter a valid email address, for example name@business.com.',

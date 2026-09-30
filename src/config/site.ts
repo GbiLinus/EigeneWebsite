@@ -15,7 +15,7 @@ export const site = {
   },
 
   contact: {
-    email: null as string | null, // z.B. 'info@webdesignbr.de'
+    email: 'linus.webdesignbr@gmail.com' as string | null, // später Adresse mit eigener Domain
     phone: null as string | null,
     instagram: null as string | null,
     linkedin: null as string | null,
