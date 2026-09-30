@@ -442,7 +442,7 @@ const interests = Object.entries(c.interests) as [string, string][];
 
 <script>
   import { gsap, reduced, scrollToEl } from '../scripts/motion';
-  import { isEmail, sendEnquiry } from '../scripts/enquiry';
+  import { isEmail, looksLikeBot, sendEnquiry, watchForm } from '../scripts/enquiry';
   import type { Interest } from '../intern/types';
 
   const form = document.querySelector<HTMLFormElement>('[data-form]');
@@ -456,6 +456,7 @@ const interests = Object.entries(c.interests) as [string, string][];
     const lang = form.dataset.lang === 'en' ? 'en' : 'de';
 
     const fields = ['name', 'email', 'message'] as const;
+    watchForm(form);
 
     const validate = () => {
       let first: HTMLElement | null = null;
@@ -517,8 +518,8 @@ const interests = Object.entries(c.interests) as [string, string][];
       try {
         const fd = new FormData(form);
         const value = (k: string) => String(fd.get(k) ?? '').trim();
-        if (value('website')) {
-          // Fangfeld ausgefüllt: vermutlich ein Bot, nichts speichern
+        if (looksLikeBot(form)) {
+          // Fangfeld ausgefüllt oder viel zu schnell: vermutlich ein Bot, nichts speichern
           await new Promise((r) => setTimeout(r, 900));
         } else {
           await sendEnquiry(

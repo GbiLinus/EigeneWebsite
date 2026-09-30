@@ -4,6 +4,7 @@ import monaLatin from '@fontsource-variable/mona-sans/files/mona-sans-latin-stan
 import { site } from '../config/site';
 import { t, type Lang } from '../i18n/ui';
 import { themeScript } from '../scripts/theme-inline';
+import LangHint from '../components/LangHint.astro';
 
 interface Props {
   lang: Lang;
@@ -21,9 +22,6 @@ const description = Astro.props.description ?? dict.meta.description;
 const siteUrl = Astro.site ?? new URL(site.url);
 const canonical = new URL(alternates[lang], siteUrl).href;
 const ogImage = new URL('/og.png', siteUrl).href;
-
-// Erster Besuch: nicht-deutsche Browser landen auf /en/. Bots bleiben auf DE.
-const langScript = `try{var s=localStorage.getItem('wdbr-lang');var b=/bot|crawl|spider|slurp|lighthouse|headless/i.test(navigator.userAgent);if(!s&&!b&&!/^de\\b/i.test(navigator.language||'de')){location.replace('/en/');}}catch(e){}`;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -65,8 +63,8 @@ const jsonLd = {
     <link rel="alternate" hreflang="en" href={new URL(alternates.en, siteUrl).href} />
     <link rel="alternate" hreflang="x-default" href={new URL(alternates.de, siteUrl).href} />
     <meta name="theme-color" content="#041b20" />
-    <script is:inline set:html={themeScript} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline set:html={themeScript} />
     <link rel="preload" href={monaLatin} as="font" type="font/woff2" crossorigin />
 
     <meta property="og:type" content="website" />
@@ -81,7 +79,6 @@ const jsonLd = {
     <script is:inline>
       document.documentElement.classList.add('js');
     </script>
-    {detectLanguage && <script is:inline set:html={langScript} />}
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </head>
   <body>
@@ -95,6 +92,8 @@ const jsonLd = {
     </div>
 
     <slot />
+
+    {detectLanguage && <LangHint href={alternates.en} />}
 
     <script>
       import '../scripts/motion';

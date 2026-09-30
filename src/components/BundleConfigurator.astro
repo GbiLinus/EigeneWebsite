@@ -909,7 +909,7 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
 
 <script>
   import { gsap, lenis, reduced } from '../scripts/motion';
-  import { isEmail, sendEnquiry } from '../scripts/enquiry';
+  import { isEmail, looksLikeBot, sendEnquiry, watchForm } from '../scripts/enquiry';
 
   type Tier = { key: string; price: number; website: string; stands: number; tags: number };
   type Pricing = {
@@ -926,6 +926,7 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
   const form = dialog?.querySelector<HTMLFormElement>('[data-config-form]');
 
   if (dialog && form) {
+    watchForm(form);
     const ds = form.dataset;
     const lang = ds.lang === 'en' ? 'en' : 'de';
     const P = JSON.parse(ds.pricing ?? '{}') as Pricing;
@@ -1164,7 +1165,7 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
       send.disabled = true;
       send.textContent = send.dataset.busy ?? '';
       try {
-        if (!input('website').value) {
+        if (!looksLikeBot(form)) {
           await sendEnquiry(
             {
               name: input('name').value.trim(),

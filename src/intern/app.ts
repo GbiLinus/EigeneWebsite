@@ -14,9 +14,14 @@ let ctx: Promise<Ctx> | null = null;
 export function ready(): Promise<Ctx> {
   if (ctx) return ctx;
   ctx = (async () => {
-    const store = await getStore();
-    const session = await store.session();
     const u = urls();
+    const store = await getStore().catch(() => null);
+    // Nicht eingerichtet: die Login-Seite erklärt, was fehlt
+    if (!store) {
+      location.replace(u.login);
+      return new Promise<Ctx>(() => {});
+    }
+    const session = await store.session();
     if (!session) {
       const next = encodeURIComponent(location.pathname);
       location.replace(`${u.login}?weiter=${next}`);

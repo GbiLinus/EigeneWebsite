@@ -16,6 +16,8 @@ function apply(p: Pref) {
   root.dataset.themePref = p;
   root.dataset.theme = theme;
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#f5f1fa' : '#041b20');
+  const icon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+  if (icon) icon.href = icon.href.replace(/favicon(-light)?\.svg/, theme === 'light' ? 'favicon-light.svg' : 'favicon.svg');
   document.querySelectorAll<HTMLElement>('[data-theme-set]').forEach((b) => {
     const on = b.dataset.themeSet === p;
     b.setAttribute('aria-checked', String(on));

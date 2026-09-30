@@ -10,7 +10,7 @@ Zielgruppe: lokale Betriebe, vor allem Restaurants, Cafés und Hotels im Osnabr�
 | Name | WebDesignBR (BR = Bad Rothenfelde), vorerst kein Logo |
 | Stack | Astro 7, GSAP, Lenis (Smooth Scroll), Tailwind CSS 4 |
 | Look | Liquid Glass, dunkle Basis mit Farbverläufen. Umschalter Hell / System / Dunkel in der Navigation (Standard: System) |
-| Sprachen | Deutsch unter `/`, Englisch unter `/en/`. Erster Besuch mit nicht-deutschem Browser landet auf `/en/`, danach zählt die gewählte Sprache |
+| Sprachen | Deutsch unter `/`, Englisch unter `/en/`. Besucher mit nicht-deutschem Browser sehen unten einen kleinen Hinweis „Switch to English“ (keine automatische Weiterleitung, die kostete Ladezeit). Die gewählte Sprache wird gemerkt |
 | Leistungen | NFC Google Tags (Aufsteller, Sticker, Tischaufkleber), Websites, Einrichtung und Hosting |
 | Preise | Website 250–750 €, Hosting 50–100 € im Jahr. Aufsteller und Sticker: 1 Stück 40 €, 2 Stück 70 €, 3 Stück 95 €, mehr auf Anfrage. Tischaufkleber mit NFC (für WLAN, Speisekarte oder Bewertungen): erster 25 €, zweiter 20 €, dritter 17,50 €, jeder weitere 15 € |
 | Mega-Bundle | Kompakt 800 €: 1 Aufsteller oder Sticker, 1 Tischaufkleber (z. B. WLAN), Website nach Wünschen mit kleinen Einschränkungen, Einrichtung, 1 Jahr Hosting gratis. Komplett ab 1.100 €: 2 Aufsteller oder Sticker, 25 Tischaufkleber, ausführliche Website ganz nach Wünschen, Einrichtung, 1 Jahr Hosting gratis, auf Wunsch eigene Domain. Darüber hinaus: Konfigurator ohne Obergrenze |
@@ -72,7 +72,9 @@ Nur für Linus und Kristian. Nirgends auf der Website verlinkt, für Suchmaschin
 
 **Apple Passwörter:** Das Login-Formular nutzt `autocomplete="username"` und `current-password`, nach der Anmeldung folgt ein echter Seitenwechsel. Safari bietet danach das Sichern an. Beim Ändern schlägt Apple über `autocomplete="new-password"` und `passwordrules` ein starkes Passwort vor (mindestens 12 Zeichen). `/.well-known/change-password` führt zu „Passwort ändern“, damit Apple Passwörter direkt dorthin springen kann. Der Bereich lässt sich auf dem iPhone über „Zum Home-Bildschirm“ wie eine App ablegen.
 
-**Demo-Modus:** Ohne Supabase-Zugangsdaten läuft alles mit Beispieldaten im Browser. Anmeldung mit `linus@webdesignbr.de` oder `kristian@webdesignbr.de`, Passwort `vorschau`. Anfragen aus dem Kontaktformular landen dann nur im eigenen Browser.
+**Demo-Modus:** Nur beim Entwickeln (`npm run dev`) oder mit `PUBLIC_DEMO=true` beim Bauen (Vorschau-Builds). Dann läuft alles mit Beispieldaten im Browser. Anmeldung mit `linus@webdesignbr.de` oder `kristian@webdesignbr.de`, Passwort `vorschau`. Anfragen aus dem Kontaktformular landen dann nur im eigenen Browser.
+
+**Live ohne Supabase:** Die Demo-Zugangsdaten sind ausgeblendet, die Login-Seite sagt „Noch nicht eingerichtet“, und das Kontaktformular zeigt einen Fehler statt einer falschen Erfolgsmeldung. `npm run build` warnt in diesem Fall.
 
 ### Supabase einrichten
 
@@ -80,7 +82,7 @@ Nur für Linus und Kristian. Nirgends auf der Website verlinkt, für Suchmaschin
 2. Unter Settings den Vertrag zur Auftragsverarbeitung (DPA) abschließen.
 3. Authentication > Sign In / Providers: „Allow new users to sign up“ ausschalten, Mindestlänge für Passwörter auf 12 setzen.
 4. Authentication > URL Configuration: Site URL auf die Domain setzen, `https://<domain>/intern/passwort/` als Redirect URL eintragen.
-5. SQL Editor: `supabase/schema.sql` ausführen.
+5. SQL Editor: `supabase/schema.sql` ausführen. Wer die Datei schon vorher ausgeführt hat, führt nur den letzten Abschnitt „Spam-Bremse“ zusätzlich aus (höchstens 3 Anfragen pro E-Mail-Adresse und 30 insgesamt in 10 Minuten).
 6. Authentication > Users: Linus und Kristian einladen („Invite user“). Über den Link in der Einladung legt jeder sein Passwort fest.
 7. Die beiden User-IDs in den `insert`-Befehl am Ende von `supabase/schema.sql` eintragen und ausführen.
 8. `PUBLIC_SUPABASE_URL` und `PUBLIC_SUPABASE_KEY` (Publishable Key) beim Hosting als Umgebungsvariablen eintragen, lokal in `.env` (Vorlage: `.env.example`).
@@ -127,9 +129,12 @@ npm run preview
 - [ ] Supabase-Projekt einrichten (siehe oben), sonst erreichen Anfragen das Team nicht
 - [ ] Cal.com-Konten und Buchungslinks für Linus und Kristian
 - [ ] Optional: E-Mail-Benachrichtigung bei neuer Anfrage (Supabase Database Webhook)
-- [ ] Optional: Spam-Schutz mit Captcha, falls das Fangfeld nicht reicht
+- [ ] Optional: Cloudflare Turnstile, falls Fangfeld, Mindestzeit (2,5 Sekunden) und Spam-Bremse in der Datenbank nicht reichen
 - [ ] Optional: Mitarbeiterbereich unter eigener Subdomain, z. B. `intern.webdesignbr.de`
-- [ ] Datenschutzerklärung fertigstellen und prüfen lassen, Supabase und Cal.com aufnehmen
+- [ ] Datenschutzerklärung prüfen lassen. Entwurf zu Supabase, Cal.com, Spamschutz und Browser-Speicher steht. Offen: Hosting-Anbieter, Supabase-Serverstandort, Grundlage für Cal.com (USA), Löschfrist (Vorschlag: 6 Monate ohne Auftrag)
+- [ ] Ersparnis beim Kompakt-Bundle: Grundlage ist zurzeit die Website zum Höchstpreis (750 €), obwohl Kompakt „kleine Einschränkungen“ hat. So lassen oder mit kleinerem Wert rechnen?
+- [ ] Konfigurator: Ab dem 4. Aufsteller oder Sticker rechnet er 30 € pro Stück, auf der Seite steht „ab 4 Stück eigenes Angebot“. Preis bestätigen
+- [ ] Konfigurator: Jedes weitere Jahr Hosting mit 100 € gerechnet. Bestätigen
 - [ ] Erste Projekte
 
 ## Annahmen im Text, bitte prüfen

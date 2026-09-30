@@ -79,3 +79,25 @@ create trigger customers_touch before update on public.customers
 -- insert into public.staff (id, name, initials) values
 --   ('<uuid von Linus>', 'Linus Asche', 'LA'),
 --   ('<uuid von Kristian>', 'Kristian Wachholz', 'KW');
+
+-- ------------------------------------------------------------------
+-- Spam-Bremse (kann auch nachträglich einzeln ausgeführt werden)
+-- Höchstens 3 Anfragen pro E-Mail-Adresse in 10 Minuten und
+-- höchstens 30 Anfragen insgesamt in 10 Minuten.
+-- ------------------------------------------------------------------
+create or replace function public.limit_enquiries() returns trigger
+language plpgsql security definer set search_path = public
+as $$
+begin
+  if (select count(*) from public.enquiries
+      where lower(email) = lower(new.email) and created_at > now() - interval '10 minutes') >= 3
+     or (select count(*) from public.enquiries
+      where created_at > now() - interval '10 minutes') >= 30 then
+    raise exception 'too many enquiries' using errcode = 'P0001';
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists enquiries_limit on public.enquiries;
+create trigger enquiries_limit before insert on public.enquiries
+  for each row execute function public.limit_enquiries();

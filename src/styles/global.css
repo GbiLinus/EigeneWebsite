@@ -63,7 +63,10 @@
   --bar-blur: 16px;
   --control-bg: rgb(var(--deep) / 0.22);
   --switch-knob: linear-gradient(180deg, #fff, #d9e8e4);
-  --object-bg: var(--object-bg);
+  --object-bg: linear-gradient(170deg, #f4faf8, #d7e9e5);
+  --curl-bg: linear-gradient(135deg, #ffffff 0%, #cfe0dc 45%, #93aaa6 100%);
+  --phone-bg: linear-gradient(160deg, #3b4a4d, #11191b 40%, #0b1113);
+  --phone-notch: #0b1113;
   --object-foot: linear-gradient(180deg, #b9ccc8, #7d9591);
   --screen-bg: linear-gradient(180deg, #f5faf9, #dfeeea);
   --canvas-ink: 237, 246, 243;
@@ -98,7 +101,7 @@
   --deep: 255 255 255;
   --text: #1d1229;
   --text-soft: rgb(31 18 46 / 0.76);
-  --text-faint: rgb(31 18 46 / 0.58);
+  --text-faint: rgb(31 18 46 / 0.64);
 
   /* Hauptfarbe: helles Lila für Flächen, dunkles Lila für Text */
   --sole: #c392f2;
@@ -138,6 +141,9 @@
   --object-bg: linear-gradient(170deg, #fbf8fe, #e9def5);
   --object-foot: linear-gradient(180deg, #cdbfdc, #8f7ba6);
   --screen-bg: linear-gradient(180deg, #fbf8fe, #ece2f6);
+  --curl-bg: linear-gradient(135deg, #ffffff 0%, #e6d9f3 45%, #ad97c6 100%);
+  --phone-bg: linear-gradient(160deg, #54426a, #22162f 40%, #160d1f);
+  --phone-notch: #160d1f;
   --canvas-ink: 31, 18, 46;
   --canvas-drop: 160, 90, 225;
   --canvas-core: 122, 47, 168;

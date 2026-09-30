@@ -47,7 +47,9 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
         <p class="nfc-where" id="nfc-panel" role="tabpanel" aria-labelledby={`nfc-tab-${s.nfc.products[0].id}`} data-nfc-where>{s.nfc.products[0].where}</p>
 
         <p class="t-small">{s.nfc.extra}</p>
-        <a class="chip price-chip svc-price" href={`#${d.ids.pricing}`}>{s.nfc.price}</a>
+        <div class="svc-prices">
+          {s.nfc.prices.map((price) => <a class="chip price-chip svc-price" href={`#${d.ids.pricing}`}>{price}</a>)}
+        </div>
       </div>
 
       <div class="nfc-stage glass" data-spec data-nfc-stage>
@@ -253,6 +255,17 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
     align-content: center;
   }
 
+  .svc-prices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .svc-prices .svc-price {
+    margin-top: 0;
+  }
+
   .svc-price {
     margin-top: 0.5rem;
     text-decoration: none;
@@ -278,9 +291,14 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
     grid-column: 7 / span 5;
   }
 
+  /* Eine Spalte: 11 Rasterlücken würden schmale Handys sprengen */
   @media (max-width: 960px) {
+    .svc {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2.5rem;
+    }
     .svc > * {
-      grid-column: 1 / -1 !important;
+      grid-column: 1 !important;
     }
     .svc-web .svc-copy {
       order: -1;
@@ -474,7 +492,7 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
     width: 2.6rem;
     height: 2.6rem;
     border-radius: 0 0 0 1.2rem;
-    background: linear-gradient(135deg, #ffffff 0%, #cfe0dc 45%, #93aaa6 100%);
+    background: var(--curl-bg);
     box-shadow: -4px -4px 12px rgb(0 0 0 / 0.35);
     transform: rotate(-6deg);
     transform-origin: top left;
@@ -537,7 +555,7 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
     height: 14.5rem;
     padding: 0.3rem;
     border-radius: 1.5rem;
-    background: linear-gradient(160deg, #3b4a4d, #11191b 40%, #0b1113);
+    background: var(--phone-bg);
     box-shadow:
       inset 0 0 0 1px rgb(255 255 255 / 0.15),
       0 30px 50px -20px rgb(0 0 0 / 0.9);
@@ -567,7 +585,7 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
     height: 0.5rem;
     margin-left: -1rem;
     border-radius: 999px;
-    background: #0b1113;
+    background: var(--phone-notch);
   }
 
   .phone-badge {
@@ -716,6 +734,7 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
 
   .menu {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 1.4rem;
     padding: clamp(1.25rem, 3vw, 2.25rem);
   }
@@ -732,6 +751,15 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
 
   .menu-tabs {
     justify-self: start;
+  }
+
+  /* Sehr schmale Handys: Reiter schmaler setzen, damit alle drei sichtbar bleiben */
+  @media (max-width: 374px) {
+    .menu-tabs .seg-btn {
+      padding: 0.5rem 0.6rem;
+      font-size: 0.8125rem;
+      font-stretch: 82%;
+    }
   }
 
   .menu-panels {
@@ -1078,9 +1106,8 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
     let current = products[0];
     let tl: gsap.core.Timeline | null = null;
 
-    const play = () => {
-      tl?.kill();
-      const tag = current.querySelector<HTMLElement>('.tag')!;
+    // Position von NFC-Symbol und Handy, abhängig von der aktuellen Bühnengröße
+    const measure = () => {
       const point = current.querySelector<SVGElement>('[data-nfc-point]')!;
       const sr = stage.getBoundingClientRect();
       const pr = point.getBoundingClientRect();
@@ -1091,24 +1118,38 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
       // Untere linke Ecke des Handys berührt das NFC-Symbol
       const tx = Math.min(px - pw * 0.08, sr.width - pw - 12);
       const ty = Math.max(py - ph * 0.97, 12);
+      return { sw: sr.width, px, py, tx, ty };
+    };
+
+    // Endzustand ohne Animation (reduzierte Bewegung, nach Größenänderung)
+    const settle = () => {
+      const { px, py, tx, ty } = measure();
+      tl?.kill();
+      tl = null;
+      current.querySelector('.tag')!.classList.remove('is-glow');
+      gsap.set(ringBox, { x: px, y: py });
+      gsap.set(rings, { opacity: 0 });
+      gsap.set(phone, { x: tx, y: ty, rotation: reduced ? 0 : -6, scale: 1, opacity: 1 });
+      gsap.set(stars, { fill: '#e7a92c', scale: 1 });
+      gsap.set(done, { opacity: 1 });
+    };
+
+    const play = () => {
+      tl?.kill();
+      if (reduced) return settle();
+      const tag = current.querySelector<HTMLElement>('.tag')!;
+      const { sw, px, py, tx, ty } = measure();
 
       gsap.set(ringBox, { x: px, y: py });
-      gsap.set(stars, { fill: 'rgba(4,27,32,0.12)', scale: 1, transformOrigin: '50% 50%' });
+      gsap.set(stars, { clearProps: 'fill', scale: 1, transformOrigin: '50% 50%' });
       gsap.set(done, { opacity: 0 });
       tag.classList.remove('is-glow');
-
-      if (reduced) {
-        gsap.set(phone, { x: tx, y: ty, rotation: 0, opacity: 1 });
-        gsap.set(stars, { fill: '#e7a92c' });
-        gsap.set(done, { opacity: 1 });
-        return;
-      }
 
       tl = gsap
         .timeline()
         .fromTo(
           phone,
-          { x: sr.width + 20, y: ty + 40, rotation: 14, opacity: 1 },
+          { x: sw + 20, y: ty + 40, rotation: 14, opacity: 1 },
           { x: tx, y: ty, rotation: -6, duration: 1.1, ease: 'power3.inOut' },
         )
         .to(phone, { scale: 0.95, duration: 0.12, yoyo: true, repeat: 1, ease: 'power2.inOut' })
@@ -1157,6 +1198,18 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
 
     stage.querySelector('[data-replay]')!.addEventListener('click', play);
     ScrollTrigger.create({ trigger: stage, start: 'top 70%', once: true, onEnter: play });
+
+    // Nach Größenänderung sitzt das Handy sonst neben dem Symbol
+    let width = stage.offsetWidth;
+    let resizeTimer = 0;
+    new ResizeObserver(() => {
+      if (stage.offsetWidth === width) return;
+      width = stage.offsetWidth;
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        if (!current.hidden && Number(gsap.getProperty(phone, 'opacity')) > 0) settle();
+      }, 150);
+    }).observe(stage);
   }
 
   // ---------------- Speisekarte ----------------

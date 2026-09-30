@@ -11,7 +11,8 @@ const d = t(lang);
 const de = lang === 'de';
 ---
 
-<h1 class="t-h2">{d.legal.privacyTitle}</h1>
+<!-- Weiches Trennzeichen: das lange Wort passt sonst auf keinem Handy in eine Zeile -->
+<h1 class="t-h2">{de ? 'Datenschutz\u00ADerklärung' : d.legal.privacyTitle}</h1>
 
 <p class="notice">
   {
@@ -37,13 +38,45 @@ const de = lang === 'de';
   <span class="pending">{de ? 'Anbieter wird ergänzt' : 'provider to be added'}</span>
 </p>
 
-<h2>{de ? 'Kontaktformular' : 'Contact form'}</h2>
+<h2>{de ? 'Kontaktformular und Bundle-Konfigurator' : 'Contact form and bundle configurator'}</h2>
 <p>
   {
     de
-      ? 'Wenn ihr uns über das Formular schreibt, verarbeiten wir eure Angaben, um eure Anfrage zu beantworten (Art. 6 Abs. 1 lit. b DSGVO). Wir geben sie nicht an Dritte weiter und löschen sie, wenn sie nicht mehr gebraucht werden.'
-      : 'When you write to us using the form, we process your details to answer your enquiry (Art. 6(1)(b) GDPR). We do not pass them on to third parties and delete them when they are no longer needed.'
+      ? 'Wenn ihr uns über das Kontaktformular oder den Bundle-Konfigurator schreibt, verarbeiten wir eure Angaben, um eure Anfrage zu beantworten und euch ein Angebot zu machen (Art. 6 Abs. 1 lit. b DSGVO). Dazu gehören Name, E-Mail-Adresse, optional Telefonnummer und Betrieb, eure Nachricht und die gewählte Konfiguration.'
+      : 'When you write to us using the contact form or the bundle configurator, we process your details to answer your enquiry and send you an offer (Art. 6(1)(b) GDPR). This includes your name, email address, optionally your phone number and business, your message and the configuration you chose.'
   }
+</p>
+<p>
+  {
+    de
+      ? 'Eure Anfrage wird in einer Datenbank beim Anbieter Supabase gespeichert, mit dem wir einen Vertrag zur Auftragsverarbeitung geschlossen haben. Nur wir beide haben Zugriff. Wir geben eure Angaben nicht an andere Dritte weiter.'
+      : 'Your enquiry is stored in a database at the provider Supabase, with whom we have concluded a data processing agreement. Only the two of us have access. We do not pass your details on to any other third parties.'
+  }{' '}
+  <span class="pending">{de ? 'Serverstandort (z. B. Frankfurt) wird ergänzt' : 'server location (e.g. Frankfurt) to be added'}</span>
+</p>
+<p>
+  {
+    de
+      ? 'Wird aus der Anfrage kein Auftrag, löschen wir sie spätestens sechs Monate nach dem letzten Kontakt. Wird ein Auftrag daraus, bewahren wir die Unterlagen so lange auf, wie es das Steuer- und Handelsrecht verlangt.'
+      : 'If the enquiry does not lead to an order, we delete it no later than six months after our last contact. If it does, we keep the records for as long as tax and commercial law require.'
+  }
+</p>
+<p>
+  {
+    de
+      ? 'Zum Schutz vor Spam enthält das Formular ein verstecktes Feld und prüft, wie schnell es abgeschickt wird. Dabei werden keine zusätzlichen Daten gespeichert oder an Dritte übertragen.'
+      : 'To protect against spam, the form contains a hidden field and checks how quickly it is sent. No additional data is stored or passed on to third parties.'
+  }
+</p>
+
+<h2>{de ? 'Terminbuchung' : 'Booking a call'}</h2>
+<p>
+  {
+    de
+      ? 'Für Termine nutzen wir Cal.com. Wenn ihr auf einen Terminlink klickt, öffnet sich die Buchungsseite von Cal.com. Erst dann verarbeitet Cal.com die Daten, die ihr dort eingebt, zum Beispiel Name, E-Mail-Adresse und Wunschtermin (Art. 6 Abs. 1 lit. b DSGVO). Es gilt zusätzlich die Datenschutzerklärung von Cal.com.'
+      : 'We use Cal.com for appointments. When you click a booking link, the Cal.com booking page opens. Only then does Cal.com process the data you enter there, for example your name, email address and preferred time (Art. 6(1)(b) GDPR). The Cal.com privacy policy also applies.'
+  }{' '}
+  <span class="pending">{de ? 'Grundlage für die Übermittlung in die USA wird ergänzt' : 'basis for transfer to the USA to be added'}</span>
 </p>
 
 <h2>{de ? 'Schriften und Skripte' : 'Fonts and scripts'}</h2>
@@ -59,8 +92,8 @@ const de = lang === 'de';
 <p>
   {
     de
-      ? 'Wir setzen keine Cookies und kein Tracking ein. Wenn ihr die Sprache wechselt, speichern wir eure Auswahl nur lokal in eurem Browser.'
-      : 'We use no cookies and no tracking. If you switch the language, we store your choice only locally in your browser.'
+      ? 'Wir setzen keine Cookies und kein Tracking ein. Im lokalen Speicher eures Browsers (localStorage) legen wir nur zwei Einstellungen ab: ob ihr die Seite hell, dunkel oder passend zum System sehen wollt, und welche Sprache ihr gewählt habt. Diese Angaben verlassen euren Browser nicht und sind für die gewünschte Darstellung nötig (§ 25 Abs. 2 Nr. 2 TDDDG). Ihr könnt sie jederzeit in den Browser-Einstellungen löschen.'
+      : 'We use no cookies and no tracking. In your browser’s local storage (localStorage) we keep only two settings: whether you want the site light, dark or matching your system, and which language you chose. These settings never leave your browser and are needed to show the site the way you asked for (Section 25(2) no. 2 TDDDG). You can delete them at any time in your browser settings.'
   }
 </p>
 

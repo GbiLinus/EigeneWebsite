@@ -1,0 +1,127 @@
+---
+// Hinweis statt Weiterleitung: Besucher mit nicht-deutschem Browser sehen
+// einen kleinen Hinweis auf die englische Seite. Kein Umleiten, kein Warten.
+interface Props {
+  href: string;
+}
+
+const { href } = Astro.props;
+---
+
+<aside class="lang-hint glass" lang="en" aria-label="Language" data-lang-hint hidden>
+  <p class="lang-hint-text">This site is also available in English.</p>
+  <a class="lang-hint-go" href={href} hreflang="en" data-lang-link="en">Switch to English</a>
+  <button class="lang-hint-close" type="button" aria-label="Stay on the German site" data-lang-hint-close>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+      <path d="M6 6l12 12M18 6L6 18" />
+    </svg>
+  </button>
+</aside>
+
+<style>
+  .lang-hint {
+    --r: 999px;
+    position: fixed;
+    left: 50%;
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    z-index: 40; /* unter Navigation und Menü */
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    width: max-content;
+    max-width: calc(100vw - 2rem);
+    padding: 0.4rem 0.4rem 0.4rem 1.1rem;
+    font-size: 0.9375rem;
+    transform: translate(-50%, 0);
+    animation: lang-hint-in 0.7s var(--ease-liquid) both;
+  }
+
+  .lang-hint[hidden] {
+    display: none;
+  }
+
+  .lang-hint-text {
+    margin: 0 0.4rem 0 0;
+    color: var(--text-soft);
+  }
+
+  .lang-hint-go {
+    flex: none;
+    padding: 0.5rem 0.95rem;
+    border-radius: 999px;
+    font-weight: 640;
+    color: var(--thumb-fg);
+    background: var(--thumb-bg);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .lang-hint-close {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 0;
+    border-radius: 50%;
+    color: var(--text-soft);
+    background: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .lang-hint-close:hover {
+    color: var(--text);
+    background: rgb(var(--ink) / 0.08);
+  }
+
+  .lang-hint-close svg {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  @media (max-width: 520px) {
+    .lang-hint-text {
+      font-size: 0.875rem;
+      line-height: 1.3;
+    }
+  }
+
+  @keyframes lang-hint-in {
+    from {
+      opacity: 0;
+      transform: translate(-50%, 1.5rem) scale(0.96);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lang-hint {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  const hint = document.querySelector<HTMLElement>('[data-lang-hint]');
+  if (hint) {
+    let chosen: string | null = null;
+    try {
+      chosen = localStorage.getItem('wdbr-lang');
+    } catch {
+      /* Speicher nicht verfügbar */
+    }
+    const langs = navigator.languages?.length ? navigator.languages : [navigator.language || 'de'];
+    const speaksGerman = langs.some((l) => /^de\b/i.test(l));
+    if (!chosen && !speaksGerman) {
+      window.setTimeout(() => (hint.hidden = false), 1200);
+    }
+    hint.querySelector('[data-lang-hint-close]')?.addEventListener('click', () => {
+      hint.hidden = true;
+      try {
+        localStorage.setItem('wdbr-lang', 'de');
+      } catch {
+        /* Speicher nicht verfügbar */
+      }
+    });
+  }
+</script>
