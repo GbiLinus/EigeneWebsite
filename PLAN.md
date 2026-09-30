@@ -128,7 +128,7 @@ npm run preview
 - [ ] Impressum: Inhaber, Rechtsform, Anschrift, ggf. USt-ID → `site.company`
 - [ ] Kleinunternehmer nach § 19 UStG? Preise netto oder brutto? → `site.pricing.taxNote` (noch unklar, mit Steuerberater oder Finanzamt klären)
 - [ ] Hosting-Umfang: Sind Domain, E-Mail und Updates enthalten?
-- [ ] Hosting-Anbieter wählen (z. B. Vercel, Netlify, Cloudflare Pages) und in der Datenschutzerklärung nennen
+- [ ] Hosting bei Netlify (Tarif Personal): Projekt aus GitHub importieren, Einstellungen stehen in `netlify.toml`. Danach Netlify in der Datenschutzerklärung nennen und `site` in `astro.config.mjs` sowie `site.url` auf die Netlify-Adresse setzen, bis die Domain steht
 - [x] Supabase-Projekt eingerichtet (URL und Publishable Key in `site.supabase`), RLS geprüft: anonym nichts lesbar, Registrierung gesperrt
 - [ ] Nach dem Hosting: in Supabase unter Authentication > URL Configuration die Site URL und `https://<domain>/intern/passwort/` als Redirect URL eintragen
 - [x] Cal.com Linus: `https://cal.com/linus-asche`

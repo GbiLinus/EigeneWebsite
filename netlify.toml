@@ -1,0 +1,42 @@
+# Netlify: baut die Seite bei jedem Push auf main neu.
+# Supabase steht in src/config/site.ts, Umgebungsvariablen sind nicht nötig.
+# PUBLIC_DEMO hier nie setzen, sonst landen Anfragen nur im Browser.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Passwort-Manager (Apple Passwörter) finden hier die Seite zum Ändern
+[[redirects]]
+  from = "/.well-known/change-password"
+  to = "/intern/passwort/"
+  status = 302
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+
+# Mitarbeiterbereich und Login nicht in Suchmaschinen
+[[headers]]
+  for = "/intern/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/anmelden/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+# Dateien mit Hash im Namen ändern sich nie: lange zwischenspeichern
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
