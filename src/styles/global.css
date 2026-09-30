@@ -58,6 +58,10 @@
   --thumb-bg: linear-gradient(180deg, #f6fbfa, #cfe3de);
   --thumb-fg: var(--nacht);
   --knob-bg: linear-gradient(180deg, #f6fbfa, #cfe3de);
+  /* Leisten (Navigation, Menü, Seitenleiste): durchsichtiger als normales Glas */
+  --bar-bg: linear-gradient(160deg, rgb(237 246 243 / 0.07), rgb(237 246 243 / 0.02) 55%, rgb(237 246 243 / 0.04));
+  --bar-blur: 16px;
+  --control-bg: rgb(var(--deep) / 0.22);
   --switch-knob: linear-gradient(180deg, #fff, #d9e8e4);
   --object-bg: var(--object-bg);
   --object-foot: linear-gradient(180deg, #b9ccc8, #7d9591);
@@ -128,6 +132,8 @@
   --thumb-bg: linear-gradient(180deg, #4a2a6e, #1d1229);
   --thumb-fg: #f5f1fa;
   --knob-bg: linear-gradient(180deg, #ffffff, #e7dcf4);
+  --bar-bg: linear-gradient(160deg, rgb(255 255 255 / 0.36), rgb(255 255 255 / 0.14) 55%, rgb(255 255 255 / 0.24));
+  --control-bg: rgb(var(--ink) / 0.05);
   --switch-knob: linear-gradient(180deg, #fff, #e7dcf4);
   --object-bg: linear-gradient(170deg, #fbf8fe, #e9def5);
   --object-foot: linear-gradient(180deg, #cdbfdc, #8f7ba6);
@@ -319,6 +325,12 @@ a {
 }
 
 /* Glanzpunkt, der dem Zeiger folgt */
+/* Durchsichtige Leiste: gleiche Lichtkante, weniger Füllung, mehr Unschärfe */
+.glass.glass-bar {
+  --glass-blur: var(--bar-blur);
+  background: var(--bar-bg);
+}
+
 .glass[data-spec]::after {
   content: "";
   position: absolute;

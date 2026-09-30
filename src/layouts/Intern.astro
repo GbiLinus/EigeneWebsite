@@ -57,7 +57,7 @@ const nav = [
     </div>
 
     <div class="shell" data-app>
-      <aside class="side glass">
+      <aside class="side glass glass-bar">
         <a class="side-brand" href="/intern/">
           <strong>WebDesignBR</strong>
           <span>Intern</span>
@@ -86,7 +86,7 @@ const nav = [
         </div>
       </aside>
 
-      <header class="topbar glass">
+      <header class="topbar glass glass-bar">
         <a class="side-brand" href="/intern/">
           <strong>WebDesignBR</strong>
           <span>Intern</span>
@@ -99,7 +99,7 @@ const nav = [
         <slot />
       </main>
 
-      <nav class="tabbar glass" aria-label="Bereiche">
+      <nav class="tabbar glass glass-bar" aria-label="Bereiche">
         {
           nav.map((n) => (
             <a class="nav-item" href={n.href} aria-current={active === n.key ? 'page' : undefined}>
