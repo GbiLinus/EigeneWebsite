@@ -9,7 +9,7 @@ Zielgruppe: lokale Betriebe, vor allem Restaurants, Cafés und Hotels im Osnabr�
 | --- | --- |
 | Name | WebDesignBR (BR = Bad Rothenfelde), vorerst kein Logo |
 | Stack | Astro 7, GSAP, Lenis (Smooth Scroll), Tailwind CSS 4 |
-| Look | Liquid Glass, dunkle Basis mit Farbverläufen |
+| Look | Liquid Glass, dunkle Basis mit Farbverläufen. Umschalter Hell / System / Dunkel in der Navigation (Standard: System) |
 | Sprachen | Deutsch unter `/`, Englisch unter `/en/`. Erster Besuch mit nicht-deutschem Browser landet auf `/en/`, danach zählt die gewählte Sprache |
 | Leistungen | NFC Google Tags (Aufsteller, Sticker, Tischaufkleber), Websites, Einrichtung und Hosting |
 | Preise | Website 250–750 €, Hosting 50–100 € im Jahr. Aufsteller und Sticker: 1 Stück 40 €, 2 Stück 70 €, 3 Stück 95 €, mehr auf Anfrage. Tischaufkleber mit NFC (für WLAN, Speisekarte oder Bewertungen): erster 25 €, zweiter 20 €, dritter 17,50 €, jeder weitere 15 € |
@@ -24,6 +24,13 @@ Zielgruppe: lokale Betriebe, vor allem Restaurants, Cafés und Hotels im Osnabr�
 - **Schrift:** Mona Sans Variable, selbst gehostet (keine Verbindung zu Google). Überschriften breit (`font-stretch` 112–125 %) und schwer, Fließtext normal. Die Speisekarten-Demo ist bewusst schmal gesetzt.
 - **Glas:** Klasse `.glass` in `src/styles/global.css`. Mit `data-spec` folgt ein Glanzpunkt dem Mauszeiger.
 - **Bewegung:** Eine orchestrierte Intro-Sequenz im Hero, sonst reagieren Animationen auf Nutzeraktionen. `prefers-reduced-motion` schaltet alles auf statisch.
+
+## Hell und Dunkel
+
+- Umschalter mit drei Stellungen in der Navigation, im mobilen Menü und im Mitarbeiterbereich: links Hell, Mitte System, rechts Dunkel.
+- Standard ist System: Die Seite folgt der Einstellung des Geräts und wechselt mit, wenn sich diese ändert.
+- Die Wahl wird im Browser gespeichert (`wdbr-theme`) und gilt für Website und Mitarbeiterbereich.
+- Farben kommen aus Theme-Tokens in `src/styles/global.css` (`:root` für Dunkel, `:root[data-theme='light']` für Hell). Neue Komponenten nutzen diese Tokens statt fester Farben.
 
 ## Seitenaufbau
 

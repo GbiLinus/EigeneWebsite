@@ -254,8 +254,8 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
     padding: 0;
     border: 0;
     border-radius: var(--r-xl);
-    color: var(--salz);
-    background: linear-gradient(170deg, rgb(15 52 58 / 0.97), rgb(6 30 35 / 0.98));
+    color: var(--text);
+    background: var(--surface-strong);
     box-shadow:
       inset 0 1px 0 rgb(255 255 255 / 0.16),
       0 0 0 1px rgb(255 255 255 / 0.08),
@@ -323,8 +323,8 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
     height: 2.75rem;
     border: 0;
     border-radius: 50%;
-    color: var(--salz);
-    background: rgb(237 246 243 / 0.08);
+    color: var(--text);
+    background: rgb(var(--ink) / 0.08);
     cursor: pointer;
   }
 
@@ -372,16 +372,16 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
     font: inherit;
     font-size: 0.875rem;
     font-weight: 620;
-    color: var(--salz);
-    background: rgb(237 246 243 / 0.08);
-    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.12);
+    color: var(--text);
+    background: rgb(var(--ink) / 0.08);
+    box-shadow: inset 0 0 0 1px rgb(var(--ink) / 0.12);
     cursor: pointer;
     transition: background-color 0.25s;
   }
 
   .cfg-preset:hover,
   .cfg-quick-btn:hover {
-    background: rgb(237 246 243 / 0.14);
+    background: rgb(var(--ink) / 0.14);
   }
 
   .cfg-sec {
@@ -391,8 +391,8 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
     padding: 1.25rem;
     border: 0;
     border-radius: var(--r-lg);
-    background: rgb(4 27 32 / 0.4);
-    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.08);
+    background: rgb(var(--deep) / 0.4);
+    box-shadow: inset 0 0 0 1px rgb(var(--ink) / 0.08);
   }
 
   .cfg-legend {
@@ -418,8 +418,8 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
     gap: 0.25rem;
     padding: 0.9rem 1rem;
     border-radius: var(--r-md);
-    background: rgb(237 246 243 / 0.05);
-    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.12);
+    background: rgb(var(--ink) / 0.05);
+    box-shadow: inset 0 0 0 1px rgb(var(--ink) / 0.12);
     cursor: pointer;
     transition:
       background-color 0.25s,
@@ -472,8 +472,8 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
     padding: 0.4rem 0.85rem;
     border-radius: 999px;
     font-size: 0.875rem;
-    background: rgb(237 246 243 / 0.06);
-    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.12);
+    background: rgb(var(--ink) / 0.06);
+    box-shadow: inset 0 0 0 1px rgb(var(--ink) / 0.12);
     cursor: pointer;
   }
 
@@ -483,7 +483,7 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
   }
 
   .cfg-chip input {
-    accent-color: var(--sole);
+    accent-color: var(--accent-text);
   }
 
   .cfg-row {
@@ -503,8 +503,8 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
     align-items: center;
     padding: 0.25rem;
     border-radius: 999px;
-    background: rgb(4 27 32 / 0.55);
-    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.1);
+    background: rgb(var(--deep) / 0.55);
+    box-shadow: inset 0 0 0 1px rgb(var(--ink) / 0.1);
   }
 
   .stepper-btn {
@@ -544,7 +544,7 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
     font-weight: 760;
     font-stretch: 116%;
     text-align: center;
-    color: var(--salz);
+    color: var(--text);
     font-variant-numeric: tabular-nums;
     appearance: textfield;
     -moz-appearance: textfield;
@@ -571,7 +571,7 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
   .cfg-free {
     margin: 0;
     font-size: 0.9375rem;
-    color: var(--sole);
+    color: var(--accent-text);
   }
 
   .cfg-toggle {
@@ -595,7 +595,7 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
     width: 2.9rem;
     height: 1.75rem;
     border-radius: 999px;
-    background: rgb(237 246 243 / 0.14);
+    background: rgb(var(--ink) / 0.14);
     transition: background-color 0.3s;
   }
 
@@ -662,9 +662,9 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
     border-radius: var(--r-sm);
     font: inherit;
     font-size: 1rem;
-    color: var(--salz);
-    background: rgb(4 27 32 / 0.6);
-    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.12);
+    color: var(--text);
+    background: rgb(var(--deep) / 0.6);
+    box-shadow: inset 0 0 0 1px rgb(var(--ink) / 0.12);
     resize: vertical;
   }
 
@@ -683,7 +683,7 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
   .cfg-error {
     margin: 0;
     font-size: 0.8125rem;
-    color: #ffa99c;
+    color: var(--danger-text);
   }
 
   .cfg-error:empty {
@@ -728,7 +728,7 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
   }
 
   .cfg-fit.is-estimate {
-    color: var(--gold);
+    color: var(--gold-text);
     background: rgb(255 194 75 / 0.12);
     box-shadow: inset 0 0 0 1px rgb(255 194 75 / 0.3);
   }
@@ -740,7 +740,7 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
     font-stretch: 124%;
     letter-spacing: -0.04em;
     line-height: 1.05;
-    color: var(--gold);
+    color: var(--gold-text);
   }
 
   .cfg-note {
@@ -829,7 +829,7 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
     padding: 0.5rem 0.9rem;
     border-radius: var(--r-sm);
     background: rgb(255 194 75 / 0.1);
-    color: var(--gold);
+    color: var(--gold-text);
   }
 
   @media (max-width: 860px) {
@@ -856,7 +856,7 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
       margin: 0 calc(-1 * clamp(1.25rem, 3vw, 2rem));
       padding: 1rem clamp(1.25rem, 3vw, 2rem) calc(env(safe-area-inset-bottom, 0px) + 1rem);
       border-radius: 0;
-      background: rgb(8 38 44 / 0.96);
+      background: var(--surface-solid);
     }
     .cfg-summary::before {
       display: none;
@@ -870,7 +870,7 @@ const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.
       grid-column: 1;
       padding: 0;
       font-size: 0.75rem;
-      color: var(--sole);
+      color: var(--accent-text);
       background: none;
     }
     .cfg-fit.is-estimate {

@@ -94,7 +94,7 @@ const slug = (id: string) => id.split('/').slice(1).join('/');
 
   .work-open {
     margin-top: 0.5rem;
-    color: var(--sole);
+    color: var(--accent-text);
     font-weight: 600;
   }
 
@@ -118,8 +118,8 @@ const slug = (id: string) => id.split('/').slice(1).join('/');
 
   .work-empty-slots span {
     border-radius: var(--r-lg);
-    border: 1.5px dashed rgb(237 246 243 / 0.2);
-    background: rgb(4 27 32 / 0.25);
+    border: 1.5px dashed rgb(var(--ink) / 0.2);
+    background: rgb(var(--deep) / 0.25);
     animation: slot 6s ease-in-out infinite;
   }
 
@@ -139,7 +139,7 @@ const slug = (id: string) => id.split('/').slice(1).join('/');
     0%,
     70%,
     100% {
-      border-color: rgb(237 246 243 / 0.2);
+      border-color: rgb(var(--ink) / 0.2);
     }
     35% {
       border-color: rgb(59 227 201 / 0.7);

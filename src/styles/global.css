@@ -26,10 +26,33 @@
   --abend: #8c7bff;
   --gold: #ffc24b;
 
+  /* Theme-Tokens: Dunkel ist Standard, Hell überschreibt unten */
+  --bg: var(--nacht);
+  --ink: 237 246 243; /* Tönungen und Linien */
+  --deep: 4 27 32; /* eingelassene Flächen */
   --text: var(--salz);
-  --text-soft: rgb(237 246 243 / 0.74);
-  --text-faint: rgb(237 246 243 / 0.52);
-  --line: rgb(237 246 243 / 0.12);
+  --accent-text: var(--sole);
+  --gold-text: var(--gold);
+  --abend-text: #a497ff;
+  --danger-text: #ffa99c;
+  --focus: var(--sole);
+  --glass-bg: linear-gradient(160deg, rgb(237 246 243 / 0.12), rgb(237 246 243 / 0.035) 55%, rgb(237 246 243 / 0.06));
+  --glass-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    inset 0 -1px 0 rgb(255 255 255 / 0.05),
+    0 40px 80px -40px rgb(0 10 12 / 0.8);
+  --rim: linear-gradient(140deg, rgb(255 255 255 / 0.5), rgb(255 255 255 / 0.08) 28%, rgb(255 255 255 / 0.03) 62%, rgb(59 227 201 / 0.4));
+  --surface-strong: linear-gradient(170deg, rgb(15 52 58 / 0.97), rgb(6 30 35 / 0.98));
+  --surface-solid: rgb(8 38 44 / 0.96);
+  --scene-glow: rgb(10 44 51 / 0.9);
+  --lens-bg: radial-gradient(circle at 50% 60%, var(--tiefsole), var(--nacht));
+  --hero-grad: linear-gradient(100deg, var(--salz) 10%, #a8f3e7 45%, #c9c1ff 90%);
+  --thumb-bg: linear-gradient(180deg, #f6fbfa, #cfe3de);
+  --thumb-fg: var(--nacht);
+
+  --text-soft: rgb(var(--ink) / 0.74);
+  --text-faint: rgb(var(--ink) / 0.52);
+  --line: rgb(var(--ink) / 0.12);
 
   --r-xl: 32px;
   --r-lg: 22px;
@@ -45,11 +68,40 @@
   --glass-blur: 18px;
 }
 
+/* Heller Modus: Salz bei Tageslicht */
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #eef4f2;
+  --ink: 4 27 32;
+  --deep: 255 255 255;
+  --text: #0b2328;
+  --text-soft: rgb(4 27 32 / 0.76);
+  --text-faint: rgb(4 27 32 / 0.58);
+  --accent-text: #0a7466;
+  --gold-text: #8a5a00;
+  --abend-text: #5443c9;
+  --danger-text: #b3321f;
+  --focus: #0a7466;
+  --glass-bg: linear-gradient(160deg, rgb(255 255 255 / 0.84), rgb(255 255 255 / 0.6) 55%, rgb(255 255 255 / 0.72));
+  --glass-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.95),
+    inset 0 -1px 0 rgb(4 27 32 / 0.04),
+    0 30px 60px -34px rgb(4 27 32 / 0.32);
+  --rim: linear-gradient(140deg, rgb(255 255 255 / 1), rgb(4 27 32 / 0.08) 30%, rgb(4 27 32 / 0.05) 62%, rgb(15 158 140 / 0.45));
+  --surface-strong: linear-gradient(170deg, rgb(255 255 255 / 0.98), rgb(236 244 242 / 0.99));
+  --surface-solid: rgb(250 253 252 / 0.97);
+  --scene-glow: rgb(255 255 255 / 0.95);
+  --lens-bg: radial-gradient(circle at 50% 60%, #ffffff, #e3eeeb);
+  --hero-grad: linear-gradient(100deg, #0b2328 10%, #0c8a7b 45%, #5443c9 90%);
+  --thumb-bg: linear-gradient(180deg, #16444b, #062127);
+  --thumb-fg: var(--salz);
+}
+
 /* ------------------------------------------------------------------
    Base
    ------------------------------------------------------------------ */
 html {
-  background: var(--nacht);
+  background: var(--bg);
   -webkit-text-size-adjust: 100%;
   scroll-padding-top: 6rem;
 }
@@ -57,7 +109,7 @@ html {
 body {
   margin: 0;
   min-height: 100dvh;
-  background: var(--nacht);
+  background: var(--bg);
   color: var(--text);
   font-family: var(--font-sans);
   font-size: 1.125rem;
@@ -72,7 +124,7 @@ body {
 
 ::selection {
   background: rgb(59 227 201 / 0.35);
-  color: var(--salz);
+  color: var(--text);
 }
 
 a {
@@ -80,7 +132,7 @@ a {
 }
 
 :focus-visible {
-  outline: 2px solid var(--sole);
+  outline: 2px solid var(--focus);
   outline-offset: 3px;
   border-radius: 6px;
 }
@@ -104,8 +156,8 @@ a {
   z-index: 100;
   padding: 0.75rem 1.25rem;
   border-radius: 999px;
-  background: var(--salz);
-  color: var(--nacht);
+  background: var(--text);
+  color: var(--bg);
   font-weight: 600;
   text-decoration: none;
   transition: top 0.2s var(--ease-out);
@@ -199,14 +251,10 @@ a {
   position: relative;
   isolation: isolate;
   border-radius: var(--r, var(--r-xl));
-  background:
-    linear-gradient(160deg, rgb(237 246 243 / 0.12), rgb(237 246 243 / 0.035) 55%, rgb(237 246 243 / 0.06));
+  background: var(--glass-bg);
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(170%);
   backdrop-filter: blur(var(--glass-blur)) saturate(170%);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.22),
-    inset 0 -1px 0 rgb(255 255 255 / 0.05),
-    0 40px 80px -40px rgb(0 10 12 / 0.8);
+  box-shadow: var(--glass-shadow);
 }
 
 /* Lichtkante: heller oben links, Sole-Schimmer unten rechts */
@@ -217,13 +265,7 @@ a {
   z-index: -1;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(
-    140deg,
-    rgb(255 255 255 / 0.5),
-    rgb(255 255 255 / 0.08) 28%,
-    rgb(255 255 255 / 0.03) 62%,
-    rgb(59 227 201 / 0.4)
-  );
+  background: var(--rim);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -249,7 +291,7 @@ a {
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .glass {
-    background: rgb(10 44 51 / 0.92);
+    background: var(--surface-solid);
   }
 }
 
@@ -307,14 +349,14 @@ a {
 }
 
 .btn-ghost {
-  color: var(--salz);
+  color: var(--text);
 }
 .btn-ghost:hover {
-  background-color: rgb(237 246 243 / 0.06);
+  background-color: rgb(var(--ink) / 0.06);
 }
 
 .link {
-  color: var(--sole);
+  color: var(--accent-text);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.22em;
@@ -322,7 +364,7 @@ a {
   transition: text-decoration-color 0.3s;
 }
 .link:hover {
-  text-decoration-color: var(--sole);
+  text-decoration-color: var(--accent-text);
 }
 
 /* ------------------------------------------------------------------
@@ -339,12 +381,12 @@ a {
   font-stretch: 104%;
   line-height: 1.3;
   color: var(--text-soft);
-  background: rgb(237 246 243 / 0.07);
-  box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.1);
+  background: rgb(var(--ink) / 0.07);
+  box-shadow: inset 0 0 0 1px rgb(var(--ink) / 0.1);
 }
 
 .price-chip {
-  color: var(--gold);
+  color: var(--gold-text);
   background: rgb(255 194 75 / 0.1);
   box-shadow: inset 0 0 0 1px rgb(255 194 75 / 0.25);
 }
@@ -354,6 +396,13 @@ a {
    ------------------------------------------------------------------ */
 @view-transition {
   navigation: auto;
+}
+
+/* Theme-Wechsel: eigene Kreis-Animation statt Überblendung */
+:root.theme-vt::view-transition-old(root),
+:root.theme-vt::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
 
 ::view-transition-old(root) {

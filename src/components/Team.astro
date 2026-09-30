@@ -66,6 +66,7 @@ const team = (await getCollection('team')).sort((a, b) => a.data.order - b.data.
   .member {
     --r: var(--r-xl);
     --tone-a: var(--sole);
+    --tone-text: var(--accent-text);
     --tone-b: #1f8f86;
     display: grid;
     grid-template-columns: auto 1fr;
@@ -80,6 +81,7 @@ const team = (await getCollection('team')).sort((a, b) => a.data.order - b.data.
 
   .member[data-tone='abend'] {
     --tone-a: var(--abend);
+    --tone-text: var(--abend-text);
     --tone-b: #4b3fb3;
   }
 
@@ -136,7 +138,7 @@ const team = (await getCollection('team')).sort((a, b) => a.data.order - b.data.
 
   .member-role {
     margin: 0.35rem 0 0;
-    color: var(--tone-a);
+    color: var(--tone-text);
     font-weight: 600;
   }
 

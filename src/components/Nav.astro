@@ -1,5 +1,6 @@
 ---
 import { t, routes, type Lang } from '../i18n/ui';
+import ThemeSwitch from './ThemeSwitch.astro';
 
 interface Props {
   lang: Lang;
@@ -41,6 +42,10 @@ const links = [
       <a href={alternates.en} hreflang="en" lang="en" aria-label="English" aria-current={lang === 'en' ? 'true' : undefined} data-lang-link="en">EN</a>
     </div>
 
+    <div class="nav-theme">
+      <ThemeSwitch lang={lang} />
+    </div>
+
     <a class="btn btn-primary nav-cta" href={anchor(d.ids.contact)}>{d.nav.cta}</a>
 
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-sheet" data-nav-toggle>
@@ -60,6 +65,10 @@ const links = [
         ))
       }
     </ul>
+    <div class="sheet-options">
+      <span class="sheet-options-label">{d.nav.theme}</span>
+      <ThemeSwitch lang={lang} />
+    </div>
     <a class="btn btn-primary" href={anchor(d.ids.contact)} data-sheet-link>{d.nav.cta}</a>
   </div>
 </header>
@@ -82,7 +91,7 @@ const links = [
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    width: min(100%, 1080px);
+    width: min(100%, 1140px);
     padding: 0.45rem 0.45rem 0.45rem 1.4rem;
     border-radius: 999px;
     transition:
@@ -92,7 +101,7 @@ const links = [
   }
 
   .nav-wrap[data-compact] .nav {
-    width: min(100%, 900px);
+    width: min(100%, 1020px);
     padding-block: 0.3rem;
   }
 
@@ -130,7 +139,7 @@ const links = [
 
   .nav-links a:hover,
   .nav-links a[aria-current='true'] {
-    color: var(--salz);
+    color: var(--text);
   }
 
   .nav-indicator {
@@ -140,7 +149,7 @@ const links = [
     height: 100%;
     width: 0;
     border-radius: 999px;
-    background: rgb(237 246 243 / 0.1);
+    background: rgb(var(--ink) / 0.1);
     box-shadow:
       inset 0 1px 0 rgb(255 255 255 / 0.18),
       inset 0 0 0 1px rgb(255 255 255 / 0.06);
@@ -153,8 +162,8 @@ const links = [
     display: flex;
     padding: 0.2rem;
     border-radius: 999px;
-    background: rgb(4 27 32 / 0.35);
-    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.08);
+    background: rgb(var(--deep) / 0.35);
+    box-shadow: inset 0 0 0 1px rgb(var(--ink) / 0.08);
   }
 
   .nav-lang a {
@@ -174,11 +183,11 @@ const links = [
   }
 
   .nav-lang a[aria-current='true'] {
-    color: var(--nacht);
+    color: var(--thumb-fg);
   }
 
   .nav-lang a:not([aria-current='true']):hover {
-    color: var(--salz);
+    color: var(--text);
   }
 
   .nav-lang-thumb {
@@ -188,7 +197,7 @@ const links = [
     width: 2.6rem;
     height: 2.2rem;
     border-radius: 999px;
-    background: linear-gradient(180deg, #f6fbfa, #cfe3de);
+    background: var(--thumb-bg);
     box-shadow: inset 0 1px 0 #fff, 0 4px 12px -4px rgb(0 0 0 / 0.5);
     transition: transform 0.6s var(--ease-liquid);
   }
@@ -210,8 +219,8 @@ const links = [
     height: 2.75rem;
     border: 0;
     border-radius: 999px;
-    background: rgb(237 246 243 / 0.08);
-    color: var(--salz);
+    background: rgb(var(--ink) / 0.08);
+    color: var(--text);
     cursor: pointer;
   }
 
@@ -269,9 +278,26 @@ const links = [
     width: 100%;
   }
 
-  @media (max-width: 860px) {
+  .sheet-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0 0 1rem;
+    padding: 0.75rem 0.75rem 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .sheet-options-label {
+    font-weight: 600;
+    color: var(--text-soft);
+  }
+
+  /* Ab hier passt nicht mehr alles in die Leiste: Menü übernimmt */
+  @media (max-width: 1100px) {
     .nav-links,
-    .nav-cta {
+    .nav-cta,
+    .nav-theme {
       display: none;
     }
     .nav-toggle {
@@ -282,7 +308,7 @@ const links = [
     }
   }
 
-  @media (min-width: 861px) {
+  @media (min-width: 1101px) {
     .nav-sheet {
       display: none;
     }

@@ -88,7 +88,7 @@ const d = t(lang);
   }
 
   .hero-mask:nth-child(2) .hero-line {
-    background: linear-gradient(100deg, var(--salz) 10%, #a8f3e7 45%, #c9c1ff 90%);
+    background: var(--hero-grad);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -150,7 +150,7 @@ const d = t(lang);
     border-radius: 50%;
     overflow: hidden;
     transform: scale(0);
-    background: radial-gradient(circle at 50% 60%, var(--tiefsole), var(--nacht));
+    background: var(--lens-bg);
     box-shadow:
       0 30px 60px -18px rgb(0 8 10 / 0.85),
       0 0 0 1px rgb(255 255 255 / 0.1);
@@ -288,23 +288,34 @@ const d = t(lang);
       return c;
     };
 
-    const head = makeSprite(32, 32, (c) => {
-      const g = c.createRadialGradient(16, 16, 0, 16, 16, 16);
-      g.addColorStop(0, 'rgba(237,246,243,1)');
-      g.addColorStop(0.18, 'rgba(237,246,243,0.95)');
-      g.addColorStop(0.3, 'rgba(59,227,201,0.35)');
-      g.addColorStop(1, 'rgba(59,227,201,0)');
-      c.fillStyle = g;
-      c.fillRect(0, 0, 32, 32);
-    });
+    // Farben je nach Modus: dunkel leuchtende Sole, hell dunkles Reisig
+    let light = document.documentElement.dataset.theme === 'light';
+    const inkRgb = () => (light ? '4,27,32' : '237,246,243');
 
-    const trail = makeSprite(4, 64, (c) => {
-      const g = c.createLinearGradient(0, 0, 0, 64);
-      g.addColorStop(0, 'rgba(59,227,201,0)');
-      g.addColorStop(1, 'rgba(59,227,201,0.55)');
-      c.fillStyle = g;
-      c.fillRect(0, 0, 4, 64);
-    });
+    const makeHead = () =>
+      makeSprite(32, 32, (c) => {
+        const g = c.createRadialGradient(16, 16, 0, 16, 16, 16);
+        const core = light ? '12,138,123' : '237,246,243';
+        g.addColorStop(0, `rgba(${core},1)`);
+        g.addColorStop(0.18, `rgba(${core},0.95)`);
+        g.addColorStop(0.3, 'rgba(59,227,201,0.35)');
+        g.addColorStop(1, 'rgba(59,227,201,0)');
+        c.fillStyle = g;
+        c.fillRect(0, 0, 32, 32);
+      });
+
+    const makeTrail = () =>
+      makeSprite(4, 64, (c) => {
+        const g = c.createLinearGradient(0, 0, 0, 64);
+        const tone = light ? '12,138,123' : '59,227,201';
+        g.addColorStop(0, `rgba(${tone},0)`);
+        g.addColorStop(1, `rgba(${tone},0.55)`);
+        c.fillStyle = g;
+        c.fillRect(0, 0, 4, 64);
+      });
+
+    let head = makeHead();
+    let trail = makeTrail();
 
     const star = makeSprite(32, 32, (c) => {
       c.fillStyle = 'rgba(255,194,75,0.95)';
@@ -328,7 +339,7 @@ const d = t(lang);
         const lean = rand(-0.05, 0.05);
         const top = rand(-20, H * 0.08);
         const alpha = rand(0.04, 0.15);
-        bctx.strokeStyle = `rgba(237,246,243,${alpha})`;
+        bctx.strokeStyle = `rgba(${inkRgb()},${alpha})`;
         bctx.lineWidth = rand(0.5, 1.3);
         bctx.beginPath();
         bctx.moveTo(x, top);
@@ -341,7 +352,7 @@ const d = t(lang);
         if (Math.random() < 0.35) {
           const by = rand(top, H);
           const bx = x + lean * (by - top);
-          bctx.strokeStyle = `rgba(237,246,243,${alpha * 0.7})`;
+          bctx.strokeStyle = `rgba(${inkRgb()},${alpha * 0.7})`;
           bctx.beginPath();
           bctx.moveTo(bx, by);
           bctx.lineTo(bx + rand(-9, 9), by + rand(6, 16));
@@ -349,7 +360,7 @@ const d = t(lang);
         }
       }
       // Holzrahmen des Gradierwerks: zwei feine Querbalken
-      bctx.strokeStyle = 'rgba(237,246,243,0.05)';
+      bctx.strokeStyle = `rgba(${inkRgb()},0.05)`;
       bctx.lineWidth = 1;
       [0.34, 0.68].forEach((f) => {
         bctx.beginPath();
@@ -420,7 +431,8 @@ const d = t(lang);
 
     function draw() {
       ctx.clearRect(0, 0, W, H);
-      ctx.globalCompositeOperation = 'lighter';
+      // Leuchten addieren nur auf dunklem Grund
+      ctx.globalCompositeOperation = light ? 'source-over' : 'lighter';
       for (const d of drops) {
         ctx.globalAlpha = starMode ? 1 : d.glow;
         const w = Math.max(1, d.size * 0.9);
@@ -542,6 +554,19 @@ const d = t(lang);
     }
 
     new IntersectionObserver(([entry]) => (heroVisible = entry.isIntersecting)).observe(hero);
+
+    // Moduswechsel: Reisig und Tropfen neu einfärben
+    window.addEventListener('wdbr:theme', () => {
+      const next = document.documentElement.dataset.theme === 'light';
+      if (next === light) return;
+      light = next;
+      head = makeHead();
+      trail = makeTrail();
+      paintBackground();
+      draw();
+      lctx.clearRect(0, 0, lensCanvas.width, lensCanvas.height);
+      lctx.drawImage(canvas, 0, 0);
+    });
 
     let resizeTimer = 0;
     let lastW = window.innerWidth;

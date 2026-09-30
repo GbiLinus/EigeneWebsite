@@ -3,6 +3,7 @@ import '../styles/global.css';
 import '../styles/intern.css';
 import { isConfigured } from '../intern/store';
 import { DEMO_PASSWORD } from '../intern/demo';
+import { themeScript } from '../scripts/theme-inline';
 ---
 
 <!doctype html>
@@ -13,6 +14,7 @@ import { DEMO_PASSWORD } from '../intern/demo';
     <meta name="robots" content="noindex, nofollow" />
     <title>Anmelden – WebDesignBR intern</title>
     <meta name="theme-color" content="#041b20" />
+    <script is:inline set:html={themeScript} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/intern.webmanifest" />
@@ -149,7 +151,7 @@ import { DEMO_PASSWORD } from '../intern/demo';
         font-size: 0.8125rem;
         font-weight: 600;
         color: var(--text-soft);
-        background: rgb(237 246 243 / 0.08);
+        background: rgb(var(--ink) / 0.08);
         transform: translateY(-50%);
         cursor: pointer;
       }
@@ -162,7 +164,7 @@ import { DEMO_PASSWORD } from '../intern/demo';
       .login-error {
         margin: 0;
         font-size: 0.875rem;
-        color: #ffa99c;
+        color: var(--danger-text);
       }
 
       .login-error:empty {
@@ -170,7 +172,7 @@ import { DEMO_PASSWORD } from '../intern/demo';
       }
 
       .login-error.is-ok {
-        color: var(--sole);
+        color: var(--accent-text);
       }
 
       .login-switch {
@@ -184,7 +186,7 @@ import { DEMO_PASSWORD } from '../intern/demo';
         border-radius: var(--r-md);
         font-size: 0.8125rem;
         line-height: 1.5;
-        color: var(--gold);
+        color: var(--gold-text);
         background: rgb(255 194 75 / 0.08);
         overflow-wrap: anywhere;
       }
@@ -195,6 +197,7 @@ import { DEMO_PASSWORD } from '../intern/demo';
     </style>
 
     <script>
+      import '../scripts/theme';
       import { getStore } from '../intern/store';
 
       const body = document.body.dataset;

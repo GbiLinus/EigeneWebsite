@@ -212,8 +212,8 @@ const interests = Object.entries(c.interests) as [string, string][];
     font-size: 0.9375rem;
     font-weight: 580;
     cursor: pointer;
-    background: rgb(237 246 243 / 0.06);
-    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.14);
+    background: rgb(var(--ink) / 0.06);
+    box-shadow: inset 0 0 0 1px rgb(var(--ink) / 0.14);
     transition:
       background-color 0.3s,
       box-shadow 0.3s,
@@ -237,7 +237,7 @@ const interests = Object.entries(c.interests) as [string, string][];
     width: 1.35rem;
     height: 1.35rem;
     border-radius: 50%;
-    box-shadow: inset 0 0 0 1.5px rgb(237 246 243 / 0.35);
+    box-shadow: inset 0 0 0 1.5px rgb(var(--ink) / 0.35);
     color: var(--nacht);
     transition:
       background-color 0.3s,
@@ -304,9 +304,9 @@ const interests = Object.entries(c.interests) as [string, string][];
     border-radius: var(--r-md);
     font: inherit;
     font-size: 1rem;
-    color: var(--salz);
-    background: rgb(4 27 32 / 0.55);
-    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.12);
+    color: var(--text);
+    background: rgb(var(--deep) / 0.55);
+    box-shadow: inset 0 0 0 1px rgb(var(--ink) / 0.12);
     transition:
       box-shadow 0.3s,
       background-color 0.3s;
@@ -320,7 +320,7 @@ const interests = Object.entries(c.interests) as [string, string][];
   .field input:focus,
   .field textarea:focus {
     outline: none;
-    background: rgb(4 27 32 / 0.75);
+    background: rgb(var(--deep) / 0.75);
     box-shadow:
       inset 0 0 0 1.5px var(--sole),
       0 0 0 4px rgb(59 227 201 / 0.15);
@@ -334,7 +334,7 @@ const interests = Object.entries(c.interests) as [string, string][];
   .form-error {
     margin: 0;
     font-size: 0.875rem;
-    color: #ffa99c;
+    color: var(--danger-text);
   }
 
   .field-error:empty,
@@ -418,7 +418,7 @@ const interests = Object.entries(c.interests) as [string, string][];
     padding: 0.5rem 0.9rem;
     border-radius: var(--r-sm);
     background: rgb(255 194 75 / 0.1);
-    color: var(--gold);
+    color: var(--gold-text);
   }
 
   @media (max-width: 960px) {

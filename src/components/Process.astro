@@ -55,7 +55,7 @@ const d = t(lang);
     left: 1.5rem;
     right: 0;
     height: 2px;
-    background: rgb(237 246 243 / 0.1);
+    background: rgb(var(--ink) / 0.1);
     border-radius: 2px;
   }
 
@@ -86,10 +86,10 @@ const d = t(lang);
     font-stretch: 118%;
     font-size: 1.125rem;
     color: var(--text-soft);
-    background: var(--nacht);
+    background: var(--bg);
     box-shadow:
-      inset 0 0 0 1.5px rgb(237 246 243 / 0.18),
-      0 0 0 6px var(--nacht);
+      inset 0 0 0 1.5px rgb(var(--ink) / 0.18),
+      0 0 0 6px var(--bg);
     transition:
       color 0.4s,
       background-color 0.4s,
@@ -102,7 +102,7 @@ const d = t(lang);
     background: var(--sole);
     box-shadow:
       inset 0 1px 0 rgb(255 255 255 / 0.6),
-      0 0 0 6px var(--nacht),
+      0 0 0 6px var(--bg),
       0 0 30px 2px rgb(59 227 201 / 0.5);
     transform: scale(1.08);
   }

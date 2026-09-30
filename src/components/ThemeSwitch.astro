@@ -1,0 +1,94 @@
+---
+import { t, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const n = t(lang).nav;
+const options = [
+  { key: 'light', label: n.themeLight, icon: 'M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z' },
+  { key: 'system', label: n.themeSystem, icon: 'M4 5h16v11H4zM9 20h6M12 16v4' },
+  { key: 'dark', label: n.themeDark, icon: 'M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z' },
+];
+---
+
+<!-- Links hell, Mitte wie das System, rechts dunkel -->
+<div class="theme" role="radiogroup" aria-label={n.theme} data-theme-switch>
+  <span class="theme-thumb" aria-hidden="true"></span>
+  {
+    options.map((o) => (
+      <button class="theme-btn" type="button" role="radio" aria-checked={o.key === 'system' ? 'true' : 'false'} aria-label={o.label} title={o.label} data-theme-set={o.key}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d={o.icon} />
+        </svg>
+      </button>
+    ))
+  }
+</div>
+
+<style>
+  .theme {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    padding: 0.2rem;
+    border-radius: 999px;
+    background: rgb(var(--deep) / 0.35);
+    box-shadow: inset 0 0 0 1px rgb(var(--ink) / 0.08);
+  }
+
+  .theme-btn {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.2rem;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    color: var(--text-faint);
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+
+  .theme-btn svg {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+
+  .theme-btn:hover {
+    color: var(--text);
+  }
+
+  .theme-btn[aria-checked='true'] {
+    color: var(--thumb-fg);
+  }
+
+  .theme-thumb {
+    position: absolute;
+    top: 0.2rem;
+    left: 0.2rem;
+    width: 2.1rem;
+    height: 2.2rem;
+    border-radius: 999px;
+    background: var(--thumb-bg);
+    box-shadow:
+      inset 0 1px 0 #fff,
+      0 4px 12px -4px rgb(0 0 0 / 0.45);
+    transform: translateX(100%);
+    transition: transform 0.6s var(--ease-liquid);
+  }
+
+  /* Position folgt der gespeicherten Wahl, schon vor dem Laden der Skripte */
+  :global(:root[data-theme-pref='light']) .theme-thumb {
+    transform: translateX(0);
+  }
+
+  :global(:root[data-theme-pref='dark']) .theme-thumb {
+    transform: translateX(200%);
+  }
+</style>

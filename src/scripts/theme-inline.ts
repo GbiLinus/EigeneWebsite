@@ -1,0 +1,3 @@
+// Läuft vor dem ersten Zeichnen im <head>, damit die Seite nicht kurz im
+// falschen Modus aufblitzt. Gespeicherte Wahl: light, dark oder system.
+export const themeScript = `(function(){var p='system';try{p=localStorage.getItem('wdbr-theme')||'system'}catch(e){}if(p!=='light'&&p!=='dark')p='system';var l=window.matchMedia('(prefers-color-scheme: light)').matches;var t=p==='system'?(l?'light':'dark'):p;var r=document.documentElement;r.setAttribute('data-theme',t);r.setAttribute('data-theme-pref',p);var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',t==='light'?'#eef4f2':'#041b20');})();`;

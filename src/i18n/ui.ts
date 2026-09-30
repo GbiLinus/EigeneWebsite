@@ -40,6 +40,10 @@ const de = {
     menu: 'Menü',
     close: 'Menü schließen',
     lang: 'Sprache',
+    theme: 'Darstellung',
+    themeLight: 'Hell',
+    themeSystem: 'Wie System',
+    themeDark: 'Dunkel',
   },
   hero: {
     lines: ['Mehr Gäste.', 'Mehr Sterne.'],
@@ -397,6 +401,10 @@ const en: Dict = {
     menu: 'Menu',
     close: 'Close menu',
     lang: 'Language',
+    theme: 'Appearance',
+    themeLight: 'Light',
+    themeSystem: 'Match system',
+    themeDark: 'Dark',
   },
   hero: {
     lines: ['More guests.', 'More stars.'],
