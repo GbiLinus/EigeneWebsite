@@ -119,6 +119,10 @@ npm run build    # statische Seite in dist/
 npm run preview
 ```
 
+## Veröffentlichen (INWX)
+
+Jeder Push auf `main` startet `.github/workflows/deploy.yml`: Die Seite wird gebaut und per SFTP in den Website-Ordner bei INWX hochgeladen. Auf dem Server wird dabei nichts gelöscht. Solange die Secrets fehlen, wird nur gebaut. Weiterleitungen, Sicherheits-Header und Caching stehen in `public/.htaccess` (mit Apache 2.4 getestet). HTTPS-Zwang ist dort vorbereitet und auskommentiert, bis das SSL-Zertifikat aktiv ist.
+
 ## Offene Punkte
 
 - [ ] Gewerbe anmelden (Gemeinde Bad Rothenfelde). Danach kommt vom Finanzamt der Fragebogen zur steuerlichen Erfassung, dort entscheidet ihr über die Kleinunternehmerregelung. Zu zweit seid ihr automatisch eine GbR
@@ -128,7 +132,7 @@ npm run preview
 - [ ] Impressum: Inhaber, Rechtsform, Anschrift, ggf. USt-ID → `site.company`
 - [ ] Kleinunternehmer nach § 19 UStG? Preise netto oder brutto? → `site.pricing.taxNote` (noch unklar, mit Steuerberater oder Finanzamt klären)
 - [ ] Hosting-Umfang: Sind Domain, E-Mail und Updates enthalten?
-- [ ] Hosting bei Netlify (Tarif Personal): Projekt aus GitHub importieren, Einstellungen stehen in `netlify.toml`. Danach Netlify in der Datenschutzerklärung nennen und `site` in `astro.config.mjs` sowie `site.url` auf die Netlify-Adresse setzen, bis die Domain steht
+- [ ] Hosting bei INWX (Webhosting): Domain, E-Mail-Postfächer und Webspace buchen, SFTP-Zugang als GitHub-Secrets eintragen (siehe `.github/workflows/deploy.yml`). Danach `site` in `astro.config.mjs`, `site.url` und `robots.txt` auf die Domain setzen und den Auftragsverarbeitungsvertrag mit INWX abschließen
 - [x] Supabase-Projekt eingerichtet (URL und Publishable Key in `site.supabase`), RLS geprüft: anonym nichts lesbar, Registrierung gesperrt
 - [ ] Nach dem Hosting: in Supabase unter Authentication > URL Configuration die Site URL und `https://<domain>/intern/passwort/` als Redirect URL eintragen
 - [x] Cal.com Linus: `https://cal.com/linus-asche`

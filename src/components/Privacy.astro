@@ -35,7 +35,12 @@ const de = lang === 'de';
       ? 'Beim Aufruf der Website verarbeitet unser Hosting-Anbieter technisch notwendige Daten wie IP-Adresse, Datum und Uhrzeit sowie die aufgerufene Seite (Art. 6 Abs. 1 lit. f DSGVO).'
       : 'When you visit this website, our hosting provider processes technically necessary data such as IP address, date and time and the page requested (Art. 6(1)(f) GDPR).'
   }{' '}
-  <span class="pending">{de ? 'Anbieter wird ergänzt' : 'provider to be added'}</span>
+  {
+    de
+      ? 'Unsere Website liegt bei INWX in Berlin, Deutschland. Mit INWX besteht ein Vertrag zur Auftragsverarbeitung.'
+      : 'Our website is hosted by INWX in Berlin, Germany. We have a data processing agreement with INWX.'
+  }{' '}
+  <span class="pending">{de ? 'genaue Firmierung aus dem INWX-Vertrag übernehmen' : 'exact company name to be taken from the INWX contract'}</span>
 </p>
 
 <h2>{de ? 'Kontaktformular und Bundle-Konfigurator' : 'Contact form and bundle configurator'}</h2>

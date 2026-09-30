@@ -1,0 +1,71 @@
+# Baut die Website bei jedem Push auf main und lädt sie per SFTP zu INWX hoch.
+#
+# Einmalig unter GitHub > Settings > Secrets and variables > Actions eintragen:
+#   INWX_SFTP_HOST      Server, z. B. aus dem INWX-Kundenbereich
+#   INWX_SFTP_USER      SFTP-Benutzer
+#   INWX_SFTP_PASSWORD  SFTP-Passwort
+#   INWX_SFTP_PATH      Zielordner der Website auf dem Server (nur für die Website!)
+#   INWX_SFTP_PORT      optional, Standard 22
+# Solange die Secrets fehlen, wird nur gebaut und nichts hochgeladen.
+
+name: Deploy to INWX
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-inwx
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Nie mit PUBLIC_DEMO bauen: sonst landen Anfragen nur im Browser
+      - run: npm run build
+
+      - name: Check upload settings
+        id: check
+        env:
+          HOST: ${{ secrets.INWX_SFTP_HOST }}
+          SFTP_USER: ${{ secrets.INWX_SFTP_USER }}
+          SFTP_PASSWORD: ${{ secrets.INWX_SFTP_PASSWORD }}
+          TARGET: ${{ secrets.INWX_SFTP_PATH }}
+        run: |
+          if [ -n "$HOST" ] && [ -n "$SFTP_USER" ] && [ -n "$SFTP_PASSWORD" ] && [ -n "$TARGET" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::INWX-Secrets fehlen noch, die Seite wurde nur gebaut und nicht hochgeladen."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload via SFTP
+        if: steps.check.outputs.ready == 'true'
+        env:
+          HOST: ${{ secrets.INWX_SFTP_HOST }}
+          PORT: ${{ secrets.INWX_SFTP_PORT }}
+          SFTP_USER: ${{ secrets.INWX_SFTP_USER }}
+          LFTP_PASSWORD: ${{ secrets.INWX_SFTP_PASSWORD }}
+          TARGET: ${{ secrets.INWX_SFTP_PATH }}
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq lftp
+          # Ohne --delete: auf dem Server wird nichts gelöscht, nur ergänzt und überschrieben
+          lftp -c "set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 30; \
+            open --env-password -u \"$SFTP_USER\" -p \"${PORT:-22}\" \"sftp://$HOST\"; \
+            mirror --reverse --verbose --parallel=4 dist/ \"$TARGET\""
