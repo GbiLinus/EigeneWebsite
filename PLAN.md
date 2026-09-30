@@ -13,7 +13,7 @@ Zielgruppe: lokale Betriebe, vor allem Restaurants, Cafés und Hotels im Osnabr�
 | Sprachen | Deutsch unter `/`, Englisch unter `/en/`. Erster Besuch mit nicht-deutschem Browser landet auf `/en/`, danach zählt die gewählte Sprache |
 | Leistungen | NFC Google Tags (Aufsteller, Sticker, Tischaufkleber), Websites, Einrichtung und Hosting |
 | Preise | Website 250–750 €, Hosting 50–100 € im Jahr. Aufsteller und Sticker: 1 Stück 40 €, 2 Stück 70 €, 3 Stück 95 €, mehr auf Anfrage. Tischaufkleber mit NFC (für WLAN, Speisekarte oder Bewertungen): erster 25 €, zweiter 20 €, dritter 17,50 €, jeder weitere 15 € |
-| Mega-Bundle | 800–1.100 €. Kompakt (800 €): 1 Aufsteller oder Sticker, 1 Tischaufkleber (z. B. WLAN), Website nach Wünschen mit kleinen Einschränkungen, Einrichtung, 1 Jahr Hosting gratis. Komplett (1.100 €): 2 Aufsteller oder Sticker, bis zu 25 Tischaufkleber, ausführliche Website ganz nach Wünschen, Einrichtung, 1 Jahr Hosting gratis, auf Wunsch eigene Domain |
+| Mega-Bundle | Kompakt 800 €: 1 Aufsteller oder Sticker, 1 Tischaufkleber (z. B. WLAN), Website nach Wünschen mit kleinen Einschränkungen, Einrichtung, 1 Jahr Hosting gratis. Komplett ab 1.100 €: 2 Aufsteller oder Sticker, 25 Tischaufkleber, ausführliche Website ganz nach Wünschen, Einrichtung, 1 Jahr Hosting gratis, auf Wunsch eigene Domain. Darüber hinaus: Konfigurator ohne Obergrenze |
 | Fotos | Vorerst keine. Team als Monogramm-Karten, Fotos später über ein Feld nachrüstbar |
 | Portfolio | Leerer Zustand mit Einladung, Projekte kommen als Markdown-Dateien dazu |
 | Deadline | Keine. Erst komplett bauen, dann einmal sauber launchen |
@@ -39,6 +39,15 @@ Zielgruppe: lokale Betriebe, vor allem Restaurants, Cafés und Hotels im Osnabr�
 10. Footer: großer Schriftzug, Licht folgt dem Mauszeiger
 
 Easter Egg: Konami-Code (↑ ↑ ↓ ↓ ← → ← → B A) lässt goldene Sterne statt Sole-Tropfen fallen.
+
+## Bundle-Konfigurator
+
+Button „Selbst konfigurieren“ auf der Bundle-Karte öffnet ein Fenster. Kunden wählen Website-Umfang und Wünsche, Anzahl Aufsteller und Sticker, Tischaufkleber (ohne Obergrenze), weitere Hosting-Jahre und eine Wunsch-Domain. Die Konfiguration geht als Anfrage (Interesse „Mega-Bundle“) in den Mitarbeiterbereich, mit einer Zusammenfassung auf Deutsch.
+
+Richtwert:
+- Passt die Auswahl in Kompakt oder Komplett, steht der feste Bundle-Preis da.
+- Sonst: günstigstes passendes Bundle plus der Mehrumfang zu Einzelpreisen, der Mehrumfang mit 10 % Puffer, das Ganze auf volle 50 € aufgerundet. So fällt das echte Angebot nicht höher aus als der Richtwert.
+- Annahmen in `site.pricing.configurator`, bitte prüfen: jeder weitere Aufsteller oder Sticker ab dem vierten 30 €, jedes weitere Hosting-Jahr 100 €.
 
 ## Mitarbeiterbereich
 

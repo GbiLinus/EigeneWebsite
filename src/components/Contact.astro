@@ -442,6 +442,8 @@ const interests = Object.entries(c.interests) as [string, string][];
 
 <script>
   import { gsap, reduced, scrollToEl } from '../scripts/motion';
+  import { isEmail, sendEnquiry } from '../scripts/enquiry';
+  import type { Interest } from '../intern/types';
 
   const form = document.querySelector<HTMLFormElement>('[data-form]');
   if (form) {
@@ -461,7 +463,7 @@ const interests = Object.entries(c.interests) as [string, string][];
         const input = form.elements.namedItem(name) as HTMLInputElement | HTMLTextAreaElement;
         const err = form.querySelector<HTMLElement>(`[data-error-for="${name}"]`)!;
         const value = input.value.trim();
-        const ok = name === 'email' ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) : value.length > 0;
+        const ok = name === 'email' ? isEmail(value) : value.length > 0;
         input.setAttribute('aria-invalid', String(!ok));
         err.textContent = ok ? '' : (err.dataset.msg ?? '');
         if (!ok && !first) first = input;
@@ -518,26 +520,19 @@ const interests = Object.entries(c.interests) as [string, string][];
         if (value('website')) {
           // Fangfeld ausgefüllt: vermutlich ein Bot, nichts speichern
           await new Promise((r) => setTimeout(r, 900));
-        } else if (endpoint) {
-          const res = await fetch(endpoint, {
-            method: 'POST',
-            headers: { Accept: 'application/json' },
-            body: fd,
-          });
-          if (!res.ok) throw new Error(String(res.status));
         } else {
-          // Landet im Mitarbeiterbereich (Supabase, im Demo-Modus nur in diesem Browser)
-          const { getStore } = await import('../intern/store');
-          const store = await getStore();
-          await store.createEnquiry({
-            name: value('name'),
-            business: value('business') || null,
-            email: value('email'),
-            phone: value('phone') || null,
-            message: value('message'),
-            interests: fd.getAll('interest').map(String) as ('website' | 'nfc' | 'hosting' | 'bundle')[],
-            lang,
-          });
+          await sendEnquiry(
+            {
+              name: value('name'),
+              business: value('business') || null,
+              email: value('email'),
+              phone: value('phone') || null,
+              message: value('message'),
+              interests: fd.getAll('interest').map(String) as Interest[],
+              lang,
+            },
+            endpoint,
+          );
         }
         form.reset();
         showSuccess();

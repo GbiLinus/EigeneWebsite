@@ -1,6 +1,7 @@
 ---
 import { site } from '../config/site';
 import { t, type Lang } from '../i18n/ui';
+import BundleConfigurator from './BundleConfigurator.astro';
 
 interface Props {
   lang: Lang;
@@ -20,7 +21,7 @@ const fmt = (n: number, digits = 0) =>
 const money = (n: number, digits = 0) => (lang === 'de' ? `${fmt(n, digits)} €` : `€${fmt(n, digits)}`);
 const single = nfc[0].price;
 const taxNote = site.pricing.taxNote[lang];
-const bundlePrices = [bundle.from, bundle.to];
+const bundlePrices = bundle.tiers.map((tier) => tier.price);
 
 // Ersparnis je Stufe: Summe der Einzelpreise minus Bundle-Preis
 const tagsTotal = (n: number) => {
@@ -51,15 +52,23 @@ const moneyAuto = (n: number) => money(n, Number.isInteger(n) ? 0 : 2);
         <h3 class="bundle-title">{p.bundle.title}</h3>
         <p class="t-body">{p.bundle.text}</p>
         <p class="bundle-range t-num">
-          {money(bundle.from)}
-          <span class="bundle-dash" aria-hidden="true">–</span>
-          <span class="sr-only">{lang === 'de' ? 'bis' : 'to'}</span>
-          {money(bundle.to)}
+          <span class="bundle-from">{p.bundle.tiers[0].price}</span>
+          {money(bundlePrices[0])}
         </p>
         <p class="t-small">{p.bundle.note}</p>
-        <a class="btn btn-primary bundle-cta" href={`#${d.ids.contact}`} data-magnetic data-prefill="bundle" data-message={p.bundle.requestMessage}>
-          {p.bundle.cta}
-        </a>
+        <div class="bundle-ctas">
+          <a class="btn btn-primary" href={`#${d.ids.contact}`} data-magnetic data-prefill="bundle" data-message={p.bundle.requestMessage}>
+            {p.bundle.cta}
+          </a>
+          <button class="btn btn-ghost glass bundle-config" type="button" data-config-open data-spec>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path>
+              <circle cx="16" cy="7" r="2"></circle>
+              <circle cx="10" cy="17" r="2"></circle>
+            </svg>
+            {p.bundle.configure}
+          </button>
+        </div>
       </div>
 
       <div class="bundle-tiers">
@@ -225,6 +234,8 @@ const moneyAuto = (n: number) => money(n, Number.isInteger(n) ? 0 : 2);
       </div>
     </div>
 
+    <BundleConfigurator lang={lang} />
+
     <div class="price-foot">
       {taxNote && <p class="t-small">{taxNote}</p>}
       <a class="btn btn-ghost glass" href={`#${d.ids.contact}`} data-spec>{p.cta}</a>
@@ -288,12 +299,24 @@ const moneyAuto = (n: number) => money(n, Number.isInteger(n) ? 0 : 2);
     color: var(--gold);
   }
 
-  .bundle-dash {
-    color: rgb(255 194 75 / 0.55);
+  .bundle-from {
+    font-size: 1rem;
+    font-weight: 560;
+    font-stretch: 100%;
+    letter-spacing: 0;
+    color: rgb(255 194 75 / 0.8);
   }
 
-  .bundle-cta {
+  .bundle-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
     margin-top: 0.75rem;
+  }
+
+  .bundle-config svg {
+    width: 1.2rem;
+    height: 1.2rem;
   }
 
   .bundle-tiers {

@@ -1,0 +1,1199 @@
+---
+import { site } from '../config/site';
+import { isConfigured } from '../intern/store';
+import { t, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const d = t(lang);
+const c = d.pricing.config;
+const f = d.contact;
+const id = (name: string) => `cfg-${name}-${lang}`;
+const connected = Boolean(site.contact.formEndpoint) || isConfigured;
+
+// Preisdaten für das Skript
+const pricing = {
+  stands: site.pricing.nfc.map((x) => x.price),
+  tags: site.pricing.tableTags,
+  tiers: site.pricing.bundle.tiers,
+  ...site.pricing.configurator,
+};
+const tierNames = Object.fromEntries(d.pricing.bundle.tiers.map((tier, i) => [site.pricing.bundle.tiers[i].key, tier.title]));
+const scopeNames = Object.fromEntries(c.website.scopes.map((s) => [s.key, s.name]));
+const scopeNamesDe = Object.fromEntries(t('de').pricing.config.website.scopes.map((s) => [s.key, s.name]));
+
+const stepper = (name: string, label: string, value: number, min = 0) => ({ name, label, value, min });
+const standRows = [stepper('stands', c.stands.stands, 1), stepper('stickers', c.stands.stickers, 0)];
+---
+
+<dialog class="cfg" data-config aria-labelledby={id('title')}>
+  <form
+    class="cfg-form"
+    novalidate
+    data-config-form
+    data-lang={lang}
+    data-endpoint={site.contact.formEndpoint ?? ''}
+    data-pricing={JSON.stringify(pricing)}
+    data-tier-names={JSON.stringify(tierNames)}
+    data-scope-names={JSON.stringify(scopeNames)}
+    data-scope-names-de={JSON.stringify(scopeNamesDe)}
+    data-text={JSON.stringify(c.summary)}
+  >
+    <header class="cfg-head">
+      <div class="cfg-head-copy">
+        <h2 class="cfg-title" id={id('title')}>{c.title}</h2>
+        <p class="t-body">{c.lead}</p>
+      </div>
+      <button class="cfg-close" type="button" data-config-close aria-label={c.close}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </button>
+    </header>
+
+    <div class="cfg-body" data-lenis-prevent>
+      <div class="cfg-options">
+        <div class="cfg-presets" role="group" aria-label={c.presets}>
+          <span class="cfg-presets-label">{c.presets}</span>
+          {
+            d.pricing.bundle.tiers.map((tier, i) => (
+              <button class="cfg-preset" type="button" data-preset={i}>
+                {tier.title}
+              </button>
+            ))
+          }
+        </div>
+
+        <!-- Website -->
+        <fieldset class="cfg-sec">
+          <legend class="cfg-legend">{c.website.title}</legend>
+          <div class="cfg-scopes">
+            {
+              c.website.scopes.map((s, i) => (
+                <label class="cfg-scope">
+                  <input type="radio" name="scope" value={s.key} checked={i === 0} />
+                  <span class="cfg-scope-name">{s.name}</span>
+                  <span class="cfg-scope-text">{s.text}</span>
+                </label>
+              ))
+            }
+          </div>
+          <p class="cfg-label">{c.website.wishes}</p>
+          <div class="cfg-chips">
+            {
+              c.website.features.map((feature, i) => (
+                <label class="cfg-chip">
+                  <input type="checkbox" name="features" value={t('de').pricing.config.website.features[i]} />
+                  {feature}
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <!-- Aufsteller und Sticker -->
+        <fieldset class="cfg-sec">
+          <legend class="cfg-legend">{c.stands.title}</legend>
+          {
+            standRows.map((row) => (
+              <div class="cfg-row">
+                <label class="cfg-row-label" for={id(row.name)}>
+                  {row.label}
+                </label>
+                <div class="stepper">
+                  <button class="stepper-btn" type="button" data-step={row.name} data-dir="-1" aria-label={`${c.less}: ${row.label}`}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12"></path></svg>
+                  </button>
+                  <input class="stepper-input" id={id(row.name)} name={row.name} type="number" inputmode="numeric" min={row.min} step="1" value={row.value} />
+                  <button class="stepper-btn" type="button" data-step={row.name} data-dir="1" aria-label={`${c.more}: ${row.label}`}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 6v12M6 12h12"></path></svg>
+                  </button>
+                </div>
+              </div>
+            ))
+          }
+          <p class="cfg-hint">{c.stands.min}</p>
+        </fieldset>
+
+        <!-- Tischaufkleber -->
+        <fieldset class="cfg-sec">
+          <legend class="cfg-legend">{c.tags.title}</legend>
+          <div class="cfg-row">
+            <label class="cfg-row-label" for={id('tags')}>{c.tags.count}</label>
+            <div class="stepper">
+              <button class="stepper-btn" type="button" data-step="tags" data-dir="-1" aria-label={`${c.less}: ${c.tags.title}`}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12"></path></svg>
+              </button>
+              <input class="stepper-input" id={id('tags')} name="tags" type="number" inputmode="numeric" min="1" step="1" value="1" />
+              <button class="stepper-btn" type="button" data-step="tags" data-dir="1" aria-label={`${c.more}: ${c.tags.title}`}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 6v12M6 12h12"></path></svg>
+              </button>
+            </div>
+          </div>
+          <div class="cfg-quick" role="group" aria-label={c.tags.count}>
+            {
+              [5, 10, 25, 50].map((n) => (
+                <button class="cfg-quick-btn" type="button" data-quick-tags={n}>
+                  {n}
+                </button>
+              ))
+            }
+          </div>
+          <p class="cfg-label">{c.tags.purpose}</p>
+          <div class="cfg-chips">
+            {
+              c.tags.purposes.map((purpose, i) => (
+                <label class="cfg-chip">
+                  <input type="checkbox" name="purposes" value={t('de').pricing.config.tags.purposes[i]} checked={i === 0} />
+                  {purpose}
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <!-- Hosting und Domain -->
+        <fieldset class="cfg-sec">
+          <legend class="cfg-legend">{c.hosting.title}</legend>
+          <p class="cfg-free">{c.hosting.free}</p>
+          <div class="cfg-row">
+            <label class="cfg-row-label" for={id('years')}>{c.hosting.years}</label>
+            <div class="stepper">
+              <button class="stepper-btn" type="button" data-step="years" data-dir="-1" aria-label={`${c.less}: ${c.hosting.years}`}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 12h12"></path></svg>
+              </button>
+              <input class="stepper-input" id={id('years')} name="years" type="number" inputmode="numeric" min="0" step="1" value="0" />
+              <button class="stepper-btn" type="button" data-step="years" data-dir="1" aria-label={`${c.more}: ${c.hosting.years}`}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 6v12M6 12h12"></path></svg>
+              </button>
+            </div>
+          </div>
+          <label class="cfg-toggle">
+            <input type="checkbox" name="domain" data-domain-toggle />
+            <span class="cfg-toggle-track" aria-hidden="true"><span></span></span>
+            {c.hosting.domain}
+          </label>
+          <div class="cfg-field" data-domain-field hidden>
+            <label for={id('domain-name')}>{c.hosting.domainName}</label>
+            <input id={id('domain-name')} name="domainName" type="text" autocomplete="off" spellcheck="false" placeholder={c.hosting.domainPlaceholder} />
+          </div>
+        </fieldset>
+
+        <!-- Kontaktdaten -->
+        <fieldset class="cfg-sec">
+          <legend class="cfg-legend">{c.contact.title}</legend>
+          <div class="hp" aria-hidden="true">
+            <label for={id('website')}>{f.honeypot}</label>
+            <input id={id('website')} name="website" type="text" tabindex="-1" autocomplete="off" />
+          </div>
+          <div class="cfg-fields">
+            <div class="cfg-field">
+              <label for={id('name')}>{f.name}</label>
+              <input id={id('name')} name="name" type="text" autocomplete="name" required aria-describedby={id('name-err')} />
+              <p class="cfg-error" id={id('name-err')} data-error-for="name" data-msg={f.errors.name}></p>
+            </div>
+            <div class="cfg-field">
+              <label for={id('business')}>{f.business} <span class="opt">{f.optional}</span></label>
+              <input id={id('business')} name="business" type="text" autocomplete="organization" />
+            </div>
+            <div class="cfg-field">
+              <label for={id('email')}>{f.email}</label>
+              <input id={id('email')} name="email" type="email" autocomplete="email" required aria-describedby={id('email-err')} />
+              <p class="cfg-error" id={id('email-err')} data-error-for="email" data-msg={f.errors.email}></p>
+            </div>
+            <div class="cfg-field">
+              <label for={id('phone')}>{f.phone} <span class="opt">{f.optional}</span></label>
+              <input id={id('phone')} name="phone" type="tel" autocomplete="tel" />
+            </div>
+            <div class="cfg-field cfg-field-wide">
+              <label for={id('message')}>{c.contact.message} <span class="opt">{f.optional}</span></label>
+              <textarea id={id('message')} name="message" rows="3"></textarea>
+            </div>
+          </div>
+          <p class="t-small">
+            {f.privacy} <a class="link" href={lang === 'de' ? '/datenschutz/' : '/en/privacy/'}>{f.privacyLink}</a>.
+          </p>
+        </fieldset>
+      </div>
+
+      <!-- Zusammenfassung mit Richtwert -->
+      <aside class="cfg-summary glass" aria-live="polite">
+        <p class="cfg-sum-title">{c.summary.title}</p>
+        <p class="cfg-fit" data-fit></p>
+        <p class="cfg-price t-num" data-cfg-price></p>
+        <p class="cfg-note" data-note></p>
+        <ul class="cfg-lines" role="list" data-lines></ul>
+        <p class="cfg-error cfg-form-error" role="alert" data-form-error data-msg={c.error}></p>
+        <button class="btn btn-primary cfg-send" type="submit" data-send data-label={c.summary.send} data-busy={c.summary.sending}>
+          {c.summary.send}
+        </button>
+      </aside>
+    </div>
+  </form>
+
+  <div class="cfg-success" data-config-success hidden tabindex="-1">
+    <svg class="cfg-check" viewBox="0 0 52 52" aria-hidden="true">
+      <circle cx="26" cy="26" r="24" fill="none" pathLength="1"></circle>
+      <path d="M15 27l7.5 7.5L37.5 19" fill="none" pathLength="1"></path>
+    </svg>
+    <p class="cfg-title">{c.success.title}</p>
+    <p class="t-body">{c.success.text}</p>
+    {!connected && <p class="t-small preview-note">{f.previewNote}</p>}
+    <button class="btn btn-ghost glass" type="button" data-config-close>{c.success.close}</button>
+  </div>
+</dialog>
+
+<style>
+  .cfg {
+    width: min(72rem, calc(100vw - 2rem));
+    max-width: none;
+    height: min(52rem, calc(100dvh - 2rem));
+    max-height: none;
+    margin: auto;
+    padding: 0;
+    border: 0;
+    border-radius: var(--r-xl);
+    color: var(--salz);
+    background: linear-gradient(170deg, rgb(15 52 58 / 0.97), rgb(6 30 35 / 0.98));
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.16),
+      0 0 0 1px rgb(255 255 255 / 0.08),
+      0 40px 100px -30px rgb(0 0 0 / 0.9);
+    overflow: hidden;
+  }
+
+  .cfg[open] {
+    display: flex;
+    flex-direction: column;
+    animation: cfg-in 0.5s var(--ease-out);
+  }
+
+  .cfg::backdrop {
+    background: rgb(2 12 14 / 0.65);
+    backdrop-filter: blur(6px);
+  }
+
+  @keyframes cfg-in {
+    from {
+      opacity: 0;
+      transform: translateY(24px) scale(0.98);
+    }
+  }
+
+  .cfg-form {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+  }
+
+  .cfg-form[hidden] {
+    display: none;
+  }
+
+  .cfg-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.5rem clamp(1.25rem, 3vw, 2rem) 1.25rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .cfg-head-copy {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .cfg-title {
+    margin: 0;
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-weight: 780;
+    font-stretch: 116%;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  .cfg-close {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 0;
+    border-radius: 50%;
+    color: var(--salz);
+    background: rgb(237 246 243 / 0.08);
+    cursor: pointer;
+  }
+
+  .cfg-close svg {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  .cfg-body {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(17rem, 21rem);
+    gap: clamp(1.25rem, 3vw, 2rem);
+    padding: 1.5rem clamp(1.25rem, 3vw, 2rem) 2rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .cfg-options {
+    display: grid;
+    gap: 1.25rem;
+    align-content: start;
+    min-width: 0;
+  }
+
+  .cfg-presets {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .cfg-presets-label {
+    font-size: 0.875rem;
+    color: var(--text-faint);
+  }
+
+  .cfg-preset,
+  .cfg-quick-btn {
+    min-height: 2.5rem;
+    padding: 0.4rem 1rem;
+    border: 0;
+    border-radius: 999px;
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 620;
+    color: var(--salz);
+    background: rgb(237 246 243 / 0.08);
+    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.12);
+    cursor: pointer;
+    transition: background-color 0.25s;
+  }
+
+  .cfg-preset:hover,
+  .cfg-quick-btn:hover {
+    background: rgb(237 246 243 / 0.14);
+  }
+
+  .cfg-sec {
+    display: grid;
+    gap: 0.9rem;
+    margin: 0;
+    padding: 1.25rem;
+    border: 0;
+    border-radius: var(--r-lg);
+    background: rgb(4 27 32 / 0.4);
+    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.08);
+  }
+
+  .cfg-legend {
+    float: left;
+    width: 100%;
+    margin: 0 0 0.25rem;
+    padding: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+    font-stretch: 108%;
+    letter-spacing: -0.01em;
+  }
+
+  .cfg-scopes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+
+  .cfg-scope {
+    position: relative;
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.9rem 1rem;
+    border-radius: var(--r-md);
+    background: rgb(237 246 243 / 0.05);
+    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.12);
+    cursor: pointer;
+    transition:
+      background-color 0.25s,
+      box-shadow 0.25s;
+  }
+
+  .cfg-scope input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .cfg-scope:has(input:checked) {
+    background: rgb(59 227 201 / 0.12);
+    box-shadow: inset 0 0 0 1.5px var(--sole);
+  }
+
+  .cfg-scope:has(input:focus-visible) {
+    outline: 2px solid var(--sole);
+    outline-offset: 2px;
+  }
+
+  .cfg-scope-name {
+    font-weight: 680;
+  }
+
+  .cfg-scope-text {
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--text-soft);
+  }
+
+  .cfg-label {
+    margin: 0.25rem 0 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-soft);
+  }
+
+  .cfg-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .cfg-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    background: rgb(237 246 243 / 0.06);
+    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.12);
+    cursor: pointer;
+  }
+
+  .cfg-chip:has(input:checked) {
+    background: rgb(59 227 201 / 0.14);
+    box-shadow: inset 0 0 0 1px rgb(59 227 201 / 0.55);
+  }
+
+  .cfg-chip input {
+    accent-color: var(--sole);
+  }
+
+  .cfg-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+  }
+
+  .cfg-row-label {
+    font-weight: 560;
+  }
+
+  .stepper {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem;
+    border-radius: 999px;
+    background: rgb(4 27 32 / 0.55);
+    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.1);
+  }
+
+  .stepper-btn {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 0;
+    border-radius: 50%;
+    color: var(--nacht);
+    background: linear-gradient(180deg, #f6fbfa, #cfe3de);
+    box-shadow: inset 0 1px 0 #fff;
+    cursor: pointer;
+    transition: transform 0.4s var(--ease-liquid);
+  }
+
+  .stepper-btn:active {
+    transform: scale(0.9);
+  }
+
+  .stepper-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .stepper-btn svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .stepper-input {
+    width: 4.5rem;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: 1.25rem;
+    font-weight: 760;
+    font-stretch: 116%;
+    text-align: center;
+    color: var(--salz);
+    font-variant-numeric: tabular-nums;
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+
+  .stepper-input::-webkit-outer-spin-button,
+  .stepper-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .cfg-quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .cfg-hint {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--text-faint);
+  }
+
+  .cfg-free {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--sole);
+  }
+
+  .cfg-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-weight: 560;
+  }
+
+  .cfg-toggle input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+
+  .cfg-toggle-track {
+    position: relative;
+    flex: none;
+    width: 2.9rem;
+    height: 1.75rem;
+    border-radius: 999px;
+    background: rgb(237 246 243 / 0.14);
+    transition: background-color 0.3s;
+  }
+
+  .cfg-toggle-track span {
+    position: absolute;
+    top: 0.15rem;
+    left: 0.15rem;
+    width: 1.45rem;
+    height: 1.45rem;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #fff, #d9e8e4);
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.4);
+    transition: transform 0.5s var(--ease-liquid);
+  }
+
+  .cfg-toggle:has(input:checked) .cfg-toggle-track {
+    background: var(--sole);
+  }
+
+  .cfg-toggle:has(input:checked) .cfg-toggle-track span {
+    transform: translateX(1.15rem);
+  }
+
+  .cfg-toggle:has(input:focus-visible) .cfg-toggle-track {
+    outline: 2px solid var(--sole);
+    outline-offset: 3px;
+  }
+
+  .cfg-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .cfg-field {
+    display: grid;
+    gap: 0.35rem;
+    align-content: start;
+  }
+
+  .cfg-field[hidden] {
+    display: none;
+  }
+
+  .cfg-field-wide {
+    grid-column: 1 / -1;
+  }
+
+  .cfg-field label {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .opt {
+    font-weight: 420;
+    color: var(--text-faint);
+  }
+
+  .cfg-field input,
+  .cfg-field textarea {
+    width: 100%;
+    padding: 0.75rem 0.9rem;
+    border: 0;
+    border-radius: var(--r-sm);
+    font: inherit;
+    font-size: 1rem;
+    color: var(--salz);
+    background: rgb(4 27 32 / 0.6);
+    box-shadow: inset 0 0 0 1px rgb(237 246 243 / 0.12);
+    resize: vertical;
+  }
+
+  .cfg-field input:focus,
+  .cfg-field textarea:focus {
+    outline: none;
+    box-shadow:
+      inset 0 0 0 1.5px var(--sole),
+      0 0 0 3px rgb(59 227 201 / 0.15);
+  }
+
+  .cfg-field [aria-invalid='true'] {
+    box-shadow: inset 0 0 0 1.5px #ff8a7a;
+  }
+
+  .cfg-error {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: #ffa99c;
+  }
+
+  .cfg-error:empty {
+    display: none;
+  }
+
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  /* ---------- Zusammenfassung ---------- */
+  .cfg-summary {
+    --r: var(--r-lg);
+    position: sticky;
+    top: 0;
+    display: grid;
+    gap: 0.6rem;
+    align-self: start;
+    padding: 1.35rem;
+  }
+
+  .cfg-sum-title {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 640;
+    color: var(--text-soft);
+  }
+
+  .cfg-fit {
+    justify-self: start;
+    margin: 0;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--nacht);
+    background: var(--sole);
+  }
+
+  .cfg-fit.is-estimate {
+    color: var(--gold);
+    background: rgb(255 194 75 / 0.12);
+    box-shadow: inset 0 0 0 1px rgb(255 194 75 / 0.3);
+  }
+
+  .cfg-price {
+    margin: 0;
+    font-size: clamp(2.25rem, 4vw, 3rem);
+    font-weight: 820;
+    font-stretch: 124%;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    color: var(--gold);
+  }
+
+  .cfg-note {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--text-faint);
+  }
+
+  .cfg-lines {
+    display: grid;
+    gap: 0.45rem;
+    margin: 0.5rem 0 0.25rem;
+    padding: 0.9rem 0 0;
+    border-top: 1px solid var(--line);
+    list-style: none;
+  }
+
+  .cfg-lines li {
+    display: grid;
+    grid-template-columns: 1rem 1fr;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--text-soft);
+  }
+
+  .cfg-lines li::before {
+    content: '';
+    width: 0.45rem;
+    height: 0.45rem;
+    margin: 0.4em 0 0 0.2rem;
+    border-radius: 50%;
+    background: var(--sole);
+  }
+
+  .cfg-send {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  /* ---------- Erfolg ---------- */
+  .cfg-success {
+    display: grid;
+    gap: 1rem;
+    justify-items: start;
+    align-content: center;
+    height: 100%;
+    padding: clamp(1.5rem, 5vw, 3rem);
+  }
+
+  .cfg-success[hidden] {
+    display: none;
+  }
+
+  .cfg-success:focus {
+    outline: none;
+  }
+
+  .cfg-check {
+    width: 4rem;
+    height: 4rem;
+    stroke: var(--sole);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .cfg-check circle,
+  .cfg-check path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  .cfg-success.is-shown circle {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.7s var(--ease-out);
+  }
+
+  .cfg-success.is-shown path {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.45s var(--ease-out) 0.55s;
+  }
+
+  .preview-note {
+    padding: 0.5rem 0.9rem;
+    border-radius: var(--r-sm);
+    background: rgb(255 194 75 / 0.1);
+    color: var(--gold);
+  }
+
+  @media (max-width: 860px) {
+    .cfg {
+      width: 100vw;
+      height: 100dvh;
+      border-radius: 0;
+    }
+    .cfg-head {
+      padding-top: calc(env(safe-area-inset-top, 0px) + 1rem);
+    }
+    .cfg-body {
+      grid-template-columns: 1fr;
+      padding-bottom: 0;
+    }
+    /* Richtwert bleibt unten sichtbar */
+    .cfg-summary {
+      position: sticky;
+      top: auto;
+      bottom: 0;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 0.25rem 1rem;
+      margin: 0 calc(-1 * clamp(1.25rem, 3vw, 2rem));
+      padding: 1rem clamp(1.25rem, 3vw, 2rem) calc(env(safe-area-inset-bottom, 0px) + 1rem);
+      border-radius: 0;
+      background: rgb(8 38 44 / 0.96);
+    }
+    .cfg-summary::before {
+      display: none;
+    }
+    .cfg-sum-title,
+    .cfg-lines,
+    .cfg-note {
+      display: none;
+    }
+    .cfg-fit {
+      grid-column: 1;
+      padding: 0;
+      font-size: 0.75rem;
+      color: var(--sole);
+      background: none;
+    }
+    .cfg-fit.is-estimate {
+      background: none;
+      box-shadow: none;
+    }
+    .cfg-price {
+      grid-column: 1;
+      font-size: 1.5rem;
+      white-space: nowrap;
+    }
+    .cfg-send {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      width: auto;
+      margin: 0;
+    }
+    .cfg-form-error {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .cfg-scopes,
+    .cfg-fields {
+      grid-template-columns: 1fr;
+    }
+    .cfg-head .t-body {
+      display: none;
+    }
+    .cfg-send {
+      padding-inline: 1.1rem;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, lenis, reduced } from '../scripts/motion';
+  import { isEmail, sendEnquiry } from '../scripts/enquiry';
+
+  type Tier = { key: string; price: number; website: string; stands: number; tags: number };
+  type Pricing = {
+    stands: number[];
+    tags: { first: number; second: number; third: number; following: number };
+    tiers: Tier[];
+    buffer: number;
+    roundTo: number;
+    standsBeyondThree: number;
+    hostingYear: number;
+  };
+
+  const dialog = document.querySelector<HTMLDialogElement>('[data-config]');
+  const form = dialog?.querySelector<HTMLFormElement>('[data-config-form]');
+
+  if (dialog && form) {
+    const ds = form.dataset;
+    const lang = ds.lang === 'en' ? 'en' : 'de';
+    const P = JSON.parse(ds.pricing ?? '{}') as Pricing;
+    const tierNames = JSON.parse(ds.tierNames ?? '{}') as Record<string, string>;
+    const scopeNames = JSON.parse(ds.scopeNames ?? '{}') as Record<string, string>;
+    const scopeNamesDe = JSON.parse(ds.scopeNamesDe ?? '{}') as Record<string, string>;
+    const T = JSON.parse(ds.text ?? '{}') as Record<string, string>;
+    const success = dialog.querySelector<HTMLElement>('[data-config-success]')!;
+    const fitEl = form.querySelector<HTMLElement>('[data-fit]')!;
+    const priceEl = form.querySelector<HTMLElement>('[data-cfg-price]')!;
+    const noteEl = form.querySelector<HTMLElement>('[data-note]')!;
+    const linesEl = form.querySelector<HTMLElement>('[data-lines]')!;
+    const formError = form.querySelector<HTMLElement>('[data-form-error]')!;
+    const send = form.querySelector<HTMLButtonElement>('[data-send]')!;
+    const domainToggle = form.querySelector<HTMLInputElement>('[data-domain-toggle]')!;
+    const domainField = form.querySelector<HTMLElement>('[data-domain-field]')!;
+
+    const nf = (n: number, digits = 0) =>
+      new Intl.NumberFormat(lang === 'de' ? 'de-DE' : 'en-GB', { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(n);
+    const money = (n: number) => (lang === 'de' ? `${nf(n)} €` : `€${nf(n)}`);
+    const moneyDe = (n: number) => `${new Intl.NumberFormat('de-DE').format(n)} €`;
+    const fill = (s: string, vars: Record<string, string | number>) => s.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? ''));
+
+    const input = (name: string) => form.elements.namedItem(name) as HTMLInputElement;
+    const num = (name: string) => Math.max(Number(input(name).min) || 0, Math.floor(Number(input(name).value) || 0));
+    const scope = () => (form.querySelector<HTMLInputElement>('input[name="scope"]:checked')?.value ?? 'kompakt');
+    const checked = (name: string) => [...form.querySelectorAll<HTMLInputElement>(`input[name="${name}"]:checked`)].map((i) => i.value);
+
+    // ---------------- Preislogik ----------------
+    const standsTotal = (n: number) => {
+      if (n <= 0) return 0;
+      if (n <= P.stands.length) return P.stands[n - 1];
+      return P.stands[P.stands.length - 1] + (n - P.stands.length) * P.standsBeyondThree;
+    };
+    const tagsTotal = (n: number) => {
+      const steps = [P.tags.first, P.tags.second, P.tags.third];
+      let sum = 0;
+      for (let i = 0; i < n; i++) sum += steps[i] ?? P.tags.following;
+      return sum;
+    };
+
+    // Günstigstes passende Bundle plus alles darüber hinaus
+    const quote = () => {
+      const s = num('stands') + num('stickers');
+      const tg = num('tags');
+      const years = num('years');
+      const web = scope();
+      let best: { tier: Tier; extra: number } | null = null;
+      for (const tier of P.tiers) {
+        if (tier.website === 'kompakt' && web !== 'kompakt') continue;
+        const extra =
+          (s > tier.stands ? standsTotal(s) - standsTotal(tier.stands) : 0) +
+          (tg > tier.tags ? tagsTotal(tg) - tagsTotal(tier.tags) : 0) +
+          years * P.hostingYear;
+        if (!best || tier.price + extra < best.tier.price + best.extra) best = { tier, extra };
+      }
+      const { tier, extra } = best!;
+      if (extra === 0) return { exact: true, tier, price: tier.price };
+      // Mehrumfang mit Puffer, auf volle 50 € aufgerundet
+      const price = Math.ceil((tier.price + extra * (1 + P.buffer)) / P.roundTo) * P.roundTo;
+      return { exact: false, tier, price };
+    };
+
+    // ---------------- Anzeige ----------------
+    const shown = { value: 0 };
+    let first = true;
+    const render = () => {
+      const q = quote();
+      fitEl.classList.toggle('is-estimate', !q.exact);
+      fitEl.textContent = q.exact ? fill(T.fits, { tier: tierNames[q.tier.key] }) : T.estimate;
+      noteEl.textContent = q.exact ? T.exactNote : T.note;
+      const prefix = q.exact ? '' : `${T.approx} `;
+      if (reduced || first) {
+        shown.value = q.price;
+        priceEl.textContent = prefix + money(q.price);
+        first = false;
+      } else {
+        gsap.to(shown, {
+          value: q.price,
+          duration: 0.6,
+          ease: 'power3.out',
+          overwrite: true,
+          onUpdate: () => (priceEl.textContent = prefix + money(Math.round(shown.value / 10) * 10)),
+          onComplete: () => (priceEl.textContent = prefix + money(q.price)),
+        });
+      }
+
+      const years = num('years');
+      const lines = [
+        fill(T.website, { scope: scopeNames[scope()] }),
+        num('stands') > 0 ? fill(T.stands, { n: num('stands') }) : '',
+        num('stickers') > 0 ? fill(T.stickers, { n: num('stickers') }) : '',
+        fill(T.tags, { n: num('tags') }),
+        years === 0 ? T.hostingOne : fill(T.hostingMany, { n: years + 1 }),
+        domainToggle.checked ? T.domain : '',
+        T.setup,
+      ].filter(Boolean);
+      linesEl.replaceChildren(
+        ...lines.map((l) => {
+          const li = document.createElement('li');
+          li.textContent = l;
+          return li;
+        }),
+      );
+
+      // Mindestens ein Aufsteller oder Sticker
+      const total = num('stands') + num('stickers');
+      form.querySelectorAll<HTMLButtonElement>('[data-step]').forEach((b) => {
+        const name = b.dataset.step!;
+        if (b.dataset.dir !== '-1') return;
+        const atMin = num(name) <= (Number(input(name).min) || 0);
+        const lastStand = (name === 'stands' || name === 'stickers') && total <= 1 && num(name) > 0;
+        b.disabled = atMin || lastStand;
+      });
+      return q;
+    };
+
+    const set = (name: string, value: number) => {
+      const el = input(name);
+      el.value = String(Math.max(Number(el.min) || 0, Math.floor(value)));
+    };
+
+    form.querySelectorAll<HTMLButtonElement>('[data-step]').forEach((b) =>
+      b.addEventListener('click', () => {
+        const name = b.dataset.step!;
+        set(name, num(name) + Number(b.dataset.dir));
+        render();
+      }),
+    );
+
+    form.querySelectorAll<HTMLInputElement>('.stepper-input').forEach((el) =>
+      el.addEventListener('change', () => {
+        set(el.name, Number(el.value));
+        // Bundle braucht mindestens einen Aufsteller oder Sticker
+        if (num('stands') + num('stickers') === 0) set('stands', 1);
+        render();
+      }),
+    );
+
+    form.querySelectorAll<HTMLButtonElement>('[data-quick-tags]').forEach((b) =>
+      b.addEventListener('click', () => {
+        set('tags', Number(b.dataset.quickTags));
+        render();
+      }),
+    );
+
+    form.addEventListener('change', (e) => {
+      const el = e.target as HTMLInputElement;
+      if (el.name === 'scope' || el.name === 'domain') render();
+      if (el === domainToggle) domainField.hidden = !domainToggle.checked;
+    });
+
+    // Vorlagen: Kompakt oder Komplett als Startpunkt
+    form.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((b) =>
+      b.addEventListener('click', () => {
+        const tier = P.tiers[Number(b.dataset.preset)];
+        form.querySelector<HTMLInputElement>(`input[name="scope"][value="${tier.website}"]`)!.checked = true;
+        set('stands', tier.stands);
+        set('stickers', 0);
+        set('tags', tier.tags);
+        set('years', 0);
+        domainToggle.checked = tier.key !== 'kompakt';
+        domainField.hidden = !domainToggle.checked;
+        render();
+      }),
+    );
+
+    // ---------------- Öffnen und Schließen ----------------
+    const open = () => {
+      form.hidden = false;
+      success.hidden = true;
+      success.classList.remove('is-shown');
+      render();
+      dialog.showModal();
+      lenis?.stop();
+    };
+    dialog.addEventListener('close', () => lenis?.start());
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+    dialog.querySelectorAll('[data-config-close]').forEach((b) => b.addEventListener('click', () => dialog.close()));
+    document.querySelectorAll('[data-config-open]').forEach((b) => b.addEventListener('click', open));
+
+    // ---------------- Senden ----------------
+    const validate = () => {
+      let firstBad: HTMLElement | null = null;
+      for (const name of ['name', 'email'] as const) {
+        const el = input(name);
+        const err = form.querySelector<HTMLElement>(`[data-error-for="${name}"]`)!;
+        const value = el.value.trim();
+        const ok = name === 'email' ? isEmail(value) : value.length > 0;
+        el.setAttribute('aria-invalid', String(!ok));
+        err.textContent = ok ? '' : (err.dataset.msg ?? '');
+        if (!ok && !firstBad) firstBad = el;
+      }
+      if (firstBad) {
+        firstBad.focus();
+        firstBad.scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' });
+      }
+      return !firstBad;
+    };
+
+    form.addEventListener('input', (e) => {
+      const el = e.target as HTMLInputElement;
+      if (el.getAttribute('aria-invalid') === 'true') {
+        el.setAttribute('aria-invalid', 'false');
+        const err = form.querySelector<HTMLElement>(`[data-error-for="${el.name}"]`);
+        if (err) err.textContent = '';
+      }
+    });
+
+    // Zusammenfassung für den Mitarbeiterbereich, immer auf Deutsch
+    const summaryText = (q: ReturnType<typeof quote>) => {
+      const years = num('years');
+      const lines = [
+        'Mega-Bundle, selbst konfiguriert',
+        q.exact ? `Passt ins ${q.tier.key === 'kompakt' ? 'Kompakt' : 'Komplett'}-Bundle: ${moneyDe(q.price)}` : `Richtwert: ca. ${moneyDe(q.price)} (mit Puffer gerechnet)`,
+        '',
+        `Website: ${scopeNamesDe[scope()]}`,
+        checked('features').length ? `Wünsche: ${checked('features').join(', ')}` : '',
+        `Aufsteller: ${num('stands')}, Sticker: ${num('stickers')}`,
+        `Tischaufkleber mit NFC: ${num('tags')}${checked('purposes').length ? ` (${checked('purposes').join(', ')})` : ''}`,
+        `Hosting: ${years === 0 ? '1 Jahr gratis' : `${years + 1} Jahre, das erste gratis`}`,
+        domainToggle.checked ? `Eigene Domain: ja${input('domainName').value.trim() ? ` (${input('domainName').value.trim()})` : ''}` : 'Eigene Domain: nein',
+      ].filter((l, i) => l !== '' || i === 2);
+      const note = input('message').value.trim();
+      if (note) lines.push('', 'Nachricht:', note);
+      return lines.join('\n');
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      formError.textContent = '';
+      if (!validate()) return;
+      const q = render();
+      send.disabled = true;
+      send.textContent = send.dataset.busy ?? '';
+      try {
+        if (!input('website').value) {
+          await sendEnquiry(
+            {
+              name: input('name').value.trim(),
+              business: input('business').value.trim() || null,
+              email: input('email').value.trim(),
+              phone: input('phone').value.trim() || null,
+              message: summaryText(q),
+              interests: ['bundle'],
+              lang,
+            },
+            ds.endpoint || null,
+          );
+        } else {
+          await new Promise((r) => setTimeout(r, 900));
+        }
+        form.hidden = true;
+        success.hidden = false;
+        requestAnimationFrame(() => success.classList.add('is-shown'));
+        success.focus();
+        form.reset();
+        domainField.hidden = true;
+      } catch {
+        formError.textContent = formError.dataset.msg ?? '';
+      } finally {
+        send.disabled = false;
+        send.textContent = send.dataset.label ?? '';
+      }
+    });
+
+    render();
+  }
+</script>
