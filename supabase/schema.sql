@@ -53,6 +53,14 @@ alter table public.staff enable row level security;
 alter table public.customers enable row level security;
 alter table public.enquiries enable row level security;
 
+-- Zugriffsrechte ausdrücklich setzen (neue Projekte vergeben sie nicht
+-- immer automatisch). Was davon erlaubt ist, regeln die Policies unten.
+grant usage on schema public to anon, authenticated;
+grant select on public.staff to authenticated;
+grant select, insert, update, delete on public.customers, public.enquiries to authenticated;
+grant insert on public.enquiries to anon;
+grant execute on function public.is_staff() to authenticated;
+
 create policy "staff read staff" on public.staff
   for select to authenticated using (public.is_staff());
 
