@@ -115,6 +115,21 @@ const year = new Date().getFullYear();
     background-clip: text;
   }
 
+  @supports (background: linear-gradient(in oklab, red, blue)) {
+    :global(:root[data-theme='light']) .footer-mark {
+      background: radial-gradient(
+        in oklab circle at var(--fx) var(--fy),
+        #0a7466 0%,
+        #0f9e8c 12%,
+        #6d4a78 21%,
+        var(--abend-text) 30%,
+        rgb(4 27 32 / 0.1) 52%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+  }
+
   .footer-bottom {
     display: flex;
     flex-wrap: wrap;

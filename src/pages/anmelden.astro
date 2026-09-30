@@ -121,6 +121,14 @@ import { themeScript } from '../scripts/theme-inline';
         box-shadow: 0 12px 30px -10px rgb(59 227 201 / 0.6);
       }
 
+      @supports (background: linear-gradient(in oklab, red, blue)) {
+        .login-orb {
+          background:
+            radial-gradient(circle at 30% 25%, rgb(255 255 255 / 0.6), transparent 40%),
+            linear-gradient(in oklab 150deg, var(--sole), var(--duo-mid), var(--abend));
+        }
+      }
+
       .login section {
         display: grid;
         gap: 0.4rem;

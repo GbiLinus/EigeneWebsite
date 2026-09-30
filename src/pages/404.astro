@@ -29,6 +29,13 @@ const en = t('en').notFound;
     background-clip: text;
     color: transparent;
   }
+  @supports (background: linear-gradient(in oklab, red, blue)) {
+    .nf-code {
+      background: linear-gradient(in oklab 120deg, var(--sole), var(--duo-mid), var(--abend));
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+  }
   .nf-text {
     margin: 1.5rem 0 2rem;
   }

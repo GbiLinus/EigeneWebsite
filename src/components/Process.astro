@@ -68,6 +68,12 @@ const d = t(lang);
     box-shadow: 0 0 16px rgb(59 227 201 / 0.6);
   }
 
+  @supports (background: linear-gradient(in oklab, red, blue)) {
+    .steps-line span {
+      background: linear-gradient(in oklab 90deg, var(--sole), var(--duo-mid), var(--abend));
+    }
+  }
+
   .step {
     position: relative;
     display: grid;

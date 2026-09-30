@@ -26,6 +26,8 @@
   --abend: #8c7bff;
   --abend-deep: #4b3fb3;
   --abend-rgb: 140 123 255;
+  /* Mitte für Verläufe Türkis zu zweiter Farbe (nur mit Oklab genutzt) */
+  --duo-mid: color-mix(in oklab, var(--sole), var(--abend));
   --gold: #ffc24b;
 
   /* Theme-Tokens: Dunkel ist Standard, Hell überschreibt unten */
@@ -81,7 +83,12 @@
   --text-faint: rgb(4 27 32 / 0.58);
   --accent-text: #0a7466;
   --gold-text: #8a5a00;
-  --abend-text: #5443c9;
+  /* Lila statt Blau-Violett */
+  --abend: #a85fd6;
+  --abend-deep: #6b2a96;
+  --abend-rgb: 168 95 214;
+  --abend-text: #7a2fa8;
+  --duo-mid: #b98ac0;
   --danger-text: #b3321f;
   --focus: #0a7466;
   --glass-bg: linear-gradient(160deg, rgb(255 255 255 / 0.84), rgb(255 255 255 / 0.6) 55%, rgb(255 255 255 / 0.72));
@@ -97,6 +104,13 @@
   --hero-grad: linear-gradient(100deg, #0b2328 10%, #0c8a7b 45%, var(--abend-text) 90%);
   --thumb-bg: linear-gradient(180deg, #16444b, #062127);
   --thumb-fg: var(--salz);
+}
+
+/* Verlauf Türkis zu Lila über Mauve: kein bläulicher Übergang in der Mitte */
+@supports (background: linear-gradient(in oklab, red, blue)) {
+  :root[data-theme='light'] {
+    --hero-grad: linear-gradient(in oklab 100deg, #0b2328 10%, #0c8a7b 36%, #6d4a78 52%, var(--abend-text) 72%);
+  }
 }
 
 /* ------------------------------------------------------------------
