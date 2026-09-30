@@ -1,13 +1,14 @@
 import type { Store } from './types';
+import { site } from '../config/site';
 
-const url = import.meta.env.PUBLIC_SUPABASE_URL as string | undefined;
-const key = import.meta.env.PUBLIC_SUPABASE_KEY as string | undefined;
+const url = import.meta.env.PUBLIC_SUPABASE_URL || site.supabase.url;
+const key = import.meta.env.PUBLIC_SUPABASE_KEY || site.supabase.publishableKey;
 
-export const isConfigured = Boolean(url && key);
-
-// Demo-Modus nur beim Entwickeln oder mit PUBLIC_DEMO=true (Vorschau-Builds).
+// Demo-Modus mit Beispieldaten im Browser: mit PUBLIC_DEMO=true (Tests,
+// Vorschau-Builds) oder beim Entwickeln, solange Supabase fehlt.
 // Live ohne Supabase schlagen Anfragen sichtbar fehl, statt still im Browser zu landen.
-export const demoMode = !isConfigured && (import.meta.env.DEV || import.meta.env.PUBLIC_DEMO === 'true');
+export const demoMode = import.meta.env.PUBLIC_DEMO === 'true' || (!(url && key) && import.meta.env.DEV);
+export const isConfigured = Boolean(url && key) && !demoMode;
 
 let store: Promise<Store> | null = null;
 
@@ -15,10 +16,10 @@ let store: Promise<Store> | null = null;
 // Seite nichts davon mitschleppt.
 export function getStore(): Promise<Store> {
   if (!store) {
-    store = isConfigured
-      ? import('./supabase').then((m) => m.createSupabaseStore(url!, key!))
-      : demoMode
-        ? import('./demo').then((m) => m.createDemoStore())
+    store = demoMode
+      ? import('./demo').then((m) => m.createDemoStore())
+      : isConfigured
+        ? import('./supabase').then((m) => m.createSupabaseStore(url!, key!))
         : Promise.reject(new Error('not configured'));
   }
   return store;

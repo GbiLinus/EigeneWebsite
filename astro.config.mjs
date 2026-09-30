@@ -3,14 +3,16 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 import { loadEnv } from 'vite';
+import { site } from './src/config/site.ts';
 
-// Warnung beim Bauen: ohne Supabase gehen Anfragen live nicht raus
+// Warnung beim Bauen: im Demo-Modus oder ohne Supabase gehen Anfragen live nicht raus
 const env = loadEnv(process.env.NODE_ENV === 'development' ? 'development' : 'production', process.cwd(), '');
-if (process.argv.includes('build') && !(env.PUBLIC_SUPABASE_URL && env.PUBLIC_SUPABASE_KEY)) {
+const hasSupabase = (env.PUBLIC_SUPABASE_URL || site.supabase.url) && (env.PUBLIC_SUPABASE_KEY || site.supabase.publishableKey);
+if (process.argv.includes('build') && (env.PUBLIC_DEMO === 'true' || !hasSupabase)) {
   console.warn(
     env.PUBLIC_DEMO === 'true'
       ? '\n[WebDesignBR] Vorschau-Build im Demo-Modus: Anfragen landen nur im Browser. Nicht live stellen.\n'
-      : '\n[WebDesignBR] PUBLIC_SUPABASE_URL/PUBLIC_SUPABASE_KEY fehlen: Kontaktformular und Mitarbeiterbereich funktionieren so nicht.\n',
+      : '\n[WebDesignBR] Supabase fehlt: Kontaktformular und Mitarbeiterbereich funktionieren so nicht.\n',
   );
 }
 

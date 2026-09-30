@@ -73,7 +73,7 @@ Nur für Linus und Kristian. Nirgends auf der Website verlinkt, für Suchmaschin
 
 **Apple Passwörter:** Das Login-Formular nutzt `autocomplete="username"` und `current-password`, nach der Anmeldung folgt ein echter Seitenwechsel. Safari bietet danach das Sichern an. Beim Ändern schlägt Apple über `autocomplete="new-password"` und `passwordrules` ein starkes Passwort vor (mindestens 12 Zeichen). `/.well-known/change-password` führt zu „Passwort ändern“, damit Apple Passwörter direkt dorthin springen kann. Der Bereich lässt sich auf dem iPhone über „Zum Home-Bildschirm“ wie eine App ablegen.
 
-**Demo-Modus:** Nur beim Entwickeln (`npm run dev`) oder mit `PUBLIC_DEMO=true` beim Bauen (Vorschau-Builds). Dann läuft alles mit Beispieldaten im Browser. Anmeldung mit `linus@webdesignbr.de` oder `kristian@webdesignbr.de`, Passwort `vorschau`. Anfragen aus dem Kontaktformular landen dann nur im eigenen Browser.
+**Demo-Modus:** Mit `PUBLIC_DEMO=true` beim Bauen (Tests und Vorschau-Builds, schreibt nichts in die echte Datenbank) oder beim Entwickeln ohne Supabase. Dann läuft alles mit Beispieldaten im Browser. Anmeldung mit `linus@webdesignbr.de` oder `kristian@webdesignbr.de`, Passwort `vorschau`. Anfragen aus dem Kontaktformular landen dann nur im eigenen Browser.
 
 **Live ohne Supabase:** Die Demo-Zugangsdaten sind ausgeblendet, die Login-Seite sagt „Noch nicht eingerichtet“, und das Kontaktformular zeigt einen Fehler statt einer falschen Erfolgsmeldung. `npm run build` warnt in diesem Fall.
 
@@ -129,7 +129,8 @@ npm run preview
 - [ ] Kleinunternehmer nach § 19 UStG? Preise netto oder brutto? → `site.pricing.taxNote` (noch unklar, mit Steuerberater oder Finanzamt klären)
 - [ ] Hosting-Umfang: Sind Domain, E-Mail und Updates enthalten?
 - [ ] Hosting-Anbieter wählen (z. B. Vercel, Netlify, Cloudflare Pages) und in der Datenschutzerklärung nennen
-- [ ] Supabase-Projekt einrichten (siehe oben), sonst erreichen Anfragen das Team nicht
+- [x] Supabase-Projekt eingerichtet (URL und Publishable Key in `site.supabase`), RLS geprüft: anonym nichts lesbar, Registrierung gesperrt
+- [ ] Nach dem Hosting: in Supabase unter Authentication > URL Configuration die Site URL und `https://<domain>/intern/passwort/` als Redirect URL eintragen
 - [x] Cal.com Linus: `https://cal.com/linus-asche`
 - [ ] Cal.com Kristian: Konto anlegen, Link in `site.booking.kristian`
 - [ ] Optional: E-Mail-Benachrichtigung bei neuer Anfrage (Supabase Database Webhook)

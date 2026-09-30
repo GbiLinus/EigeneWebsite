@@ -24,6 +24,15 @@ export const site = {
     formEndpoint: null as string | null,
   },
 
+  // Supabase (Mitarbeiterbereich und Kontaktformular). Der Publishable Key
+  // ist für den Browser gedacht und darf öffentlich sein; die Datenbank
+  // schützt sich über Row Level Security. Niemals den Secret Key eintragen.
+  // PUBLIC_SUPABASE_URL/PUBLIC_SUPABASE_KEY in der Umgebung haben Vorrang.
+  supabase: {
+    url: 'https://zlnrxyiaacwkoxojebmh.supabase.co' as string | null,
+    publishableKey: 'sb_publishable_gMk69KgzmvfV-SXIJXnKJA_cUE7FGjg' as string | null,
+  },
+
   // Cal.com-Buchungslinks, z.B. 'https://cal.com/linus-webdesignbr'.
   // Solange null, erscheint auf der Website kein "Termin buchen".
   booking: {
