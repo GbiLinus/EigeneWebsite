@@ -84,8 +84,8 @@ Nur für Linus und Kristian. Nirgends auf der Website verlinkt, für Suchmaschin
 3. Authentication > Sign In / Providers: „Allow new users to sign up“ ausschalten, Mindestlänge für Passwörter auf 12 setzen.
 4. Authentication > URL Configuration: Site URL auf die Domain setzen, `https://<domain>/intern/passwort/` als Redirect URL eintragen.
 5. SQL Editor: `supabase/schema.sql` ausführen. Wer die Datei schon vorher ausgeführt hat, führt nur den letzten Abschnitt „Spam-Bremse“ zusätzlich aus (höchstens 3 Anfragen pro E-Mail-Adresse und 30 insgesamt in 10 Minuten).
-6. Authentication > Users: Linus und Kristian einladen („Invite user“). Über den Link in der Einladung legt jeder sein Passwort fest.
-7. Die beiden User-IDs in den `insert`-Befehl am Ende von `supabase/schema.sql` eintragen und ausführen.
+6. Authentication > Users > „Add user“ > „Create new user“: Linus und Kristian mit E-Mail und vorläufigem Passwort anlegen, „Auto Confirm User“ an. Einladungs-Mails gehen ohne eigenen Mailserver nur an Mitglieder des Supabase-Teams (höchstens 2 Mails pro Stunde). Das eigene Passwort legt danach jeder unter `/intern/passwort/` fest.
+7. Die beiden E-Mail-Adressen in den `insert`-Befehl am Ende von `supabase/schema.sql` eintragen und nur diesen Befehl ausführen.
 8. `PUBLIC_SUPABASE_URL` und `PUBLIC_SUPABASE_KEY` (Publishable Key) beim Hosting als Umgebungsvariablen eintragen, lokal in `.env` (Vorlage: `.env.example`).
 
 Hinweis: Kostenlose Supabase-Projekte pausieren nach einer Woche ohne Nutzung. Abhilfe: ein automatischer wöchentlicher Aufruf oder der Pro-Tarif.

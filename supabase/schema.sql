@@ -75,10 +75,11 @@ create trigger customers_touch before update on public.customers
   for each row execute function public.touch_updated_at();
 
 -- Nach dem Anlegen der beiden Logins unter Authentication > Users
--- die IDs hier eintragen und ausführen:
--- insert into public.staff (id, name, initials) values
---   ('<uuid von Linus>', 'Linus Asche', 'LA'),
---   ('<uuid von Kristian>', 'Kristian Wachholz', 'KW');
+-- die E-Mail-Adressen eintragen und nur diesen Befehl ausführen:
+-- insert into public.staff (id, name, initials)
+-- select id, 'Linus Asche', 'LA' from auth.users where email = 'linus@beispiel.de'
+-- union all
+-- select id, 'Kristian Wachholz', 'KW' from auth.users where email = 'kristian@beispiel.de';
 
 -- ------------------------------------------------------------------
 -- Spam-Bremse (kann auch nachträglich einzeln ausgeführt werden)
