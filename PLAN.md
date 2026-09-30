@@ -55,7 +55,8 @@ Button „Selbst konfigurieren“ auf der Bundle-Karte öffnet ein Fenster. Kund
 Richtwert:
 - Passt die Auswahl in Kompakt oder Komplett, steht der feste Bundle-Preis da.
 - Sonst: günstigstes passendes Bundle plus der Mehrumfang zu Einzelpreisen, der Mehrumfang mit 10 % Puffer, das Ganze auf volle 50 € aufgerundet. So fällt das echte Angebot nicht höher aus als der Richtwert.
-- Annahmen in `site.pricing.configurator`, bitte prüfen: jeder weitere Aufsteller oder Sticker ab dem vierten 30 €, jedes weitere Hosting-Jahr 100 €.
+- Preise in `site.pricing.configurator` (bestätigt): jeder weitere Aufsteller oder Sticker ab dem vierten 25 €, jedes weitere Hosting-Jahr 100 €.
+- Ersparnis wird nur beim Komplett-Bundle angezeigt (`showSaved` pro Stufe).
 
 ## Mitarbeiterbereich
 
@@ -123,7 +124,7 @@ npm run preview
 - [ ] Domain (steuert auch die Firmen-E-Mails)
 - [ ] Firmen-E-Mails, Telefon, Socials → `site.contact`
 - [ ] Impressum: Inhaber, Rechtsform, Anschrift, ggf. USt-ID → `site.company`
-- [ ] Kleinunternehmer nach § 19 UStG? Preise netto oder brutto? → `site.pricing.taxNote`
+- [ ] Kleinunternehmer nach § 19 UStG? Preise netto oder brutto? → `site.pricing.taxNote` (noch unklar, mit Steuerberater oder Finanzamt klären)
 - [ ] Hosting-Umfang: Sind Domain, E-Mail und Updates enthalten?
 - [ ] Hosting-Anbieter wählen (z. B. Vercel, Netlify, Cloudflare Pages) und in der Datenschutzerklärung nennen
 - [ ] Supabase-Projekt einrichten (siehe oben), sonst erreichen Anfragen das Team nicht
@@ -132,9 +133,6 @@ npm run preview
 - [ ] Optional: Cloudflare Turnstile, falls Fangfeld, Mindestzeit (2,5 Sekunden) und Spam-Bremse in der Datenbank nicht reichen
 - [ ] Optional: Mitarbeiterbereich unter eigener Subdomain, z. B. `intern.webdesignbr.de`
 - [ ] Datenschutzerklärung prüfen lassen. Entwurf zu Supabase, Cal.com, Spamschutz und Browser-Speicher steht. Offen: Hosting-Anbieter, Supabase-Serverstandort, Grundlage für Cal.com (USA), Löschfrist (Vorschlag: 6 Monate ohne Auftrag)
-- [ ] Ersparnis beim Kompakt-Bundle: Grundlage ist zurzeit die Website zum Höchstpreis (750 €), obwohl Kompakt „kleine Einschränkungen“ hat. So lassen oder mit kleinerem Wert rechnen?
-- [ ] Konfigurator: Ab dem 4. Aufsteller oder Sticker rechnet er 30 € pro Stück, auf der Seite steht „ab 4 Stück eigenes Angebot“. Preis bestätigen
-- [ ] Konfigurator: Jedes weitere Jahr Hosting mit 100 € gerechnet. Bestätigen
 - [ ] Erste Projekte
 
 ## Annahmen im Text, bitte prüfen

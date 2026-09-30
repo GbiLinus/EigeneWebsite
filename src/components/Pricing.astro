@@ -32,6 +32,7 @@ const tagsTotal = (n: number) => {
 };
 const standsPrice = (n: number) => nfc.find((x) => x.qty === n)?.price ?? n * single;
 const savings = bundle.tiers.map((tier) => {
+  if (!tier.showSaved) return 0;
   const singles = site.pricing.website.to + standsPrice(tier.stands) + tagsTotal(tier.tags) + site.pricing.hosting.to;
   return Math.max(0, singles - tier.price);
 });

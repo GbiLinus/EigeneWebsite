@@ -177,7 +177,7 @@ const de = {
       cta: 'Bundle anfragen',
       requestMessage: 'Hallo, wir interessieren uns für das Mega-Bundle.',
       saved: 'bis zu {x} gespart',
-      savedNote: 'Ersparnis gegenüber unseren Einzelpreisen, gerechnet mit Website für 750 € und Hosting für 100 € im Jahr.',
+      savedNote: 'Ersparnis beim Komplett-Bundle gegenüber unseren Einzelpreisen, gerechnet mit Website für 750 € und Hosting für 100 € im Jahr.',
       configure: 'Selbst konfigurieren',
     },
     config: {
@@ -538,7 +538,7 @@ const en: Dict = {
       cta: 'Ask about the bundle',
       requestMessage: 'Hello, we are interested in the mega bundle.',
       saved: 'save up to {x}',
-      savedNote: 'Savings compared to our single prices, calculated with a €750 website and €100 hosting per year.',
+      savedNote: 'Savings on the Complete bundle compared to our single prices, calculated with a €750 website and €100 hosting per year.',
       configure: 'Configure your own',
     },
     config: {

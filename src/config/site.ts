@@ -53,11 +53,12 @@ export const site = {
     // Tischaufkleber mit NFC: Preis pro Stück, gestaffelt
     tableTags: { first: 25, second: 20, third: 17.5, following: 15, max: 50 },
     // Mega-Bundle (alles inklusive). Der Inhalt pro Stufe steuert
-    // die Ersparnis-Anzeige und den Konfigurator.
+    // die Ersparnis-Anzeige und den Konfigurator. showSaved: Ersparnis
+    // anzeigen (beim Kompakt nicht, die kleinere Website ist dort günstiger).
     bundle: {
       tiers: [
-        { key: 'kompakt', price: 800, website: 'kompakt', stands: 1, tags: 1 },
-        { key: 'komplett', price: 1100, website: 'ausfuehrlich', stands: 2, tags: 25 },
+        { key: 'kompakt', price: 800, website: 'kompakt', stands: 1, tags: 1, showSaved: false },
+        { key: 'komplett', price: 1100, website: 'ausfuehrlich', stands: 2, tags: 25, showSaved: true },
       ],
     },
     // Konfigurator: Richtwert = günstigstes passendes Bundle plus alles,
@@ -66,7 +67,7 @@ export const site = {
     configurator: {
       buffer: 0.1,
       roundTo: 50,
-      standsBeyondThree: 30, // jeder weitere Aufsteller oder Sticker ab dem vierten
+      standsBeyondThree: 25, // jeder weitere Aufsteller oder Sticker ab dem vierten
       hostingYear: 100, // jedes weitere Jahr Hosting
     },
     // TODO: Umsatzsteuer-Hinweis. Kleinunternehmer:
