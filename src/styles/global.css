@@ -22,6 +22,10 @@
   --tiefsole: #0a2c33;
   --sole: #3be3c9;
   --sole-deep: #1fb8a0;
+  --sole-light: #7ff3e1;
+  --sole-dark: #1f8f86;
+  --sole-rgb: 59 227 201;
+  --nacht-rgb: 4 27 32;
   --salz: #edf6f3;
   --abend: #8c7bff;
   --abend-deep: #4b3fb3;
@@ -45,7 +49,7 @@
     inset 0 1px 0 rgb(255 255 255 / 0.22),
     inset 0 -1px 0 rgb(255 255 255 / 0.05),
     0 40px 80px -40px rgb(0 10 12 / 0.8);
-  --rim: linear-gradient(140deg, rgb(255 255 255 / 0.5), rgb(255 255 255 / 0.08) 28%, rgb(255 255 255 / 0.03) 62%, rgb(59 227 201 / 0.4));
+  --rim: linear-gradient(140deg, rgb(255 255 255 / 0.5), rgb(255 255 255 / 0.08) 28%, rgb(255 255 255 / 0.03) 62%, rgb(var(--sole-rgb) / 0.4));
   --surface-strong: linear-gradient(170deg, rgb(15 52 58 / 0.97), rgb(6 30 35 / 0.98));
   --surface-solid: rgb(8 38 44 / 0.96);
   --scene-glow: rgb(10 44 51 / 0.9);
@@ -53,6 +57,14 @@
   --hero-grad: linear-gradient(100deg, var(--salz) 10%, #a8f3e7 45%, #c9c1ff 90%);
   --thumb-bg: linear-gradient(180deg, #f6fbfa, #cfe3de);
   --thumb-fg: var(--nacht);
+  --knob-bg: linear-gradient(180deg, #f6fbfa, #cfe3de);
+  --switch-knob: linear-gradient(180deg, #fff, #d9e8e4);
+  --object-bg: var(--object-bg);
+  --object-foot: linear-gradient(180deg, #b9ccc8, #7d9591);
+  --screen-bg: linear-gradient(180deg, #f5faf9, #dfeeea);
+  --canvas-ink: 237, 246, 243;
+  --canvas-drop: 59, 227, 201;
+  --canvas-core: 237, 246, 243;
 
   --text-soft: rgb(var(--ink) / 0.74);
   --text-faint: rgb(var(--ink) / 0.52);
@@ -72,44 +84,62 @@
   --glass-blur: 18px;
 }
 
-/* Heller Modus: Salz bei Tageslicht */
+/* Heller Modus: nur Lila, keine Blau- oder Grüntöne */
 :root[data-theme='light'] {
   color-scheme: light;
-  --bg: #eef4f2;
-  --ink: 4 27 32;
+  --nacht: #1d1229;
+  --nacht-rgb: 29 18 41;
+  --bg: #f5f1fa;
+  --ink: 31 18 46;
   --deep: 255 255 255;
-  --text: #0b2328;
-  --text-soft: rgb(4 27 32 / 0.76);
-  --text-faint: rgb(4 27 32 / 0.58);
-  --accent-text: #0a7466;
-  --gold-text: #8a5a00;
-  /* Lila statt Blau-Violett */
+  --text: #1d1229;
+  --text-soft: rgb(31 18 46 / 0.76);
+  --text-faint: rgb(31 18 46 / 0.58);
+
+  /* Hauptfarbe: helles Lila für Flächen, dunkles Lila für Text */
+  --sole: #c392f2;
+  --sole-light: #ead9fc;
+  --sole-deep: #a066dd;
+  --sole-dark: #7a3fb8;
+  --sole-rgb: 160 90 225;
+  --accent-text: #7a2fa8;
+  --focus: #7a2fa8;
+
+  /* Zweite Farbe: kräftigeres Lila */
   --abend: #a85fd6;
   --abend-deep: #6b2a96;
   --abend-rgb: 168 95 214;
   --abend-text: #7a2fa8;
-  --duo-mid: #b98ac0;
+  --duo-mid: #b67ae6;
+
+  --gold-text: #8a5a00;
   --danger-text: #b3321f;
-  --focus: #0a7466;
   --glass-bg: linear-gradient(160deg, rgb(255 255 255 / 0.84), rgb(255 255 255 / 0.6) 55%, rgb(255 255 255 / 0.72));
   --glass-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.95),
-    inset 0 -1px 0 rgb(4 27 32 / 0.04),
-    0 30px 60px -34px rgb(4 27 32 / 0.32);
-  --rim: linear-gradient(140deg, rgb(255 255 255 / 1), rgb(4 27 32 / 0.08) 30%, rgb(4 27 32 / 0.05) 62%, rgb(15 158 140 / 0.45));
-  --surface-strong: linear-gradient(170deg, rgb(255 255 255 / 0.98), rgb(236 244 242 / 0.99));
-  --surface-solid: rgb(250 253 252 / 0.97);
+    inset 0 -1px 0 rgb(31 18 46 / 0.04),
+    0 30px 60px -34px rgb(31 18 46 / 0.3);
+  --rim: linear-gradient(140deg, rgb(255 255 255 / 1), rgb(31 18 46 / 0.08) 30%, rgb(31 18 46 / 0.05) 62%, rgb(160 90 225 / 0.45));
+  --surface-strong: linear-gradient(170deg, rgb(255 255 255 / 0.98), rgb(242 236 249 / 0.99));
+  --surface-solid: rgb(252 250 254 / 0.97);
   --scene-glow: rgb(255 255 255 / 0.95);
-  --lens-bg: radial-gradient(circle at 50% 60%, #ffffff, #e3eeeb);
-  --hero-grad: linear-gradient(100deg, #0b2328 10%, #0c8a7b 45%, var(--abend-text) 90%);
-  --thumb-bg: linear-gradient(180deg, #16444b, #062127);
-  --thumb-fg: var(--salz);
+  --lens-bg: radial-gradient(circle at 50% 60%, #ffffff, #ece3f6);
+  --hero-grad: linear-gradient(100deg, #1d1229 10%, #6b2a96 45%, #a85fd6 90%);
+  --thumb-bg: linear-gradient(180deg, #4a2a6e, #1d1229);
+  --thumb-fg: #f5f1fa;
+  --knob-bg: linear-gradient(180deg, #ffffff, #e7dcf4);
+  --switch-knob: linear-gradient(180deg, #fff, #e7dcf4);
+  --object-bg: linear-gradient(170deg, #fbf8fe, #e9def5);
+  --object-foot: linear-gradient(180deg, #cdbfdc, #8f7ba6);
+  --screen-bg: linear-gradient(180deg, #fbf8fe, #ece2f6);
+  --canvas-ink: 31, 18, 46;
+  --canvas-drop: 160, 90, 225;
+  --canvas-core: 122, 47, 168;
 }
 
-/* Verlauf Türkis zu Lila über Mauve: kein bläulicher Übergang in der Mitte */
 @supports (background: linear-gradient(in oklab, red, blue)) {
   :root[data-theme='light'] {
-    --hero-grad: linear-gradient(in oklab 100deg, #0b2328 10%, #0c8a7b 36%, #6d4a78 52%, var(--abend-text) 72%);
+    --hero-grad: linear-gradient(in oklab 100deg, #1d1229 10%, #6b2a96 45%, #a85fd6 90%);
   }
 }
 
@@ -139,7 +169,7 @@ body {
 }
 
 ::selection {
-  background: rgb(59 227 201 / 0.35);
+  background: rgb(var(--sole-rgb) / 0.35);
   color: var(--text);
 }
 
@@ -351,17 +381,17 @@ a {
   color: var(--nacht);
   background:
     radial-gradient(120% 90% at 30% 0%, rgb(255 255 255 / 0.6), transparent 55%),
-    linear-gradient(180deg, #7ff3e1, var(--sole) 45%, var(--sole-deep));
+    linear-gradient(180deg, var(--sole-light), var(--sole) 45%, var(--sole-deep));
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.7),
-    inset 0 -2px 6px rgb(4 27 32 / 0.25),
-    0 10px 30px -8px rgb(59 227 201 / 0.55);
+    inset 0 -2px 6px rgb(var(--nacht-rgb) / 0.25),
+    0 10px 30px -8px rgb(var(--sole-rgb) / 0.55);
 }
 .btn-primary:hover {
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.8),
-    inset 0 -2px 6px rgb(4 27 32 / 0.25),
-    0 16px 40px -8px rgb(59 227 201 / 0.75);
+    inset 0 -2px 6px rgb(var(--nacht-rgb) / 0.25),
+    0 16px 40px -8px rgb(var(--sole-rgb) / 0.75);
 }
 
 .btn-ghost {
@@ -376,7 +406,7 @@ a {
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.22em;
-  text-decoration-color: rgb(59 227 201 / 0.45);
+  text-decoration-color: rgb(var(--sole-rgb) / 0.45);
   transition: text-decoration-color 0.3s;
 }
 .link:hover {

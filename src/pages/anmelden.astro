@@ -114,11 +114,11 @@ import { themeScript } from '../scripts/theme-inline';
         font-weight: 850;
         font-stretch: 120%;
         letter-spacing: -0.04em;
-        color: rgb(4 27 32 / 0.85);
+        color: rgb(var(--nacht-rgb) / 0.85);
         background:
           radial-gradient(circle at 30% 25%, rgb(255 255 255 / 0.6), transparent 40%),
           linear-gradient(150deg, var(--sole), var(--abend));
-        box-shadow: 0 12px 30px -10px rgb(59 227 201 / 0.6);
+        box-shadow: 0 12px 30px -10px rgb(var(--sole-rgb) / 0.6);
       }
 
       @supports (background: linear-gradient(in oklab, red, blue)) {

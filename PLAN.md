@@ -30,7 +30,7 @@ Zielgruppe: lokale Betriebe, vor allem Restaurants, Cafés und Hotels im Osnabr�
 - Umschalter mit drei Stellungen in der Navigation, im mobilen Menü und im Mitarbeiterbereich: links Hell, Mitte System, rechts Dunkel.
 - Standard ist System: Die Seite folgt der Einstellung des Geräts und wechselt mit, wenn sich diese ändert.
 - Die Wahl wird im Browser gespeichert (`wdbr-theme`) und gilt für Website und Mitarbeiterbereich.
-- Heller Modus: Lila (`#a85fd6`, Text `#7a2fa8`) statt Blau-Violett als zweite Farbe. Verläufe von Türkis zu Lila laufen über Mauve, damit keine bläuliche Mitte entsteht.
+- Heller Modus: komplett in Lila, ohne Blau- oder Grüntöne. Hauptfarbe helles Lila (`#c392f2`, Text `#7a2fa8`), zweite Farbe `#a85fd6`, Hintergrund `#f5f1fa`, Schrift dunkles Lila `#1d1229`. Gold bleibt für Sterne und Preise, Rot für Fehler. Der dunkle Modus bleibt Türkis.
 - Farben kommen aus Theme-Tokens in `src/styles/global.css` (`:root` für Dunkel, `:root[data-theme='light']` für Hell). Neue Komponenten nutzen diese Tokens statt fester Farben.
 
 ## Seitenaufbau

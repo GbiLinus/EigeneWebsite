@@ -15,7 +15,7 @@ function apply(p: Pref) {
   const theme = resolve(p);
   root.dataset.themePref = p;
   root.dataset.theme = theme;
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#eef4f2' : '#041b20');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#f5f1fa' : '#041b20');
   document.querySelectorAll<HTMLElement>('[data-theme-set]').forEach((b) => {
     const on = b.dataset.themeSet === p;
     b.setAttribute('aria-checked', String(on));

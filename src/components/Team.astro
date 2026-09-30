@@ -67,7 +67,7 @@ const team = (await getCollection('team')).sort((a, b) => a.data.order - b.data.
     --r: var(--r-xl);
     --tone-a: var(--sole);
     --tone-text: var(--accent-text);
-    --tone-b: #1f8f86;
+    --tone-b: var(--sole-dark);
     display: grid;
     grid-template-columns: auto 1fr;
     grid-template-rows: auto auto;
@@ -99,7 +99,7 @@ const team = (await getCollection('team')).sort((a, b) => a.data.order - b.data.
       conic-gradient(from var(--spin, 0deg), var(--tone-a), var(--tone-b), var(--tone-a));
     box-shadow:
       inset 0 2px 2px rgb(255 255 255 / 0.5),
-      inset 0 -8px 18px rgb(4 27 32 / 0.45),
+      inset 0 -8px 18px rgb(var(--nacht-rgb) / 0.45),
       0 18px 40px -12px color-mix(in srgb, var(--tone-a) 60%, transparent);
     transform: translateZ(30px);
     transition: --spin 1.2s var(--ease-out);
@@ -120,7 +120,7 @@ const team = (await getCollection('team')).sort((a, b) => a.data.order - b.data.
     font-weight: 820;
     font-stretch: 125%;
     letter-spacing: -0.04em;
-    color: rgb(4 27 32 / 0.82);
+    color: rgb(var(--nacht-rgb) / 0.82);
   }
 
   .member-copy {

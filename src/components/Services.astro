@@ -393,10 +393,10 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
     text-align: center;
     background:
       radial-gradient(120% 80% at 20% 0%, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0) 60%),
-      linear-gradient(170deg, #f4faf8, #d7e9e5);
+      var(--object-bg);
     box-shadow:
       inset 0 1px 0 #fff,
-      inset 0 -2px 0 rgb(4 27 32 / 0.08),
+      inset 0 -2px 0 rgb(var(--nacht-rgb) / 0.08),
       0 24px 40px -18px rgb(0 0 0 / 0.7);
     transition: box-shadow 0.5s;
   }
@@ -404,8 +404,8 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
   .tag.is-glow {
     box-shadow:
       inset 0 1px 0 #fff,
-      0 0 0 2px rgb(59 227 201 / 0.8),
-      0 0 40px 4px rgb(59 227 201 / 0.45),
+      0 0 0 2px rgb(var(--sole-rgb) / 0.8),
+      0 0 40px 4px rgb(var(--sole-rgb) / 0.45),
       0 24px 40px -18px rgb(0 0 0 / 0.7);
   }
 
@@ -437,7 +437,7 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
   .tag-sub {
     font-size: 0.6875rem;
     line-height: 1.3;
-    color: rgb(4 27 32 / 0.6);
+    color: rgb(var(--nacht-rgb) / 0.6);
   }
 
   .nfc-product--aufsteller .tag {
@@ -449,7 +449,7 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
     height: 0.8rem;
     margin: -0.2rem auto 0;
     border-radius: 0 0 0.6rem 0.6rem;
-    background: linear-gradient(180deg, #b9ccc8, #7d9591);
+    background: var(--object-foot);
     transform: rotateY(-16deg);
   }
 
@@ -554,7 +554,7 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
     border-radius: 1.25rem;
     padding: 0.75rem 0.5rem;
     text-align: center;
-    background: linear-gradient(180deg, #f5faf9, #dfeeea);
+    background: var(--screen-bg);
     color: var(--nacht);
     overflow: hidden;
   }
@@ -600,13 +600,13 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
   .phone-stars svg {
     width: 1.1rem;
     height: 1.1rem;
-    fill: rgb(4 27 32 / 0.12);
+    fill: rgb(var(--nacht-rgb) / 0.12);
   }
 
   .phone-done {
     font-size: 0.625rem;
     line-height: 1.25;
-    color: rgb(4 27 32 / 0.65);
+    color: rgb(var(--nacht-rgb) / 0.65);
     opacity: 0;
   }
 
@@ -862,7 +862,7 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
     width: 1.45rem;
     height: 1.45rem;
     border-radius: 999px;
-    background: linear-gradient(180deg, #fff, #d9e8e4);
+    background: var(--switch-knob);
     box-shadow: 0 2px 6px rgb(0 0 0 / 0.4);
     transition:
       transform 0.5s var(--ease-liquid),
@@ -966,7 +966,7 @@ const star = 'M12 2.6l2.85 5.95 6.55.8-4.8 4.55 1.25 6.5L12 17.2l-5.85 3.2 1.25-
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--accent-text);
-    background: rgb(59 227 201 / 0.1);
+    background: rgb(var(--sole-rgb) / 0.1);
   }
 
   .host-dot {

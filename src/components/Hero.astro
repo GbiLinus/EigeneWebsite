@@ -170,6 +170,13 @@ const d = t(lang);
     filter: drop-shadow(-1.5px 0 rgb(255 90 140 / 0.4)) drop-shadow(1.5px 0 rgb(80 210 255 / 0.45));
   }
 
+  /* Heller Modus: Farbsaum in Lila statt Blau */
+  :global(:root[data-theme='light']) .lens-inner :global(.hero-line),
+  :global(:root[data-theme='light']) .lens-inner :global(.hero-lead),
+  :global(:root[data-theme='light']) .lens-inner :global(.btn) {
+    filter: drop-shadow(-1.5px 0 rgb(230 90 170 / 0.35)) drop-shadow(1.5px 0 rgb(150 80 230 / 0.4));
+  }
+
   .lens-shine {
     position: absolute;
     inset: 0;
@@ -177,11 +184,11 @@ const d = t(lang);
     pointer-events: none;
     background:
       radial-gradient(circle at 32% 22%, rgb(255 255 255 / 0.45), transparent 26%),
-      radial-gradient(circle at 70% 85%, rgb(59 227 201 / 0.28), transparent 30%),
+      radial-gradient(circle at 70% 85%, rgb(var(--sole-rgb) / 0.28), transparent 30%),
       radial-gradient(circle, transparent 58%, rgb(255 255 255 / 0.08) 66%, rgb(255 255 255 / 0.22) 71%, transparent 72%);
     box-shadow:
       inset 0 2px 1px rgb(255 255 255 / 0.55),
-      inset 0 -3px 8px rgb(59 227 201 / 0.35),
+      inset 0 -3px 8px rgb(var(--sole-rgb) / 0.35),
       inset 0 0 22px rgb(255 255 255 / 0.12),
       inset 0 0 0 1px rgb(255 255 255 / 0.25);
   }
@@ -290,16 +297,19 @@ const d = t(lang);
 
     // Farben je nach Modus: dunkel leuchtende Sole, hell dunkles Reisig
     let light = document.documentElement.dataset.theme === 'light';
-    const inkRgb = () => (light ? '4,27,32' : '237,246,243');
+    const token = (name: string, fallback: string) =>
+      getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
+    const inkRgb = () => token('--canvas-ink', '237, 246, 243');
 
     const makeHead = () =>
       makeSprite(32, 32, (c) => {
         const g = c.createRadialGradient(16, 16, 0, 16, 16, 16);
-        const core = light ? '12,138,123' : '237,246,243';
+        const core = token('--canvas-core', '237, 246, 243');
+        const drop = token('--canvas-drop', '59, 227, 201');
         g.addColorStop(0, `rgba(${core},1)`);
         g.addColorStop(0.18, `rgba(${core},0.95)`);
-        g.addColorStop(0.3, 'rgba(59,227,201,0.35)');
-        g.addColorStop(1, 'rgba(59,227,201,0)');
+        g.addColorStop(0.3, `rgba(${drop},0.35)`);
+        g.addColorStop(1, `rgba(${drop},0)`);
         c.fillStyle = g;
         c.fillRect(0, 0, 32, 32);
       });
@@ -307,7 +317,7 @@ const d = t(lang);
     const makeTrail = () =>
       makeSprite(4, 64, (c) => {
         const g = c.createLinearGradient(0, 0, 0, 64);
-        const tone = light ? '12,138,123' : '59,227,201';
+        const tone = light ? token('--canvas-core', '59, 227, 201') : token('--canvas-drop', '59, 227, 201');
         g.addColorStop(0, `rgba(${tone},0)`);
         g.addColorStop(1, `rgba(${tone},0.55)`);
         c.fillStyle = g;
