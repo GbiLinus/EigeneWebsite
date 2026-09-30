@@ -27,7 +27,7 @@ export const site = {
   // Cal.com-Buchungslinks, z.B. 'https://cal.com/linus-webdesignbr'.
   // Solange null, erscheint auf der Website kein "Termin buchen".
   booking: {
-    linus: null as string | null,
+    linus: 'https://cal.com/linus-asche' as string | null,
     kristian: null as string | null,
   },
 

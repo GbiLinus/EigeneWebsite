@@ -129,7 +129,8 @@ npm run preview
 - [ ] Hosting-Umfang: Sind Domain, E-Mail und Updates enthalten?
 - [ ] Hosting-Anbieter wählen (z. B. Vercel, Netlify, Cloudflare Pages) und in der Datenschutzerklärung nennen
 - [ ] Supabase-Projekt einrichten (siehe oben), sonst erreichen Anfragen das Team nicht
-- [ ] Cal.com-Konten und Buchungslinks für Linus und Kristian
+- [x] Cal.com Linus: `https://cal.com/linus-asche`
+- [ ] Cal.com Kristian: Konto anlegen, Link in `site.booking.kristian`
 - [ ] Optional: E-Mail-Benachrichtigung bei neuer Anfrage (Supabase Database Webhook)
 - [ ] Optional: Cloudflare Turnstile, falls Fangfeld, Mindestzeit (2,5 Sekunden) und Spam-Bremse in der Datenbank nicht reichen
 - [ ] Optional: Mitarbeiterbereich unter eigener Subdomain, z. B. `intern.webdesignbr.de`
