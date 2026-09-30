@@ -369,7 +369,7 @@
 .avatar[data-tone='abend'] {
   background:
     radial-gradient(circle at 30% 25%, rgb(255 255 255 / 0.5), transparent 40%),
-    linear-gradient(160deg, var(--abend), #4b3fb3);
+    linear-gradient(160deg, var(--abend), var(--abend-deep));
 }
 
 .avatar-sm {
@@ -416,7 +416,7 @@
 
 .pill-in_arbeit {
   color: var(--abend-text);
-  background: rgb(140 123 255 / 0.16);
+  background: rgb(var(--abend-rgb) / 0.16);
 }
 
 .pill-erledigt {

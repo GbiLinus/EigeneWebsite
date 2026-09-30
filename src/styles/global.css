@@ -24,6 +24,8 @@
   --sole-deep: #1fb8a0;
   --salz: #edf6f3;
   --abend: #8c7bff;
+  --abend-deep: #4b3fb3;
+  --abend-rgb: 140 123 255;
   --gold: #ffc24b;
 
   /* Theme-Tokens: Dunkel ist Standard, Hell überschreibt unten */
@@ -92,7 +94,7 @@
   --surface-solid: rgb(250 253 252 / 0.97);
   --scene-glow: rgb(255 255 255 / 0.95);
   --lens-bg: radial-gradient(circle at 50% 60%, #ffffff, #e3eeeb);
-  --hero-grad: linear-gradient(100deg, #0b2328 10%, #0c8a7b 45%, #5443c9 90%);
+  --hero-grad: linear-gradient(100deg, #0b2328 10%, #0c8a7b 45%, var(--abend-text) 90%);
   --thumb-bg: linear-gradient(180deg, #16444b, #062127);
   --thumb-fg: var(--salz);
 }
