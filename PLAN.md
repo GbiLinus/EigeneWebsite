@@ -136,7 +136,7 @@ npm run preview
 - [ ] Optional: E-Mail-Benachrichtigung bei neuer Anfrage (Supabase Database Webhook)
 - [ ] Optional: Cloudflare Turnstile, falls Fangfeld, Mindestzeit (2,5 Sekunden) und Spam-Bremse in der Datenbank nicht reichen
 - [ ] Optional: Mitarbeiterbereich unter eigener Subdomain, z. B. `intern.webdesignbr.de`
-- [ ] Datenschutzerklärung prüfen lassen. Entwurf zu Supabase, Cal.com, Spamschutz und Browser-Speicher steht. Offen: Hosting-Anbieter, Supabase-Serverstandort, Grundlage für Cal.com (USA). Löschfrist bestätigt: 6 Monate ohne Auftrag
+- [ ] Datenschutzerklärung prüfen lassen. Entwurf zu Supabase, Cal.com, Spamschutz und Browser-Speicher steht. Offen: Hosting-Anbieter, Grundlage für Cal.com (USA). Supabase-Region bestätigt: Frankfurt (eu-central-1). Löschfrist bestätigt: 6 Monate ohne Auftrag
 - [ ] Erste Projekte
 
 ## Annahmen im Text, bitte prüfen
