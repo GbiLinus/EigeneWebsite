@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@fontsource-variable/mona-sans/standard.css";
+@import "@fontsource/space-grotesk/latin-700.css";
 @import "lenis/dist/lenis.css";
 
 /* ------------------------------------------------------------------
@@ -357,6 +358,39 @@ a {
   .glass {
     background: var(--surface-solid);
   }
+}
+
+/* ------------------------------------------------------------------
+   Logo „Neon-Badge“ (Werte aus dem Entwurf, in em umgerechnet)
+   ------------------------------------------------------------------ */
+.logo {
+  --logo-badge-bg: #c6f432;
+  --logo-badge-fg: #111111;
+  display: inline-flex;
+  align-items: center;
+  font-family: "Space Grotesk", var(--font-sans);
+  font-weight: 700;
+  letter-spacing: -0.036em;
+  line-height: 1.25;
+  white-space: nowrap;
+  color: var(--text);
+}
+
+.logo-word {
+  padding-right: 0.25em;
+}
+
+.logo-badge {
+  padding: 0.07em 0.32em 0.14em;
+  border-radius: 0.32em;
+  color: var(--logo-badge-fg);
+  background: var(--logo-badge-bg);
+}
+
+/* Heller Modus: Abzeichen in Lila statt Neongrün */
+:root[data-theme='light'] .logo {
+  --logo-badge-bg: var(--sole);
+  --logo-badge-fg: var(--nacht);
 }
 
 /* ------------------------------------------------------------------

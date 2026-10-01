@@ -19,11 +19,12 @@ const links = [
   { id: d.ids.team, label: d.nav.team },
   { id: d.ids.faq, label: d.nav.faq },
 ];
+import Logo from './Logo.astro';
 ---
 
 <header class="nav-wrap" data-nav>
   <nav class="nav glass glass-bar" aria-label={d.nav.label} data-spec>
-    <a class="nav-brand" href={onHome ? '#top' : home} aria-label={d.nav.home}>WebDesignBR</a>
+    <a class="nav-brand" href={onHome ? '#top' : home} aria-label={d.nav.home}><Logo /></a>
 
     <ul class="nav-links" role="list" data-nav-links>
       <li class="nav-indicator" aria-hidden="true" data-nav-indicator></li>
@@ -105,10 +106,8 @@ const links = [
   }
 
   .nav-brand {
-    font-weight: 780;
-    font-stretch: 116%;
-    font-size: 1.0625rem;
-    letter-spacing: -0.03em;
+    display: inline-flex;
+    font-size: 1.1875rem;
     text-decoration: none;
     margin-right: auto;
     white-space: nowrap;

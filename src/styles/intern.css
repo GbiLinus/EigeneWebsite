@@ -67,19 +67,17 @@
 
 .side-brand {
   display: grid;
-  gap: 0.1rem;
+  justify-items: start;
+  gap: 0.3rem;
   padding: 0 0.75rem;
   text-decoration: none;
 }
 
-.side-brand strong {
-  font-weight: 780;
-  font-stretch: 116%;
-  font-size: 1.0625rem;
-  letter-spacing: -0.03em;
+.side-brand .logo {
+  font-size: 1.125rem;
 }
 
-.side-brand span {
+.side-brand .side-sub {
   font-size: 0.8125rem;
   color: var(--text-faint);
 }

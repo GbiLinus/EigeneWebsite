@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import '../styles/intern.css';
 import ThemeSwitch from '../components/ThemeSwitch.astro';
+import Logo from '../components/Logo.astro';
 import { themeScript } from '../scripts/theme-inline';
 
 interface Props {
@@ -59,8 +60,8 @@ const nav = [
     <div class="shell" data-app>
       <aside class="side glass glass-bar">
         <a class="side-brand" href="/intern/">
-          <strong>WebDesignBR</strong>
-          <span>Intern</span>
+          <Logo />
+          <span class="side-sub">Intern</span>
         </a>
         <nav class="side-nav" aria-label="Bereiche">
           {
@@ -88,8 +89,8 @@ const nav = [
 
       <header class="topbar glass glass-bar">
         <a class="side-brand" href="/intern/">
-          <strong>WebDesignBR</strong>
-          <span>Intern</span>
+          <Logo />
+          <span class="side-sub">Intern</span>
         </a>
         <a class="me" href="/intern/passwort/" data-me aria-label="Konto und Passwort"></a>
       </header>

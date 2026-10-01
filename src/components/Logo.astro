@@ -1,0 +1,11 @@
+---
+// Logo „Neon-Badge“: Wortmarke „WebDesign“ plus Abzeichen „BR.“.
+// Größe über font-size am Logo oder am Elternelement steuern.
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<span class:list={['logo', className]} translate="no"><span class="logo-word">WebDesign</span><span class="logo-badge">BR.</span></span>

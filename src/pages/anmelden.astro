@@ -4,6 +4,7 @@ import '../styles/intern.css';
 import { demoMode, isConfigured } from '../intern/store';
 import { DEMO_PASSWORD } from '../intern/demo';
 import { themeScript } from '../scripts/theme-inline';
+import Logo from '../components/Logo.astro';
 ---
 
 <!doctype html>
@@ -29,7 +30,7 @@ import { themeScript } from '../scripts/theme-inline';
 
     <main class="login">
       <div class="login-card glass">
-        <div class="login-orb" aria-hidden="true">BR</div>
+        <div class="login-logo"><Logo /></div>
 
         <!-- Anmelden: Felder so benannt, dass Apple Passwörter sie erkennt und speichert -->
         <section data-view="login">
@@ -112,28 +113,9 @@ import { themeScript } from '../scripts/theme-inline';
         padding: clamp(1.75rem, 5vw, 2.5rem);
       }
 
-      .login-orb {
-        display: grid;
-        place-items: center;
-        width: 3.5rem;
-        height: 3.5rem;
-        border-radius: 50%;
-        font-weight: 850;
-        font-stretch: 120%;
-        letter-spacing: -0.04em;
-        color: rgb(var(--nacht-rgb) / 0.85);
-        background:
-          radial-gradient(circle at 30% 25%, rgb(255 255 255 / 0.6), transparent 40%),
-          linear-gradient(150deg, var(--sole), var(--abend));
-        box-shadow: 0 12px 30px -10px rgb(var(--sole-rgb) / 0.6);
-      }
-
-      @supports (background: linear-gradient(in oklab, red, blue)) {
-        .login-orb {
-          background:
-            radial-gradient(circle at 30% 25%, rgb(255 255 255 / 0.6), transparent 40%),
-            linear-gradient(in oklab 150deg, var(--sole), var(--duo-mid), var(--abend));
-        }
+      .login-logo {
+        justify-self: start;
+        font-size: 1.625rem;
       }
 
       .login section {
