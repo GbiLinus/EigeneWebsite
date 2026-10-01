@@ -22,7 +22,7 @@ Zielgruppe: lokale Betriebe, vor allem Restaurants, Cafés und Hotels im Osnabr�
 
 - **Farben (Gradierwerk bei Nacht):** Solenacht `#041B20` (Basis), Tiefsole `#0A2C33`, Sole `#3BE3C9` (Akzent, Links, Fokus), Salz `#EDF6F3` (Text), Abendlicht `#8C7BFF`, Sternengold `#FFC24B` (nur für Sterne und Preise).
 - **Schrift:** Mona Sans Variable, selbst gehostet (keine Verbindung zu Google). Überschriften breit (`font-stretch` 112–125 %) und schwer, Fließtext normal. Die Speisekarten-Demo ist bewusst schmal gesetzt.
-- **Logo „Neon-Badge“:** `src/components/Logo.astro`. „WebDesign“ plus Abzeichen „BR.“ in Space Grotesk Bold (selbst gehostet). Abzeichen im dunklen Modus Neongrün `#C6F432` mit `#111111`, im hellen Modus Lila. Favicons folgen dem Modus, Homescreen-Icon in Lila.
+- **Logo „Neon-Badge“:** `src/components/Logo.astro`. „WebDesign“ plus Abzeichen „BR.“ in Space Grotesk Bold (selbst gehostet). Abzeichen in der Akzentfarbe: im dunklen Modus Türkis `#3be3c9`, im hellen Modus Lila `#c392f2`. Favicons folgen dem Modus, Homescreen-Icon in Lila.
 - **Glas:** Klasse `.glass` in `src/styles/global.css`. Mit `data-spec` folgt ein Glanzpunkt dem Mauszeiger.
 - **Bewegung:** Eine orchestrierte Intro-Sequenz im Hero, sonst reagieren Animationen auf Nutzeraktionen. `prefers-reduced-motion` schaltet alles auf statisch.
 
