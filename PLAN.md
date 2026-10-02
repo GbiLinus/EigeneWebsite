@@ -138,10 +138,10 @@ Jeder Push auf `main` startet `.github/workflows/deploy.yml`: Die Seite wird geb
 - [ ] Nach dem Hosting: in Supabase unter Authentication > URL Configuration die Site URL und `https://<domain>/intern/passwort/` als Redirect URL eintragen
 - [x] Cal.com Linus: `https://cal.com/linus-asche`
 - [ ] Cal.com Kristian: Konto anlegen, Link in `site.booking.kristian`
-- [ ] Optional: E-Mail-Benachrichtigung bei neuer Anfrage (Supabase Database Webhook)
+- [ ] E-Mail bei neuer Anfrage: Resend-Konto mit `linus.webdesignbr@gmail.com`, Schlüssel per `vault.create_secret` ablegen, Abschnitt „E-Mail an uns“ aus `supabase/schema.sql` ausführen. Sobald die Domain bei Resend verifiziert ist: Absender auf die Domain umstellen und Kristian als Empfänger ergänzen
 - [ ] Optional: Cloudflare Turnstile, falls Fangfeld, Mindestzeit (2,5 Sekunden) und Spam-Bremse in der Datenbank nicht reichen
 - [ ] Optional: Mitarbeiterbereich unter eigener Subdomain, z. B. `intern.webdesignbr.de`
-- [ ] Datenschutzerklärung prüfen lassen. Entwurf zu Supabase, Cal.com, Spamschutz und Browser-Speicher steht. Offen: Hosting-Anbieter, Grundlage für Cal.com (USA). Supabase-Region bestätigt: Frankfurt (eu-central-1). Löschfrist bestätigt: 6 Monate ohne Auftrag
+- [ ] Datenschutzerklärung prüfen lassen. Entwurf zu Supabase, Cal.com, Spamschutz und Browser-Speicher steht. Offen: genaue INWX-Firmierung, Grundlage für Cal.com und Resend (USA). Supabase-Region bestätigt: Frankfurt (eu-central-1). Löschfrist bestätigt: 6 Monate ohne Auftrag
 - [ ] Erste Projekte
 
 ## Annahmen im Text, bitte prüfen

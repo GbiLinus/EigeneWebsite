@@ -110,3 +110,85 @@ end $$;
 drop trigger if exists enquiries_limit on public.enquiries;
 create trigger enquiries_limit before insert on public.enquiries
   for each row execute function public.limit_enquiries();
+
+-- ------------------------------------------------------------------
+-- E-Mail an uns bei jeder neuen Anfrage (über Resend)
+-- Kann auch nachträglich einzeln ausgeführt werden. Vorher einmal den
+-- Resend-Schlüssel im Tresor ablegen (Schlüssel nur hier eintragen,
+-- nie in Code, Chat oder E-Mail):
+--   select vault.create_secret('re_...', 'resend_api_key');
+-- Ohne Schlüssel wird keine Mail verschickt, das Formular funktioniert trotzdem.
+-- ------------------------------------------------------------------
+create extension if not exists pg_net with schema extensions;
+
+create or replace function public.notify_new_enquiry() returns trigger
+language plpgsql security definer set search_path = public
+as $$
+declare
+  -- Ohne eigene Domain stellt Resend nur an die Adresse des Resend-Kontos zu.
+  -- Mit verifizierter Domain: Absender auf die Domain ändern und Kristian ergänzen.
+  sender constant text := 'WebDesignBR Website <onboarding@resend.dev>';
+  recipients constant text[] := array['linus.webdesignbr@gmail.com'];
+  api_key text;
+  topics text;
+  who text;
+begin
+  select decrypted_secret into api_key
+    from vault.decrypted_secrets where name = 'resend_api_key' limit 1;
+  if coalesce(api_key, '') = '' then
+    return new;
+  end if;
+
+  select string_agg(case i
+      when 'website' then 'Website'
+      when 'nfc' then 'NFC-Aufsteller'
+      when 'hosting' then 'Hosting'
+      when 'bundle' then 'Mega-Bundle'
+      else i end, ', ')
+    into topics from unnest(new.interests) as i;
+
+  -- Zeilenumbrüche aus dem Betreff halten
+  who := regexp_replace(new.name || coalesce(' (' || nullif(new.business, '') || ')', ''), '\s+', ' ', 'g');
+
+  perform net.http_post(
+    url := 'https://api.resend.com/emails',
+    headers := jsonb_build_object(
+      'Authorization', 'Bearer ' || api_key,
+      'Content-Type', 'application/json'
+    ),
+    body := jsonb_build_object(
+      'from', sender,
+      'to', to_jsonb(recipients),
+      'subject', left('Neue Anfrage: ' || who, 200),
+      'text', concat_ws(E'\n',
+        'Neue Anfrage über die Website',
+        '',
+        'Name: ' || new.name,
+        'Betrieb: ' || coalesce(nullif(new.business, ''), '–'),
+        'E-Mail: ' || new.email,
+        'Telefon: ' || coalesce(nullif(new.phone, ''), '–'),
+        'Interesse: ' || coalesce(topics, '–'),
+        'Sprache: ' || case new.lang when 'en' then 'Englisch' else 'Deutsch' end,
+        '',
+        'Nachricht:',
+        new.message,
+        '',
+        'Antworten: einfach auf diese E-Mail antworten, die Antwort geht an ' || new.email || '.'
+      )
+    ) || case
+      -- Antwort-Adresse nur, wenn sie wie eine E-Mail aussieht, sonst lehnt Resend ab
+      when new.email ~ '^[^\s@]+@[^\s@]+\.[^\s@]+$' then jsonb_build_object('reply_to', new.email)
+      else '{}'::jsonb
+    end,
+    timeout_milliseconds := 5000
+  );
+  return new;
+exception when others then
+  -- Die Benachrichtigung darf das Speichern der Anfrage nie verhindern
+  raise warning 'notify_new_enquiry: %', sqlerrm;
+  return new;
+end $$;
+
+drop trigger if exists enquiries_notify on public.enquiries;
+create trigger enquiries_notify after insert on public.enquiries
+  for each row execute function public.notify_new_enquiry();

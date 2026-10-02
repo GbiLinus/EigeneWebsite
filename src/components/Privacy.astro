@@ -61,6 +61,14 @@ const de = lang === 'de';
 <p>
   {
     de
+      ? 'Damit wir neue Anfragen sofort sehen, schickt uns unser System eine Benachrichtigung per E-Mail mit dem Inhalt der Anfrage. Für den Versand nutzen wir den Dienst Resend (Resend Inc., USA).'
+      : 'So that we see new enquiries right away, our system sends us a notification email with the content of the enquiry. We use the service Resend (Resend Inc., USA) to send it.'
+  }{' '}
+  <span class="pending">{de ? 'Grundlage für die Übermittlung in die USA wird ergänzt' : 'basis for transfer to the USA to be added'}</span>
+</p>
+<p>
+  {
+    de
       ? 'Wird aus der Anfrage kein Auftrag, löschen wir sie spätestens sechs Monate nach dem letzten Kontakt. Wird ein Auftrag daraus, bewahren wir die Unterlagen so lange auf, wie es das Steuer- und Handelsrecht verlangt.'
       : 'If the enquiry does not lead to an order, we delete it no later than six months after our last contact. If it does, we keep the records for as long as tax and commercial law require.'
   }
