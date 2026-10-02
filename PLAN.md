@@ -89,7 +89,7 @@ Nur für Linus und Kristian. Nirgends auf der Website verlinkt, für Suchmaschin
 7. Die beiden E-Mail-Adressen in den `insert`-Befehl am Ende von `supabase/schema.sql` eintragen und nur diesen Befehl ausführen.
 8. `PUBLIC_SUPABASE_URL` und `PUBLIC_SUPABASE_KEY` (Publishable Key) beim Hosting als Umgebungsvariablen eintragen, lokal in `.env` (Vorlage: `.env.example`).
 
-Hinweis: Kostenlose Supabase-Projekte pausieren nach einer Woche ohne Nutzung. Abhilfe: ein automatischer wöchentlicher Aufruf oder der Pro-Tarif.
+Kostenlose Supabase-Projekte pausieren nach einer Woche ohne Nutzung. Dagegen läuft `.github/workflows/supabase-keepalive.yml`: montags und donnerstags eine kleine Datenbank-Abfrage. Schlägt sie fehl, schickt GitHub eine E-Mail.
 
 ### Cal.com einrichten
 

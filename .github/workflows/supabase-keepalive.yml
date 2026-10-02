@@ -1,0 +1,49 @@
+# Hält das kostenlose Supabase-Projekt wach: Ohne Nutzung pausiert Supabase
+# es nach 7 Tagen, dann funktionieren Kontaktformular und Mitarbeiterbereich
+# nicht mehr. Zweimal pro Woche wird eine kleine Datenbank-Abfrage gestellt.
+# Schlägt sie fehl, schickt GitHub eine E-Mail an den Repo-Inhaber.
+
+name: Supabase keep-alive
+
+on:
+  schedule:
+    - cron: '17 6 * * 1,4' # Montag und Donnerstag, 06:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      # URL und Publishable Key stehen öffentlich in src/config/site.ts
+      - name: Read Supabase settings
+        id: cfg
+        run: |
+          url=$(grep -oE 'https://[a-z0-9]+\.supabase\.co' src/config/site.ts | head -n 1)
+          key=$(grep -oE 'sb_publishable_[A-Za-z0-9_-]+' src/config/site.ts | head -n 1)
+          if [ -z "$url" ] || [ -z "$key" ]; then
+            echo "::error::Supabase-URL oder Publishable Key fehlt in src/config/site.ts"
+            exit 1
+          fi
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "key=$key" >> "$GITHUB_OUTPUT"
+
+      # is_staff() ist eine echte Datenbank-Abfrage und gibt anonym nur "false" zurück
+      - name: Ping database
+        env:
+          URL: ${{ steps.cfg.outputs.url }}
+          KEY: ${{ steps.cfg.outputs.key }}
+        run: |
+          code=$(curl -sS -o response.txt -w '%{http_code}' --max-time 30 --retry 3 --retry-delay 15 \
+            -X POST "$URL/rest/v1/rpc/is_staff" \
+            -H "apikey: $KEY" -H "Content-Type: application/json" -d '{}')
+          echo "HTTP $code: $(cat response.txt)"
+          if [ "$code" != "200" ]; then
+            echo "::error::Supabase antwortet nicht wie erwartet. Projekt im Dashboard prüfen (pausiert?)."
+            exit 1
+          fi
